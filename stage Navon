@@ -1,0 +1,14 @@
+Faire une interface simple.
+Que le programme soit utilisable sur windows et mac
+SERIALISATION !! Sauvegarde
+
+Paramètres taille de l’image 
+Taille de la lettre globale
+Lettre locale, nb de lettre locale
+
+Geometrie analitique
+Lettre globale via faire des droites 
+
+On fait une grille et on clique dessus 
+
+Séparer l’ihm et le generateur

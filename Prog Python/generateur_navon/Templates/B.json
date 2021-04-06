@@ -1,0 +1,48 @@
+{
+    "0":{
+	"Type":"line",
+	"Xa": 0,
+	"Ya": 0,
+	"Xb": 0,
+	"Yb":100
+     },
+     "1":{
+	"Type":"curve",
+	"X1": 22,
+	"Y1": 0,
+	"X2": 50,
+	"Y2": 50,
+	"angleDepart": 270,
+	"angleArrive": 90
+     },
+     "2":{
+	"Type":"curve",
+	"X1": 22,
+	"Y1": 50,
+	"X2": 50,
+	"Y2": 100,
+	"angleDepart": 270,
+	"angleArrive": 90
+     },
+     "3":{
+	"Type":"line",
+	"Xa": 0,
+	"Ya": 0,
+	"Xb": 25,
+	"Yb": 0
+     },
+     "4":{
+	"Type":"line",
+	"Xa": 0,
+	"Ya": 50,
+	"Xb": 25,
+	"Yb": 50
+     },
+     "5":{
+	"Type":"line",
+	"Xa": 0,
+	"Ya": 100,
+	"Xb": 25,
+	"Yb": 100
+     }
+}

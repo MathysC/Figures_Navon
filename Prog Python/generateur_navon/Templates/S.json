@@ -1,0 +1,20 @@
+{
+    "0":{	
+	"Type":"curve",
+	"X1": 45,
+	"Y1": 0,
+	"X2": 50,
+	"Y2": 50,
+	"angleDepart": 90,
+	"angleArrive": 290
+     },
+     "1":{	
+	"Type":"curve",
+	"X1": 50,
+	"Y1": 50,
+	"X2": 50,
+	"Y2": 100,
+	"angleDepart": 270,
+	"angleArrive": 120
+     }
+}

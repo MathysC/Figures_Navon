@@ -1,0 +1,36 @@
+{
+     "0":{
+	"Type":"line",
+	"Xa": 80,
+	"Ya": 60,
+	"Xb": 80,
+	"Yb": 147
+     },
+     "1":{
+	"Type":"line",
+	"Xa": 50,
+	"Ya": 60,
+	"Xb": 80,
+	"Yb": 60
+     },
+    "2":{
+	"Type":"curve",
+	"X1": 50,
+	"Y1": 0,
+	"X2": 100,
+	"Y2": 100,
+	"angleDepart": 50,
+	"angleArrive": 190
+     },
+     "3":{
+	"Type":"curve",
+	"X1": 50,
+	"Y1": 50,
+	"X2": 100,
+	"Y2": 100,
+	"angleDepart": 270,
+	"angleArrive": 320
+     }
+
+     
+}

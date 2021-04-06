@@ -1,0 +1,11 @@
+{
+   "0": {
+   	"Type":"curve",
+	"X1": 70,
+	"Y1": 10,
+	"X2": 120,
+	"Y2": 100,
+	"angleDepart": 70,
+	"angleArrive": 290
+	}
+}
