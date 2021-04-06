@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+	\PYG{k}{if}\PYG{p}{(}\PYG{n}{c}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{==}\PYG{l+s+sc}{\PYGZsq{}]\PYGZsq{}}\PYG{p}{)}
+	\PYG{p}{\PYGZob{}}
+		\PYG{n}{figureStored} \PYG{o}{=} \PYG{n+nb}{true}\PYG{p}{;}
+	\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

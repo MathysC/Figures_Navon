@@ -1,0 +1,14 @@
+\contentsline {section}{\numberline {1}Remerciements}{4}{section.1}%
+\contentsline {section}{\numberline {2}Présentation de l'entreprise}{5}{section.2}%
+\contentsline {section}{\numberline {3}Mission du stage}{5}{section.3}%
+\contentsline {section}{\numberline {4}Précédents travaux}{5}{section.4}%
+\contentsline {section}{\numberline {5}Approche actuelle}{5}{section.5}%
+\contentsline {subsection}{\numberline {5.1}génération des figures}{5}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}génération des bits array}{6}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Diagrammes UML}{8}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Diagramme cas d'utilisation}{8}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Diagramme de classes}{8}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Présentation de l'application}{9}{section.7}%
+\contentsline {section}{\numberline {8}Application}{9}{section.8}%
+\contentsline {section}{\numberline {9}Conclusion}{10}{section.9}%
+\contentsline {section}{\numberline {10}Bibliographie}{11}{section.10}%

@@ -1,0 +1,20 @@
+\babel@toc {french}{}
+\contentsline {section}{\numberline {1}Remerciements}{4}{section.1}%
+\contentsline {section}{\numberline {2}Présentation de l'entreprise}{5}{section.2}%
+\contentsline {section}{\numberline {3}Mission du stage}{5}{section.3}%
+\contentsline {section}{\numberline {4}Précédents travaux}{6}{section.4}%
+\contentsline {section}{\numberline {5}Approche actuelle}{6}{section.5}%
+\contentsline {subsection}{\numberline {5.1}génération des figures}{6}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}génération des bitmap}{6}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Diagramme UML}{9}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Diagramme cas d'utilisation}{9}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Diagramme de classes}{10}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Présentation de l'application}{11}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Générateur des bitmaps}{11}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Générateur d'images}{11}{subsection.7.2}%
+\contentsline {subsubsection}{\numberline {7.2.1}code source de la génération d'images}{11}{subsubsection.7.2.1}%
+\contentsline {section}{\numberline {8}Création d'un exécutable Windows}{14}{section.8}%
+\contentsline {subsection}{\numberline {8.1}M Cross Environment}{14}{subsection.8.1}%
+\contentsline {section}{\numberline {9}Application}{14}{section.9}%
+\contentsline {section}{\numberline {10}Conclusion}{14}{section.10}%
+\contentsline {section}{\numberline {11}Bibliographie}{16}{section.11}%

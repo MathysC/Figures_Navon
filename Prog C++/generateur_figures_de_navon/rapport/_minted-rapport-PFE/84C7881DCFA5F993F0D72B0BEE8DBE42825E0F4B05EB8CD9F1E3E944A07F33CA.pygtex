@@ -1,0 +1,63 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{void} \PYG{n}{NavonFigure}\PYG{o}{::}\PYG{n}{drawFigureFromFile}\PYG{p}{(}\PYG{n}{string} \PYG{n}{filepath}\PYG{p}{,} \PYG{n}{QString} \PYG{n}{imagePath}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+	\PYG{n}{fstream} \PYG{n}{figureFile}\PYG{p}{;}
+	\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}} \PYG{n}{globalShape}\PYG{p}{;}
+	\PYG{n}{string} \PYG{n}{line}\PYG{p}{;}
+	\PYG{k+kt}{bool} \PYG{n}{figureStored} \PYG{o}{=} \PYG{n+nb}{false}\PYG{p}{;}
+	\PYG{k+kt}{int} \PYG{n}{figureNum}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{;}
+	\PYG{k+kt}{int} \PYG{n}{arrIndex}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{;}
+	\PYG{n}{figureFile}\PYG{p}{.}\PYG{n}{open}\PYG{p}{(}\PYG{n}{filepath}\PYG{p}{,}\PYG{n}{ios}\PYG{o}{::}\PYG{n}{in}\PYG{p}{);}
+	\PYG{k}{if}\PYG{p}{(}\PYG{n}{figureFile}\PYG{p}{.}\PYG{n}{is\PYGZus{}open}\PYG{p}{())\PYGZob{}}
+		\PYG{k}{while}\PYG{p}{(}\PYG{o}{!}\PYG{n}{figureFile}\PYG{p}{.}\PYG{n}{eof}\PYG{p}{())\PYGZob{}}
+			\PYG{n}{getline}\PYG{p}{(}\PYG{n}{figureFile}\PYG{p}{,}\PYG{n}{line}\PYG{p}{,} \PYG{l+s+sc}{\PYGZsq{}\PYGZbs{}n\PYGZsq{}}\PYG{p}{);}
+			\PYG{k}{for}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i} \PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{;} \PYG{n}{i}\PYG{o}{\PYGZlt{}}\PYG{n}{line}\PYG{p}{.}\PYG{n}{size}\PYG{p}{();} \PYG{n}{i}\PYG{o}{++}\PYG{p}{)\PYGZob{}}
+				\PYG{k+kt}{char} \PYG{n}{c}\PYG{p}{[]} \PYG{o}{=} \PYG{p}{\PYGZob{}}\PYG{n}{line}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]\PYGZcb{};}
+				\PYG{k}{if}\PYG{p}{(}\PYG{n}{c}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{==} \PYG{l+s+sc}{\PYGZsq{}1\PYGZsq{}} \PYG{o}{||} \PYG{n}{c}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{==} \PYG{l+s+sc}{\PYGZsq{}0\PYGZsq{}}\PYG{p}{)\PYGZob{}}
+					\PYG{n}{globalShape}\PYG{p}{.}\PYG{n}{push\PYGZus{}back}\PYG{p}{(}\PYG{n}{stoi}\PYG{p}{(}\PYG{n}{c}\PYG{p}{));}
+					\PYG{n}{arrIndex}\PYG{o}{++}\PYG{p}{;}
+				\PYG{p}{\PYGZcb{}}
+				\PYG{c+c1}{//given that each shape arrays end with a ] in the txt file}
+				\PYG{c+c1}{//we reset the arrIndex to 0}
+				\PYG{c+c1}{//to rewrite globalShape with the next shape.}
+				\PYG{k}{if}\PYG{p}{(}\PYG{n}{c}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{==}\PYG{l+s+sc}{\PYGZsq{}]\PYGZsq{}}\PYG{p}{)}
+				\PYG{p}{\PYGZob{}}
+					\PYG{n}{figureStored} \PYG{o}{=} \PYG{n+nb}{true}\PYG{p}{;}
+				\PYG{p}{\PYGZcb{}}
+			\PYG{p}{\PYGZcb{}}
+			\PYG{k}{if}\PYG{p}{(}\PYG{n}{figureStored}\PYG{p}{)}
+			\PYG{p}{\PYGZob{}}
+				\PYG{n}{arrIndex}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{;}
+				\PYG{k+kt}{int} \PYG{n}{i}\PYG{p}{;}
+				\PYG{n}{QChar} \PYG{n}{local\PYGZus{}char} \PYG{o}{=} \PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{character}\PYG{p}{;}
+				\PYG{n}{QImage} \PYG{n+nf}{image}\PYG{p}{(}\PYG{l+m+mi}{960}\PYG{p}{,} \PYG{l+m+mi}{960}\PYG{p}{,} \PYG{n}{QImage}\PYG{o}{::}\PYG{n}{Format\PYGZus{}RGB32}\PYG{p}{);}
+				\PYG{n}{image}\PYG{p}{.}\PYG{n}{fill}\PYG{p}{(}\PYG{n}{QColor}\PYG{p}{(}\PYG{l+m+mi}{250}\PYG{p}{,}\PYG{l+m+mi}{250}\PYG{p}{,}\PYG{l+m+mi}{250}\PYG{p}{));}
+				\PYG{n}{QPainter} \PYG{n+nf}{painter}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{image}\PYG{p}{);}
+				\PYG{n}{painter}\PYG{p}{.}\PYG{n}{setFont}\PYG{p}{(}\PYG{n}{QFont}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Times\PYGZdq{}}\PYG{p}{,}\PYG{n}{fontSize}\PYG{p}{));}
+				\PYG{n}{QPoint} \PYG{n+nf}{topLeft}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{);}
+				\PYG{n}{QPoint} \PYG{n+nf}{bottomRight}\PYG{p}{(}\PYG{n}{fontSize}\PYG{p}{,} \PYG{n}{fontSize}\PYG{p}{);}
+				\PYG{n}{QRect} \PYG{n+nf}{rect}\PYG{p}{(}\PYG{n}{topLeft}\PYG{p}{,} \PYG{n}{bottomRight}\PYG{p}{);}
+				\PYG{k}{for}\PYG{p}{(}\PYG{n}{i}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{;} \PYG{n}{i}\PYG{o}{\PYGZlt{}}\PYG{n}{globalShape}\PYG{p}{.}\PYG{n}{size}\PYG{p}{();} \PYG{n}{i}\PYG{o}{++}\PYG{p}{)\PYGZob{}}
+					\PYG{k}{if}\PYG{p}{(}\PYG{n}{i}\PYG{o}{\PYGZpc{}}\PYG{k+kt}{int}\PYG{p}{(}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{globalShape}\PYG{p}{.}\PYG{n}{size}\PYG{p}{()))} \PYG{o}{==} \PYG{l+m+mi}{0}\PYG{p}{)}
+					\PYG{p}{\PYGZob{}}
+						\PYG{n}{topLeft}\PYG{p}{.}\PYG{n}{setX}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{);} \PYG{n}{topLeft}\PYG{p}{.}\PYG{n}{setY}\PYG{p}{(}\PYG{n}{topLeft}\PYG{p}{.}\PYG{n}{y}\PYG{p}{()}\PYG{o}{+}\PYG{n}{fontSize}\PYG{o}{+}\PYG{n}{spanning}\PYG{p}{);}
+						\PYG{n}{bottomRight}\PYG{p}{.}\PYG{n}{setX}\PYG{p}{(}\PYG{n}{fontSize}\PYG{o}{+}\PYG{n}{spanning}\PYG{p}{);}
+						\PYG{n}{bottomRight}\PYG{p}{.}\PYG{n}{setY}\PYG{p}{(}\PYG{n}{bottomRight}\PYG{p}{.}\PYG{n}{y}\PYG{p}{()}\PYG{o}{+}\PYG{n}{fontSize}\PYG{o}{+}\PYG{n}{spanning}\PYG{p}{);}
+					\PYG{p}{\PYGZcb{}}
+					\PYG{k}{if}\PYG{p}{(}\PYG{n}{globalShape}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{==} \PYG{l+m+mi}{1}\PYG{p}{)}
+					\PYG{p}{\PYGZob{}}
+						\PYG{n}{rect}\PYG{p}{.}\PYG{n}{setTopLeft}\PYG{p}{(}\PYG{n}{topLeft}\PYG{p}{);} \PYG{n}{rect}\PYG{p}{.}\PYG{n}{setBottomRight}\PYG{p}{(}\PYG{n}{bottomRight}\PYG{p}{);}
+						\PYG{n}{painter}\PYG{p}{.}\PYG{n}{drawText}\PYG{p}{(}\PYG{n}{rect}\PYG{p}{,} \PYG{n}{Qt}\PYG{o}{::}\PYG{n}{AlignCenter}\PYG{p}{,} \PYG{n}{local\PYGZus{}char}\PYG{p}{);}
+					\PYG{p}{\PYGZcb{}}
+					\PYG{n}{topLeft}\PYG{p}{.}\PYG{n}{setX}\PYG{p}{(}\PYG{n}{topLeft}\PYG{p}{.}\PYG{n}{x}\PYG{p}{()}\PYG{o}{+}\PYG{n}{fontSize}\PYG{o}{+}\PYG{n}{spanning}\PYG{p}{);}
+					\PYG{n}{bottomRight}\PYG{p}{.}\PYG{n}{setX}\PYG{p}{(}\PYG{n}{bottomRight}\PYG{p}{.}\PYG{n}{x}\PYG{p}{()}\PYG{o}{+}\PYG{n}{fontSize}\PYG{o}{+}\PYG{n}{spanning}\PYG{p}{);}
+				\PYG{p}{\PYGZcb{}}
+				\PYG{k+kt}{bool} \PYG{n}{isSaved} \PYG{o}{=} \PYG{n}{image}\PYG{p}{.}\PYG{n}{save}\PYG{p}{(}\PYG{n}{imagePath}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}PNG\PYGZdq{}}\PYG{p}{,} \PYG{l+m+mi}{100}\PYG{p}{);}
+			\PYG{p}{\PYGZcb{}}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+	\PYG{k}{else}\PYG{p}{\PYGZob{}}
+	\PYG{p}{\PYGZcb{}}
+	\PYG{n}{figureFile}\PYG{p}{.}\PYG{n}{close}\PYG{p}{();}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}
