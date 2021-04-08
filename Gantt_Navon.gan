@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2021-04-27" view-index="0" gantt-divider-location="300" resource-divider-location="300" version="3.0.3005" locale="fr_FR">
+    <description/>
+    <view zooming-state="default:2" id="gantt-chart">
+        <field id="tpd3" name="Nom" width="167" order="0"/>
+        <field id="tpd4" name="Date de début" width="65" order="1"/>
+        <field id="tpd5" name="Date de fin" width="64" order="2"/>
+        <option id="color.recent">
+            <![CDATA[#ff0033 #f4f4f4 #990099]]>
+        </option>
+    </view>
+    <view id="resource-table">
+        <field id="0" name="Nom" width="210" order="0"/>
+        <field id="1" name="Rôle par défaut" width="86" order="1"/>
+    </view>
+    <!-- -->
+    <calendars>
+        <day-types>
+            <day-type id="0"/>
+            <day-type id="1"/>
+            <default-week id="1" name="default" sun="1" mon="0" tue="0" wed="0" thu="0" fri="0" sat="1"/>
+            <only-show-weekends value="false"/>
+            <overriden-day-types/>
+            <days/>
+        </day-types>
+    </calendars>
+    <tasks empty-milestones="true">
+        <taskproperties>
+            <taskproperty id="tpd0" name="type" type="default" valuetype="icon"/>
+            <taskproperty id="tpd1" name="priority" type="default" valuetype="icon"/>
+            <taskproperty id="tpd2" name="info" type="default" valuetype="icon"/>
+            <taskproperty id="tpd3" name="name" type="default" valuetype="text"/>
+            <taskproperty id="tpd4" name="begindate" type="default" valuetype="date"/>
+            <taskproperty id="tpd5" name="enddate" type="default" valuetype="date"/>
+            <taskproperty id="tpd6" name="duration" type="default" valuetype="int"/>
+            <taskproperty id="tpd7" name="completion" type="default" valuetype="int"/>
+            <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
+            <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
+        </taskproperties>
+        <task id="2" name="Voir les bibliothèques" color="#f4f4f4" meeting="false" start="2021-04-07" duration="4" complete="0" thirdDate="2021-04-07" thirdDate-constraint="0" priority="2" expand="true">
+            <depend id="7" type="2" difference="0" hardness="Strong"/>
+        </task>
+        <task id="7" name="ReConception du code" color="#f4f4f4" meeting="false" start="2021-04-13" duration="1" complete="0" thirdDate="2021-04-05" thirdDate-constraint="0" priority="4" expand="true"/>
+        <task id="0" name="réunion hebdo" color="#990099" meeting="false" start="2021-04-13" duration="1" complete="0" thirdDate="2021-04-07" thirdDate-constraint="0" expand="true">
+            <depend id="3" type="2" difference="0" hardness="Strong"/>
+        </task>
+        <task id="3" name="Refaire partie principale du code" color="#8cb6ce" shape="0,1,0,1,0,0,1,0,0,1,0,1,1,0,0,0" meeting="false" start="2021-04-14" duration="9" complete="0" thirdDate="2021-04-07" thirdDate-constraint="0" priority="4" expand="true">
+            <notes>
+                <![CDATA[Refaire la partie du code (presque tout) fait par les précédents codeurs.]]>
+            </notes>
+        </task>
+        <task id="9" name="Code par Matrice" color="#8cb6ce" shape="1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1" meeting="false" start="2021-04-21" duration="9" complete="0" thirdDate="2021-04-05" thirdDate-constraint="0" priority="4" expand="true">
+            <notes>
+                <![CDATA[Le code actuelle fonctionne via des courbes et fonctions mathématiques, il faut changer cela par des utilisations de matrices, afin de simplifier son utilisation, sa modification et sa sauvegarde.]]>
+            </notes>
+        </task>
+        <task id="14" name="Ajout du quadrillage à l'interface" color="#ff0033" meeting="false" start="2021-04-27" duration="9" complete="0" thirdDate="2021-04-05" thirdDate-constraint="0" priority="4" expand="true">
+            <notes>
+                <![CDATA[Quadrillage permettant de faire n'importe quelle figure de Navon
+Taille du quadrillage en X et Y modifiable séparément 
+Il faut noircir des casses afin de créer la figure de Navon, la blanchir afin de la supprimer
+Il faut pouvoir rendre le quadrillage vide à nouveau.
+
+
+Optionnel : 
+Zoom et Dezoom du quadrillage
+Rotation du quadrillage]]>
+            </notes>
+            <depend id="27" type="2" difference="0" hardness="Strong"/>
+        </task>
+        <task id="42" name="Refaire l'interface" color="#8cb6ce" meeting="false" start="2021-05-07" duration="3" complete="0" thirdDate="2021-05-05" thirdDate-constraint="0" expand="true">
+            <notes>
+                <![CDATA[Refaire l'interface afin d'y ajouter le quadrillage et autres objets nécessaires]]>
+            </notes>
+            <depend id="27" type="2" difference="0" hardness="Strong"/>
+        </task>
+        <task id="27" name="Système de sauvegarde" color="#8cb6ce" shape="1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1" meeting="false" start="2021-05-12" duration="6" complete="0" thirdDate="2021-04-22" thirdDate-constraint="0" priority="2" expand="true">
+            <notes>
+                <![CDATA[Système de sauvegarde (sûrement en CSV) permettant de faire plusieurs figures de Navon à la fois.
+Modification de plusieurs figures sans trop de manip inutile
+(Ajout de boutons sur l'interface)
+]]>
+            </notes>
+        </task>
+        <task id="34" name="Faire des fichiers exemples" color="#8cb6ce" meeting="false" start="2021-06-03" duration="1" complete="0" thirdDate="2021-05-11" thirdDate-constraint="0" expand="true">
+            <notes>
+                <![CDATA[Faire des figures de Navon exemples,
+Faire des templates pour toutes les lettres voire les caractères du tableau ascii
+]]>
+            </notes>
+            <depend id="32" type="2" difference="0" hardness="Strong"/>
+        </task>
+        <task id="37" name="Faire un pdf aide" color="#8cb6ce" meeting="false" start="2021-06-02" duration="2" complete="0" thirdDate="2021-05-11" thirdDate-constraint="0" expand="true">
+            <notes>
+                <![CDATA[Faire un pdf d'aide sur 
+l'utilisation de l'application
+l'utilisation de la sauvegarde]]>
+            </notes>
+            <depend id="32" type="2" difference="0" hardness="Strong"/>
+        </task>
+        <task id="32" name="Faire un executable" color="#8cb6ce" meeting="false" start="2021-06-04" duration="1" complete="0" thirdDate="2021-05-11" thirdDate-constraint="0" expand="true"/>
+    </tasks>
+    <resources>
+        <resource id="0" name="Clerget Mathys" function="SoftwareDevelopment:2" contacts="" phone=""/>
+        <resource id="1" name="Bard Patrick" function="Default:1" contacts="" phone=""/>
+    </resources>
+    <allocations>
+        <allocation task-id="0" resource-id="0" function="SoftwareDevelopment:2" responsible="false" load="0.0"/>
+        <allocation task-id="2" resource-id="0" function="SoftwareDevelopment:2" responsible="true" load="0.0"/>
+        <allocation task-id="0" resource-id="1" function="Default:1" responsible="true" load="0.0"/>
+    </allocations>
+    <vacations/>
+    <previous/>
+    <roles roleset-name="Default"/>
+    <roles roleset-name="SoftwareDevelopment"/>
+</project>

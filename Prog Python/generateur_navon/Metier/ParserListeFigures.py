@@ -3,9 +3,9 @@ from Metier.FiguresNavon import FigureNavon
 
 class ParserListeFigures:
 
-    #CONSTRUCTEUR
+    # CONSTRUCTEUR
     def __init__(self, nomFile):
-        self.nomFichier=nomFile
+        self.nomFichier = nomFile
         self.lettreGlobal = ""
         self.lettreLocal = ""
         self.tailleImageWidth = 0
@@ -16,17 +16,17 @@ class ParserListeFigures:
         self.densite = 0
         self.listeFigures = []
 
-    #METHODES POUR PARSER LE FICHIER
+    # METHODES POUR PARSER LE FICHIER
     def recupererDonneesFichier(self):
 
         with open(self.nomFichier, "r") as fichier:
             lignes = fichier.readlines()
         for ligne in lignes:
             champs = ligne.split()
-            if not(champs[0].startswith("#")):
-                self.listeFigures.append(FigureNavon(champs[0],champs[1], int(champs[2]), int(champs[3]), int(champs[4]), int(champs[5]), int(champs[6]), int(champs[7]), int(champs[8]), float(champs[9])))
-
-
+            if not (champs[0].startswith("#")):
+                self.listeFigures.append(
+                    FigureNavon(champs[0], champs[1], int(champs[2]), int(champs[3]), int(champs[4]), int(champs[5]),
+                                int(champs[6]), int(champs[7]), int(champs[8]), float(champs[9])))
 
     ##################################GETTER
     def getNomfichier(self):

@@ -1,0 +1,51 @@
+Python :
+Erreur import dans interface "I don't know how, but it work"
+Documentation presque inexistante
+Aucune vérification des informations données
+Pas de gestion d'erreur
+Idk comment fonctionne le programme depuis un fichier txt
+
+A quoi sert ElementGlobal ?
+
+De mon côté :
+Je dois check
+ numpy
+ Tkinter
+ Matpotlib
+ PIL
+
+
+
+
+
+Réunion
+
+Encradrement afin de faire n'importe quelle figure 
+Lettre glo 'à dessiner' avec une lettre locale
+Format de sortie
+
+Densité : nombre élement local / élément global
+
+
+Pouvoir faire des char plus compliqués
+
+Faire que les lettres soient toutes faites correctement.
+
+
+n = nb lettre locale
+
+
+Faire des fichiers exemples (Les 26 lettres etc)
+
+Faire la densité via un tableau de mêmes (x,y)
+
+Clique continue pour dessiner 
+
+
+
+Faire une grille qui passe en zone de dessin et inversement
+
+
+Faire une liste des tâches ordonnées
+Voir ce qui est important ou non
+Faire une hiérarchisation des importances
