@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2021-04-27" view-index="0" gantt-divider-location="300" resource-divider-location="300" version="3.0.3005" locale="fr_FR">
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2021-04-08" view-index="0" gantt-divider-location="496" resource-divider-location="300" version="3.0.3005" locale="fr_FR">
     <description/>
     <view zooming-state="default:2" id="gantt-chart">
-        <field id="tpd3" name="Nom" width="167" order="0"/>
-        <field id="tpd4" name="Date de début" width="65" order="1"/>
-        <field id="tpd5" name="Date de fin" width="64" order="2"/>
+        <field id="tpd3" name="Nom" width="232" order="0"/>
+        <field id="tpd4" name="Date de début" width="130" order="1"/>
+        <field id="tpd5" name="Date de fin" width="130" order="2"/>
         <option id="color.recent">
-            <![CDATA[#ff0033 #f4f4f4 #990099]]>
+            <![CDATA[#990099 #33ff33 #ff0033 #f4f4f4]]>
         </option>
     </view>
     <view id="resource-table">
@@ -36,42 +36,26 @@
             <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
             <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
         </taskproperties>
-        <task id="2" name="Voir les bibliothèques" color="#f4f4f4" meeting="false" start="2021-04-07" duration="4" complete="0" thirdDate="2021-04-07" thirdDate-constraint="0" priority="2" expand="true">
+        <task id="2" name="Voir les bibliothèques" color="#f4f4f4" meeting="false" start="2021-04-07" duration="4" complete="100" thirdDate="2021-04-07" thirdDate-constraint="0" priority="2" expand="true">
+            <notes>
+                <![CDATA[Fin : Approfondir les recherches sur Numpy]]>
+            </notes>
             <depend id="7" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="7" name="ReConception du code" color="#f4f4f4" meeting="false" start="2021-04-13" duration="1" complete="0" thirdDate="2021-04-05" thirdDate-constraint="0" priority="4" expand="true"/>
-        <task id="0" name="réunion hebdo" color="#990099" meeting="false" start="2021-04-13" duration="1" complete="0" thirdDate="2021-04-07" thirdDate-constraint="0" expand="true">
-            <depend id="3" type="2" difference="0" hardness="Strong"/>
+        <task id="7" name="ReConception du code" color="#f4f4f4" meeting="false" start="2021-04-13" duration="1" complete="90" thirdDate="2021-04-05" thirdDate-constraint="0" priority="4" expand="true"/>
+        <task id="59" name="Réunion Hebdo" color="#990099" meeting="false" start="2021-04-13" duration="1" complete="100" thirdDate="2021-04-06" thirdDate-constraint="0" expand="true">
+            <depend id="49" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="3" name="Refaire partie principale du code" color="#8cb6ce" shape="0,1,0,1,0,0,1,0,0,1,0,1,1,0,0,0" meeting="false" start="2021-04-14" duration="9" complete="0" thirdDate="2021-04-07" thirdDate-constraint="0" priority="4" expand="true">
+        <task id="49" name="Résoudre la question de la densité" color="#33ff33" meeting="false" start="2021-04-14" duration="5" complete="0" thirdDate="2021-04-02" thirdDate-constraint="0" priority="4" expand="true">
             <notes>
-                <![CDATA[Refaire la partie du code (presque tout) fait par les précédents codeurs.]]>
+                <![CDATA[Après la réunion hebdomadaire, je dois me pencher sur la question de la densité 
+Trouver une façon de faire, tester et faire approuver par M. Bard]]>
             </notes>
         </task>
         <task id="9" name="Code par Matrice" color="#8cb6ce" shape="1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1" meeting="false" start="2021-04-21" duration="9" complete="0" thirdDate="2021-04-05" thirdDate-constraint="0" priority="4" expand="true">
             <notes>
                 <![CDATA[Le code actuelle fonctionne via des courbes et fonctions mathématiques, il faut changer cela par des utilisations de matrices, afin de simplifier son utilisation, sa modification et sa sauvegarde.]]>
             </notes>
-        </task>
-        <task id="14" name="Ajout du quadrillage à l'interface" color="#ff0033" meeting="false" start="2021-04-27" duration="9" complete="0" thirdDate="2021-04-05" thirdDate-constraint="0" priority="4" expand="true">
-            <notes>
-                <![CDATA[Quadrillage permettant de faire n'importe quelle figure de Navon
-Taille du quadrillage en X et Y modifiable séparément 
-Il faut noircir des casses afin de créer la figure de Navon, la blanchir afin de la supprimer
-Il faut pouvoir rendre le quadrillage vide à nouveau.
-
-
-Optionnel : 
-Zoom et Dezoom du quadrillage
-Rotation du quadrillage]]>
-            </notes>
-            <depend id="27" type="2" difference="0" hardness="Strong"/>
-        </task>
-        <task id="42" name="Refaire l'interface" color="#8cb6ce" meeting="false" start="2021-05-07" duration="3" complete="0" thirdDate="2021-05-05" thirdDate-constraint="0" expand="true">
-            <notes>
-                <![CDATA[Refaire l'interface afin d'y ajouter le quadrillage et autres objets nécessaires]]>
-            </notes>
-            <depend id="27" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="27" name="Système de sauvegarde" color="#8cb6ce" shape="1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1" meeting="false" start="2021-05-12" duration="6" complete="0" thirdDate="2021-04-22" thirdDate-constraint="0" priority="2" expand="true">
             <notes>
@@ -104,9 +88,7 @@ l'utilisation de la sauvegarde]]>
         <resource id="1" name="Bard Patrick" function="Default:1" contacts="" phone=""/>
     </resources>
     <allocations>
-        <allocation task-id="0" resource-id="0" function="SoftwareDevelopment:2" responsible="false" load="0.0"/>
         <allocation task-id="2" resource-id="0" function="SoftwareDevelopment:2" responsible="true" load="0.0"/>
-        <allocation task-id="0" resource-id="1" function="Default:1" responsible="true" load="0.0"/>
     </allocations>
     <vacations/>
     <previous/>
