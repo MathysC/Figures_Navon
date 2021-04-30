@@ -3,15 +3,17 @@ import scipy.interpolate
 import matplotlib.pyplot
 
 
-N = 15
+N = 5
 
-
+#Premier segment
 x1 = numpy.array([ 0,  0, 0])
 y1 = numpy.array([ 2,  1, 0])
 
+#Deuxième segment
 x2 = numpy.array([ 0,  0, 0])
 y2 = numpy.array([ 0, -1, -2])
 
+#Le demi cercle 
 t = numpy.linspace(-numpy.pi / 2, numpy.pi / 2, 10)
 r = numpy.sqrt(1.0)
 c = [(0 + r * numpy.cos(t_), 1 + r * numpy.sin(t_)) for t_ in t]
@@ -56,4 +58,4 @@ for n in range(4, N) :
 	matplotlib.pyplot.plot(x3_, y3_, 'ro');
 
 	matplotlib.pyplot.axis('equal');
-	matplotlib.pyplot.savefig(f"{n}.png")
+	matplotlib.pyplot.savefig(f"Navon1/{n}.png")

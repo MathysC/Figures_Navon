@@ -1,3 +1,7 @@
 Suivi stage/OneNote_RecycleBin/
-
+*.7z
 *.png
+
+*.pyc
+*.xml
+*.iml

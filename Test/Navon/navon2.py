@@ -79,4 +79,4 @@ for n in range(2, N) :
 
 	matplotlib.pyplot.axis('equal');
 	matplotlib.pyplot.show()
-	#matplotlib.pyplot.savefig(f"{n}.png")
+	#matplotlib.pyplot.savefig(f"Navon2/{n}.png")

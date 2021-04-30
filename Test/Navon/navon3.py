@@ -89,7 +89,7 @@ for d in [100, 80, 75, 50, 40, 33, 30, 25, 15]:	# d représente les pourcentages
 	matplotlib.pyplot.plot(_x1_(l), _y1_(l), 'g-')
 	matplotlib.pyplot.plot(_x2_(l), _y2_(l), 'g-')
 	matplotlib.pyplot.plot(_x3_(l), _y3_(l), 'g-')	
-
+	
 	"""
 	# Points rouge représentant les emplacements des lettres
 	matplotlib.pyplot.plot(x1_, y1_, 'ro')
@@ -109,5 +109,5 @@ for d in [100, 80, 75, 50, 40, 33, 30, 25, 15]:	# d représente les pourcentages
 	
 	#Enregistrement de la figure de Navon
 	#matplotlib.pyplot.axis('off')
-	matplotlib.pyplot.savefig(f"{ite} - {d} %.png")
-	#matplotlib.pyplot.savefig(f"{ite} - {d} %.png", bbox_inches='tight', pad_inches=0)
+	matplotlib.pyplot.savefig(f"Navon3/{ite} - {d} %.png")
+	#matplotlib.pyplot.savefig(f"Navon3/{ite} - {d} %.png", bbox_inches='tight', pad_inches=0)
