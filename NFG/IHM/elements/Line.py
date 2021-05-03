@@ -3,14 +3,12 @@ import numpy as np
 
 
 class Line(Element):
-    @property.__init__
     def __init__(self, coords):
         super().__init__(
             np.array([coords[0], coords[2]]),
             np.array([coords[1], coords[3]]))
         self.id = None
 
-    @property.getter
     def getType(self):
         return "line"
 
