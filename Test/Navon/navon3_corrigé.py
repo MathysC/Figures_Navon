@@ -2,6 +2,7 @@ import numpy
 import scipy.interpolate
 import matplotlib.pyplot
 import tkinter as tk
+from PIL import Image
 
 def func():
 	L = 0.4
@@ -38,7 +39,7 @@ def func():
 
 	g = sum([l1[-1], l2[-1], l3[-1]])
 
-	for d in [100, 80, 75, 50, 40, 33, 30, 25, 15] :
+	for d in [100] : #, 80, 75, 50, 40, 33, 30, 25, 15
 		
 		
 		n = int(d / 100 * g / L)
@@ -55,7 +56,8 @@ def func():
 		x3_, y3_ = _x3_(a), _y3_(a)
 
 
-		matplotlib.pyplot.figure()
+		figure = matplotlib.pyplot.figure()
+		figure.add_subplot(111)
 		matplotlib.pyplot.title(f"d = {d} %")
 
 		"""
@@ -84,7 +86,19 @@ def func():
 			matplotlib.pyplot.text(x3_[i], y3_[i], 'U', horizontalalignment = "center", verticalalignment = "center")
 
 		matplotlib.pyplot.axis('equal')
-		matplotlib.pyplot.savefig(f"{d} %.png")
+		matplotlib.pyplot.axis('off')
+		#matplotlib.pyplot.savefig(f"{d} %.png")
+		im = fig2img(figure)
+		im.show()
+
+def fig2img(fig):
+    """Convert a Matplotlib figure to a PIL Image and return it"""
+    import io
+    buf = io.BytesIO()
+    fig.savefig(buf)
+    buf.seek(0)
+    img = Image.open(buf)
+    return img
 
 
 mainWindow = tk.Tk()

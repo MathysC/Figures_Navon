@@ -3,13 +3,19 @@ import numpy as np
 
 
 class Line(Element):
+    """
+    Class that extends Element, implements the Line
+    """
     def __init__(self, coords):
         super().__init__(
             np.array([coords[0], coords[2]]),
             np.array([coords[1], coords[3]]))
-        self.id = None
+        self.id = None # implement in self.start
 
     def getType(self):
+        """
+        Getter of type 
+        """
         return "line"
 
     def start(self, **kwargs):
@@ -23,7 +29,7 @@ class Line(Element):
         event = kwargs.get('event')
         draw_canvas = kwargs.get('draw_canvas')
 
-        # La line est au niveau du clique
+        # The line begin at the click
         self.setX(0, event.x)
         self.setX(1, event.x)
         self.setY(0, event.y)
