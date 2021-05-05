@@ -38,12 +38,12 @@ def func():
 
 
 	g = sum([l1[-1], l2[-1], l3[-1]])
-
-	for d in [100] : #, 80, 75, 50, 40, 33, 30, 25, 15
+	for d in [100, 80, 75, 50, 40, 33, 30, 25, 15] : #
 		
 		
 		n = int(d / 100 * g / L)
-		n1 = n
+
+		n1 = n # * l1[-1] / g (pourcentage que le trait représente dans la figure)
 		n3 = n
 		
 		while (l3[-1] / n3) > (l1[-1] / n1) :
@@ -57,8 +57,7 @@ def func():
 
 
 		figure = matplotlib.pyplot.figure()
-		figure.add_subplot(111)
-		matplotlib.pyplot.title(f"d = {d} %")
+		matplotlib.pyplot.title(f"Navon3\nd = {d} %")
 
 		"""
 		matplotlib.pyplot.plot(x1, y1, 'bo');
@@ -86,10 +85,10 @@ def func():
 			matplotlib.pyplot.text(x3_[i], y3_[i], 'U', horizontalalignment = "center", verticalalignment = "center")
 
 		matplotlib.pyplot.axis('equal')
-		matplotlib.pyplot.axis('off')
-		#matplotlib.pyplot.savefig(f"{d} %.png")
-		im = fig2img(figure)
-		im.show()
+		#matplotlib.pyplot.axis('off')
+		matplotlib.pyplot.savefig(f"Navon3/{d} %.png")
+		#im = fig2img(figure)
+		#im.show()
 
 def fig2img(fig):
     """Convert a Matplotlib figure to a PIL Image and return it"""

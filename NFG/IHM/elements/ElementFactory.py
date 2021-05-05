@@ -1,5 +1,6 @@
 from IHM.elements.Element import Element
 from IHM.elements.Line import Line
+from IHM.elements.Eraser import Eraser
 
 
 class ElementFactory:
@@ -24,7 +25,7 @@ class ElementFactory:
         elif elementType == "arc":
             ...
         elif elementType == "eraser":
-            ...
+            return Eraser()
         elif elementType == "mouse":
             ...
         else:

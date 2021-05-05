@@ -24,7 +24,7 @@ class Ui_MainWindow:
         self.draw = Draw_Canvas(self.mainWindow, self.NF)
 
         # Create the frame that contains the global buttons (preview etc)
-        self.global_frame = LabelFrame(self.mainWindow,font=Setup.FONT,bd=2,bg="white")
+        self.global_frame = LabelFrame(self.mainWindow,font=Setup.FONT,bd=1,bg="white", relief=RIDGE)
         self.global_frame.place(x=0,y=Setup.HEIGHT,width=Setup.WIDTH+70,height=50)
         
         # Button that lists all created element (ONLY FOR TEST PHASE)
@@ -54,4 +54,5 @@ class Ui_MainWindow:
         """
         Function that (currently only ) preview the NF
         """
+        self.draw.update()
         self.NF.final()

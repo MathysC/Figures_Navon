@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2021-04-08" view-index="0" gantt-divider-location="496" resource-divider-location="300" version="3.0.3005" locale="fr_FR">
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2021-04-05" view-index="0" gantt-divider-location="268" resource-divider-location="300" version="3.0.3005" locale="fr_FR">
     <description/>
-    <view zooming-state="default:2" id="gantt-chart">
-        <field id="tpd3" name="Nom" width="232" order="0"/>
-        <field id="tpd4" name="Date de début" width="130" order="1"/>
-        <field id="tpd5" name="Date de fin" width="130" order="2"/>
+    <view zooming-state="default:5" id="gantt-chart">
+        <field id="tpd3" name="Nom" width="195" order="0"/>
+        <field id="tpd4" name="Date de début" width="31" order="1"/>
+        <field id="tpd5" name="Date de fin" width="38" order="2"/>
         <option id="color.recent">
             <![CDATA[#990099 #33ff33 #ff0033 #f4f4f4]]>
         </option>
@@ -42,21 +42,69 @@
             </notes>
             <depend id="7" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="7" name="ReConception du code" color="#f4f4f4" meeting="false" start="2021-04-13" duration="1" complete="90" thirdDate="2021-04-05" thirdDate-constraint="0" priority="4" expand="true"/>
+        <task id="7" name="ReConception du code" color="#f4f4f4" meeting="false" start="2021-04-13" duration="1" complete="50" thirdDate="2021-04-05" thirdDate-constraint="0" priority="4" expand="true">
+            <notes>
+                <![CDATA[Conception vu une fois
+Mais à refaire car les plans ont changé]]>
+            </notes>
+        </task>
         <task id="59" name="Réunion Hebdo" color="#990099" meeting="false" start="2021-04-13" duration="1" complete="100" thirdDate="2021-04-06" thirdDate-constraint="0" expand="true">
+            <notes>
+                <![CDATA[Début du stage : 
+
+La question qui a posé problème les années précédentes est celle de la densité : Il faut trouver une solution.
+
+Monsieur Bard pense que partir sur une idée de matrice est possible.]]>
+            </notes>
             <depend id="49" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="49" name="Résoudre la question de la densité" color="#33ff33" meeting="false" start="2021-04-14" duration="5" complete="0" thirdDate="2021-04-02" thirdDate-constraint="0" priority="4" expand="true">
+        <task id="49" name="Résoudre la question de densité par quadrillage" color="#33ff33" meeting="false" start="2021-04-14" duration="4" complete="100" thirdDate="2021-04-02" thirdDate-constraint="0" priority="4" expand="true">
             <notes>
                 <![CDATA[Après la réunion hebdomadaire, je dois me pencher sur la question de la densité 
 Trouver une façon de faire, tester et faire approuver par M. Bard]]>
             </notes>
+            <depend id="60" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="9" name="Code par Matrice" color="#8cb6ce" shape="1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1" meeting="false" start="2021-04-21" duration="9" complete="0" thirdDate="2021-04-05" thirdDate-constraint="0" priority="4" expand="true">
+        <task id="60" name="Réunion Hebdo" color="#990099" meeting="false" start="2021-04-20" duration="1" complete="100" thirdDate="2021-04-09" thirdDate-constraint="0" expand="true">
             <notes>
-                <![CDATA[Le code actuelle fonctionne via des courbes et fonctions mathématiques, il faut changer cela par des utilisations de matrices, afin de simplifier son utilisation, sa modification et sa sauvegarde.]]>
+                <![CDATA[Les quadrillages ne sont peut-être pas ce qu'il faut utiliser afin d'obtenir le résultat voulu. Plutôt chercher du côté du dessin (segment, arc etc)]]>
+            </notes>
+            <depend id="84" type="2" difference="0" hardness="Strong"/>
+        </task>
+        <task id="84" name="Résoudre la question de densité par MatplotLib" color="#33ff33" meeting="false" start="2021-04-21" duration="4" complete="100" thirdDate="2021-04-07" thirdDate-constraint="0" priority="4" expand="true">
+            <notes>
+                <![CDATA[Tentative de code par Matplotlib et un canvas de dessin Tkinter
+
+Problème majeur : Je ne connais pas suffisamment cette biblio
+Donc je suis un peu lent au début
+
+Problème mineur : Le canvas m'était inconnu aussi, mais moins compliqué à expérimenter]]>
+            </notes>
+            <depend id="61" type="2" difference="0" hardness="Strong"/>
+        </task>
+        <task id="61" name="Réunion Hebdo" color="#990099" meeting="false" start="2021-04-27" duration="1" complete="100" thirdDate="2021-04-08" thirdDate-constraint="0" expand="true">
+            <notes>
+                <![CDATA[Les test (navon1,navon2,navon3) de M. Bard sont satisfaisant, on part avec cela afin de commencer le code du projet]]>
+            </notes>
+            <depend id="9" type="2" difference="0" hardness="Strong"/>
+        </task>
+        <task id="9" name="Début du code" color="#8cb6ce" shape="1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1" meeting="false" start="2021-04-28" duration="9" complete="0" thirdDate="2021-04-05" thirdDate-constraint="0" priority="2" expand="true">
+            <notes>
+                <![CDATA[1. Code par Matrice
+Le code actuelle fonctionne via des courbes et fonctions mathématiques, il faut changer cela par des utilisations de matrices, afin de simplifier son utilisation, sa modification et sa sauvegarde.
+
+Annulé ! 
+2. On fait un pas en arrière, utilisation de matplotlib. Résultats meilleurs]]>
+            </notes>
+            <depend id="110" type="2" difference="0" hardness="Strong"/>
+        </task>
+        <task id="63" name="Réunion Hebdo" color="#990099" meeting="false" start="2021-05-04" duration="1" complete="100" thirdDate="2021-04-08" thirdDate-constraint="0" expand="true">
+            <notes>
+                <![CDATA[Réunion hebdo portant sur l'avancée du code
+Matplolib est bon pour faire les calculs nécessaires à NF mais il faut utiliser une autre bibliothèque telle que Pillow etc afin de faire le boulot de la création de l'image etc]]>
             </notes>
         </task>
+        <task id="110" name="Réunion Hebdo" color="#990099" meeting="false" start="2021-05-11" duration="1" complete="0" thirdDate="2021-04-28" thirdDate-constraint="0" expand="true"/>
         <task id="27" name="Système de sauvegarde" color="#8cb6ce" shape="1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1" meeting="false" start="2021-05-12" duration="6" complete="0" thirdDate="2021-04-22" thirdDate-constraint="0" priority="2" expand="true">
             <notes>
                 <![CDATA[Système de sauvegarde (sûrement en CSV) permettant de faire plusieurs figures de Navon à la fois.
@@ -89,6 +137,17 @@ l'utilisation de la sauvegarde]]>
     </resources>
     <allocations>
         <allocation task-id="2" resource-id="0" function="SoftwareDevelopment:2" responsible="true" load="0.0"/>
+        <allocation task-id="7" resource-id="0" function="SoftwareDevelopment:2" responsible="true" load="100.0"/>
+        <allocation task-id="59" resource-id="0" function="SoftwareDevelopment:2" responsible="false" load="100.0"/>
+        <allocation task-id="49" resource-id="0" function="SoftwareDevelopment:2" responsible="true" load="100.0"/>
+        <allocation task-id="60" resource-id="0" function="SoftwareDevelopment:2" responsible="false" load="100.0"/>
+        <allocation task-id="110" resource-id="0" function="SoftwareDevelopment:2" responsible="false" load="100.0"/>
+        <allocation task-id="61" resource-id="0" function="SoftwareDevelopment:2" responsible="false" load="100.0"/>
+        <allocation task-id="59" resource-id="1" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="49" resource-id="1" function="Default:1" responsible="false" load="100.0"/>
+        <allocation task-id="60" resource-id="1" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="110" resource-id="1" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="61" resource-id="1" function="Default:1" responsible="true" load="100.0"/>
     </allocations>
     <vacations/>
     <previous/>
