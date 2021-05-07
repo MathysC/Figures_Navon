@@ -2,26 +2,27 @@ from IHM.elements.Element import Element
 import numpy as np
 
 
-class Line(Element):
+class Arc(Element):
 	"""
-	Class that extends Element, implements the Line
+	Class that extends Element, implements the Arc
 	"""
-	def __init__(self, coords):
+	def __init__(self,coords):
 		super().__init__(
 			np.array([coords[0], coords[2]]),
 			np.array([coords[1], coords[3]]))
+		self.id = None # implement in self.start, then used to move the line
 
 	def getType(self):
 		"""
 		Getter of type 
-		:return: "line"
+		:return: "arc"
 		:rtype: str
 		"""
-		return "line"
+		return "arc"
 
 	def start(self, **kwargs):
 		"""
-		Start drawing a line
+		Start drawing an arc
 		:key event: event on draw_canvas
 		:key draw_canvas: the canvas
 		:return: this method return nothing
@@ -36,10 +37,10 @@ class Line(Element):
 		self.setY(0, event.y)
 		self.setY(1, event.y)
 
-		self.id = draw_canvas.create_line(
+		self.id = draw_canvas.create_arc(
 			event.x, event.y,
 			event.x, event.y,
-			fill='black', width=1)
+			fill='black', width=1,style="arc")
 
 	def motion(self, **kwargs):
 		"""
@@ -68,4 +69,4 @@ class Line(Element):
 		:rtype:None
 		"""
 		NF = kwargs.get('NF')
-		NF.lines = np.append(NF.lines, np.array(self))
+		NF.lines = np.append(NF.arcs, np.array(self))

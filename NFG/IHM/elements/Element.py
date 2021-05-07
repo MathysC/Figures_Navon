@@ -18,6 +18,15 @@ class Element(ABC):
         """
         self.x = np.copy(Xs)
         self.y = np.copy(Ys)
+        self.id = None
+        
+    def getId(self):
+        """
+        Getter of id
+        :return: an id
+        :rtype: int
+        """
+        return self.id
 
     def getX(self, i):
         """

@@ -2,6 +2,7 @@ from IHM.elements.ElementFactory import ElementFactory as Factory
 from Logic.Setup import Setup
 
 from IHM.elements.Line import Line
+from IHM.elements.Arc import Arc
 
 from tkinter import *
 import numpy as np
@@ -24,8 +25,8 @@ class Draw_Canvas:
 		# Options
 		# Draw Line
 		Button(self.option_frame, width=3, bg="white",text="line", command=lambda :self.changeElement('line')).grid(row=0,column=0)
-		# Draw arc (CURRENTLY EMPTY)
-		Button(self.option_frame, width=3, bg="white",text="arc", command=self.test).grid(row=0,column=1)
+		# Draw arc
+		Button(self.option_frame, width=3, bg="white",text="arc", command=lambda :self.changeElement('arc')).grid(row=0,column=1)
 
 		# Eraser
 		Button(self.option_frame,width=3,bg="white",text="eraser",command=lambda :self.changeElement('eraser')).grid(row=1,column=0)
@@ -34,7 +35,14 @@ class Draw_Canvas:
 		Button(self.option_frame,width=8,bg="white",text="clear",command=self.clear).grid(row=2,column=0,columnspan=2)
 
 		# Font
-		self.fontSb = Spinbox(self.option_frame,width=8,bg="white",text="fontSize",from_=8,to=80,textvariable=16,command=self.changeSize).grid(row=3,column=0,columnspan=2)
+		Label(self.option_frame,width=8,bg="white",text="font").grid(row=3,column=0,columnspan=2)
+		self.fontSb = Spinbox(self.option_frame,width=8,bg="white",from_=8,to=80,textvariable=DoubleVar(value=16))
+		self.fontSb.grid(row=4,column=0,columnspan=2)
+
+		# Density
+		Label(self.option_frame,width=8,bg="white",text="density").grid(row=5,column=0,columnspan=2)
+		self.densSb = Spinbox(self.option_frame,width=8,bg="white",from_=10,to=100,increment=10,textvariable=DoubleVar(value=100))
+		self.densSb.grid(row=6,column=0,columnspan=2)
 
 
 		# At the start, the user can draw lines
@@ -67,10 +75,6 @@ class Draw_Canvas:
 		self.NF.lines = np.array([])
 		self.NF.arcs = np.array([])
 
-	def changeSize(self):
-		print(self.fontSb.get())
-		self.NF.size = int(self.fontSb.get())
-
 	#Events to draw / modify / erase
 	def start(self, event):
 		"""
@@ -99,7 +103,9 @@ class Draw_Canvas:
 		self.element = Factory.Create(self.element.getType())
 
 	def update(self):
-		pass
+		"""
+		Function that will update the options of the NF  
+		"""
+		self.NF.size = int(self.fontSb.get())
+		self.NF.d = int(self.densSb.get())
 
-	def test(self,event=None):
-		print(f"canvas :{self.draw_canvas.find_all()}")

@@ -7,7 +7,6 @@ class Eraser(Element):
 	"""
 	def __init__(self):
 		super().__init__(np.zeros(2),np.zeros(2))
-		self.id = None # implement in self.start then used to confirm the delete
 	def getType(self):
 		"""
 		Getter of type 
