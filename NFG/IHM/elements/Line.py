@@ -68,4 +68,5 @@ class Line(Element):
 		:rtype:None
 		"""
 		NF = kwargs.get('NF')
+
 		NF.lines = np.append(NF.lines, np.array(self))

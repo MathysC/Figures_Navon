@@ -27,7 +27,6 @@ class Draw_Canvas:
 		Button(self.option_frame, width=3, bg="white",text="line", command=lambda :self.changeElement('line')).grid(row=0,column=0)
 		# Draw arc
 		Button(self.option_frame, width=3, bg="white",text="arc", command=lambda :self.changeElement('arc')).grid(row=0,column=1)
-
 		# Eraser
 		Button(self.option_frame,width=3,bg="white",text="eraser",command=lambda :self.changeElement('eraser')).grid(row=1,column=0)
 

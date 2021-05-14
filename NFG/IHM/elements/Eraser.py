@@ -67,5 +67,8 @@ class Eraser(Element):
 					if line.getId() == self.id:
 						# https://www.kite.com/python/answers/how-to-delete-values-from-a-numpy-array-in-python#:~:text=from%20an%20array-,Use%20numpy.,that%20match%20the%20specified%20condition%20.	
 						NF.lines = np.delete(NF.lines,np.where(NF.lines == line))
+
+			elif draw_canvas.type(self.id) == "arc":
+				pass
 			# Remove it from the canvas
 			draw_canvas.delete(self.id)

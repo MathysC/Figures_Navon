@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image, ImageFont, ImageDraw,ImageTk
-
+from Logic.Setup import Setup
+from IHM.elements.Line import Line
 
 class NF:
 	"""
@@ -20,6 +21,7 @@ class NF:
 		self.color = (0,0,0)
 		self.size = 16
 		self.police = "arial.ttf"
+
 	def getG(self):
 		"""
 		Function that calculates the sum of all last element of each line
@@ -36,6 +38,25 @@ class NF:
 		g = self.getG()
 		return int((self.d / 100 * g  / self.size) * line.getL()[-1] / g )
 
+	def getDuress(self,current):
+		templist = np.delete(self.lines,np.where(self.lines == current))
+		print("----------------------------------------------------------------------------------------------")
+		print(f"Current : {current.getCoords()} :")	
+		for l in templist:
+
+				print(f" Intersect with : {l.getCoords()} | {self.findIntersection(current, l)}")
+
+	@staticmethod
+	def findIntersection(line1, line2):
+		x1, x2 = line1.x
+		y1, y2 = line1.y
+
+		x3, x4 = line2.x
+		y3, y4 = line2.y
+
+		px= ( (x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4) ) / ( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) ) 
+		py= ( (x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4) ) / ( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) )
+		return np.array([px, py])
 
 	def final(self):
 		# Create the image
@@ -57,10 +78,59 @@ class NF:
 			for i in range(0,len(x_)):
 				draw.text((x_[i],y_[i]),self.char,self.color,font=font)
 
+			self.getDuress(line)
+
 		# not implemented yet
 		for arc in self.arcs:
 			...
 
 		#Only show the outcome	
 		im.show()
-		im.save("text.png")
+		im.save("Outcome/NewTest.png")
+
+	def InfoLines(self):
+		info = np.array([])
+		for line in self.lines:
+			# Calculation by M. BARD
+			a = np.linspace(0, 1, self.getN(line))
+			_x_, _y_ = line.interpolate()
+			x_, y_ = _x_(a), _y_(a)
+
+
+
+
+	def finalImage(self):
+		# Get local image
+		localIm = Image.open('lena.jpg')
+
+		# A calculation with the diagonal of draw canvas to have the image of correct size
+		diagonal = Line([0,0,Setup.WIDTH,Setup.HEIGHT])
+		a = np.linspace(0, 1, self.getN(diagonal))
+		_x_, _y_ = diagonal.interpolate()
+		x_, y_ = _x_(a), _y_(a)
+
+
+		# Create the Image for the NF
+		im = Image.new('RGB',(Setup.WIDTH+int(localIm.width*len(x_)), Setup.HEIGHT+int(localIm.height*len(y_))), color='white')
+
+		# A loop for each type of element
+		for line in self.lines:
+			
+			# Calculation by M. BARD
+			a = np.linspace(0, 1, self.getN(line))
+			_x_, _y_ = line.interpolate()
+			x_, y_ = _x_(a), _y_(a)
+			print("----------------------------------------------------------------------")
+			print(f"x : {x_}")
+			print(f"y : {y_}")
+			print("----------------------------------------------------------------------")
+
+			# Add local image to each coords
+			for i in range(0,len(x_)):
+				im.paste(localIm, 
+					( int(x_[i]+localIm.width ), 
+						int(y_[i]+localIm.height ) )) 
+
+		#Only show the outcome	
+		im.show()
+		im.save("Outcome/NewTestImage2.jpg")

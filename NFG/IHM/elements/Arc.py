@@ -40,7 +40,7 @@ class Arc(Element):
 		self.id = draw_canvas.create_arc(
 			event.x, event.y,
 			event.x, event.y,
-			fill='black', width=1,style="arc")
+			width=1,style="arc", start="-90",extent="180")
 
 	def motion(self, **kwargs):
 		"""
@@ -62,11 +62,11 @@ class Arc(Element):
 
 	def end(self, **kwargs):
 		"""
-		Add the line at the NF's array of lines
+		Add the arc at the NF's array of arcs
 		:key NF: the Navon's Figure
 		:type NF: NF
 		:return: method return nothing
 		:rtype:None
 		"""
 		NF = kwargs.get('NF')
-		NF.lines = np.append(NF.arcs, np.array(self))
+		NF.arcs = np.append(NF.arcs, np.array(self))

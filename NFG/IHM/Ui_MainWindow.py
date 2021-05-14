@@ -48,11 +48,11 @@ class Ui_MainWindow:
         Function to get the print of all lines
         """
         for line in self.NF.lines:
-            print(line.getCoords())
+            print(f"{line} {line.getCoords()}")
 
     def final(self):
         """
         Function that (currently only ) preview the NF
         """
         self.draw.update()
-        self.NF.final()
+        self.NF.finalImage()
