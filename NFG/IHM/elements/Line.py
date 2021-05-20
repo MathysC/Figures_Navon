@@ -1,5 +1,6 @@
 from IHM.elements.Element import Element
 import numpy as np
+import scipy.interpolate as itp
 
 
 class Line(Element):
@@ -73,3 +74,20 @@ class Line(Element):
 
 		# We create the next element 
 		draw_Canvas.changeElement(self.getType())
+
+	def getL(self):
+		"""
+		Function that calculates L
+		"""
+		return np.cumsum(
+			np.sqrt(
+				np.ediff1d(self.x, to_begin=0) ** 2
+				+ np.ediff1d(self.y, to_begin=0) ** 2))
+
+	def interpolate(self):
+		"""
+		Function that calcultates the interpolation of X and Y of the element
+		"""
+		_x_ = itp.interp1d(self.getLDiv(), self.x)
+		_y_ = itp.interp1d(self.getLDiv(), self.y)
+		return np.array([_x_, _y_])

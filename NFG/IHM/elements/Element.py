@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from Logic.Setup import Setup
 import numpy as np
-import scipy.interpolate as itp
 
 
 class Element(ABC):
@@ -75,14 +74,9 @@ class Element(ABC):
 		return coord
 
 	# Calculation by M. BARD
+	@abstractmethod
 	def getL(self):
-		"""
-		Function that calculates L
-		"""
-		return np.cumsum(
-			np.sqrt(
-				np.ediff1d(self.x, to_begin=0) ** 2
-				+ np.ediff1d(self.y, to_begin=0) ** 2))
+		pass
 
 	def getLDiv(self):
 		"""
@@ -90,13 +84,9 @@ class Element(ABC):
 		"""
 		return self.getL() / self.getL()[-1]
 
+	@abstractmethod
 	def interpolate(self):
-		"""
-		Function that calcultates the interpolation of X and Y of the element
-		"""
-		_x_ = itp.interp1d(self.getLDiv(), self.x)
-		_y_ = itp.interp1d(self.getLDiv(), self.y)
-		return _x_, _y_
+		pass
 
 
 	@abstractmethod

@@ -1,15 +1,19 @@
 from IHM.elements.Element import Element
 import numpy as np
 
+
 class Eraser(Element):
 	"""
 	Class that extends Element, implements the Eraser
 	"""
 	def __init__(self):
-		super().__init__(np.zeros(2),np.zeros(2))
+		super().__init__()
+
 	def getType(self):
 		"""
 		Getter of type 
+		:return: "eraser"
+		:rtype: str
 		"""
 		return "eraser"
 
@@ -39,7 +43,6 @@ class Eraser(Element):
 		Not implemented function for this element
 		"""
 		pass
-
 
 	def end(self, **kwargs):
 		"""
@@ -72,3 +75,9 @@ class Eraser(Element):
 				pass
 			# Remove it from the canvas
 			canvas.delete(self.id)
+
+	def getL(self):
+		pass
+
+	def interpolate(self):
+		pass

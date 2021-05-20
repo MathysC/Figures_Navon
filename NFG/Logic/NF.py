@@ -34,6 +34,8 @@ class NF:
 			last = np.append(last, np.array(line.getL()[-1]))
 		for arc in self.arcs:
 			last = np.append(last,np.array(arc.getL()[-1]))
+		for circle in self.circles:
+			last = np.append(last,np.array(circle.getL()[-1]))
 		return sum(last)
 
 	def getN(self, element):
@@ -41,10 +43,10 @@ class NF:
 		Function that calculates N
 		"""
 		g = self.getG()
-		print(f"g : {g} type : {type(g)}")
-		print(f"d : {self.d} type : {type(self.d)}")
-		print(f"size : {self.size} type : {type(self.size)}")
-		print(f"L : {element.getL()[-1]} type : {type(element.getL()[-1])}")
+		# print(f"g : {g} type : {type(g)}")
+		# print(f"d : {self.d} type : {type(self.d)}")
+		# print(f"size : {self.size} type : {type(self.size)}")
+		# print(f"L : {element.getL()[-1]} type : {type(element.getL()[-1])}")
 		return int((
 						   self.d
 						   / 100 *
@@ -105,18 +107,20 @@ class NF:
 
 		for circle in self.circles:
 			a = np.linspace(0, 1, self.getN(circle))
-			_x_, _y_ = line.interpolate()
-			x_, y_ = _x_(a), _y_(a)
+			interp = circle.interpolate()
+			for i in range(0,len(interp),2):
+				_x_, _y_ = interp[i],interp[i+1]
+				x_, y_ = _x_(a), _y_(a)
 
-			# Add local char to each coords
-			for i in range(0, len(x_)):
-				draw.text((x_[i], y_[i]), self.char, self.color, font=font)
+				# Add local char to each coords
+				for i in range(0, len(x_)):
+					draw.text((x_[i], y_[i]), self.char, self.color, font=font)
 
 
 
 		# Save the OutCome
 		im.show()
-		im.save("Outcome/TestCircle.png")
+		#im.save("Outcome/TestCircle.png")
 
 	def InfoLines(self):
 		info = np.array([])

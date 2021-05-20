@@ -47,10 +47,18 @@ class Ui_MainWindow:
 		(ONLY FOR TEST PHASE)
 		Function to get the print of all lines
 		"""
+		for i in range(0,100):
+			print("")
+		print("-----------Line-----------")
 		for line in self.NF.lines:
 			print(f"{line} {line.getCoords()}")
+		print("-----------Arc-----------")
 		for arc in self.NF.arcs:
 			print(f"{arc} {arc.getCoords()}")
+		print("-----------Circle-----------")
+		for circle in self.NF.circles:
+			print(f"{circle} {circle.getCoords()}")
+
 
 
 	def final(self):
