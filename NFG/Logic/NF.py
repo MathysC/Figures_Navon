@@ -95,15 +95,14 @@ class NF:
 
 		# self.getDuress(line)
 
-		# not ready yet
-		#for arc in self.arcs:
-		#	a = np.linspace(0, 1, self.getN(arc))
-		#	_x_, _y_ = arc.interpolate()
-		#	x_, y_ = _x_(a), _y_(a)
-
-		#	# Add local char to each coords
-		#	for i in range(0, len(x_)):
-		#		draw.text((x_[i], y_[i]), self.char, self.color, font=font)
+		for arc in self.arcs:
+			a = np.linspace(0, 1, self.getN(arc))
+			_x_, _y_ = arc.interpolate()
+			x_, y_ = _x_(a), _y_(a)
+			
+			# Add local char to each coords
+			for i in range(0, len(x_)):
+				draw.text((x_[i], y_[i]), self.char, self.color, font=font)
 
 		for circle in self.circles:
 			a = np.linspace(0, 1, self.getN(circle))

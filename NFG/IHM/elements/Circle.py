@@ -33,7 +33,7 @@ class Circle(Element):
 		event = kwargs.get('event')
 		canvas = kwargs.get('canvas')
 
-		# The line begin at the click
+		# The circle begins at the click
 		self.setX(0, event.x)
 		self.setX(1, event.x)
 		self.setY(0, event.y)
@@ -105,7 +105,6 @@ class Circle(Element):
 			np.sqrt(
 				np.ediff1d(x_, to_begin=0) ** 2
 				+ np.ediff1d(y_, to_begin=0) ** 2))
-
 
 	def interpolate(self):
 		"""
