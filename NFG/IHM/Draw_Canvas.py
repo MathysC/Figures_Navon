@@ -101,7 +101,8 @@ class Draw_Canvas:
 		:type event: Event
 		"""
 		self.element.end(event=event, canvas=self.draw_canvas, NF=self.NF, draw_Canvas=self)
-
+		# We create the next element 
+		self.changeElement(self.element.getType())
 	def update(self):
 		"""
 		Function that will update the options of the NF  

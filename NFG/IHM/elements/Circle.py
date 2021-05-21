@@ -78,13 +78,7 @@ class Circle(Element):
 		:rtype:None
 		"""
 		NF = kwargs.get('NF')
-
 		NF.circles = np.append(NF.circles, np.array(self))
-
-		draw_Canvas = kwargs.get('draw_Canvas')
-
-		# We create the next element 
-		draw_Canvas.changeElement(self.getType())
 
 	def getL(self):
 		"""
@@ -96,10 +90,10 @@ class Circle(Element):
 		angle = np.linspace(-np.pi/2,-np.pi, 10)
 		x,y = self.center
 
-		c = [(x + self.radius * np.cos(a_), 
+		sqrtC = [(x + self.radius * np.cos(a_), 
 		y + self.radius * np.sin(a_)) for a_ in angle]
-		x_ = np.array([c_[0] for c_ in c])
-		y_ = np.array([c_[1] for c_ in c])
+		x_ = np.array([c_[0] for c_ in sqrtC])
+		y_ = np.array([c_[1] for c_ in sqrtC])
 
 		return np.cumsum(
 			np.sqrt(
@@ -120,10 +114,10 @@ class Circle(Element):
 			])
 		x,y = self.center
 		for t in angle:
-			c = [(x + self.radius * np.cos(t_), 
+			sqrtC = [(x + self.radius * np.cos(t_), 
 				y + self.radius * np.sin(t_)) for t_ in t]
-			x_ = [c_[0] for c_ in c]
-			y_ = [c_[1] for c_ in c]
+			x_ = [c_[0] for c_ in sqrtC]
+			y_ = [c_[1] for c_ in sqrtC]
 			_x_ = itp.interp1d(self.getLDiv(), x_)
 			_y_ = itp.interp1d(self.getLDiv(), y_)
 			res = np.append(res,[np.array([_x_,_y_])])

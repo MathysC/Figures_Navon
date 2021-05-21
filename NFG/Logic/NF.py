@@ -47,6 +47,7 @@ class NF:
 		# print(f"d : {self.d} type : {type(self.d)}")
 		# print(f"size : {self.size} type : {type(self.size)}")
 		# print(f"L : {element.getL()[-1]} type : {type(element.getL()[-1])}")
+		print(type(element.getL()))
 		return int((
 						   self.d
 						   / 100 *
@@ -119,7 +120,7 @@ class NF:
 
 		# Save the OutCome
 		im.show()
-		#im.save("Outcome/TestCircle.png")
+		im.save("Outcome/Testautre.png")
 
 	def InfoLines(self):
 		info = np.array([])

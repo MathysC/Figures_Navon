@@ -70,11 +70,6 @@ class Line(Element):
 
 		NF.lines = np.append(NF.lines, np.array(self))
 
-		draw_Canvas = kwargs.get('draw_Canvas')
-
-		# We create the next element 
-		draw_Canvas.changeElement(self.getType())
-
 	def getL(self):
 		"""
 		Function that calculates L

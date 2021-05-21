@@ -48,7 +48,7 @@ class Arc(Element):
 
 	def motion(self, **kwargs):
 		"""
-		Change the position of the second point of the line at the cursor
+		Change the position of the arc
 		:key event: event on canvas
 		:key canvas: the canvas
 		:return: this method return nothing
@@ -56,47 +56,60 @@ class Arc(Element):
 		"""
 		event = kwargs.get('event')
 		canvas = kwargs.get('canvas')
-
 		x, y = self.center
-		pointA = np.array([event.x,event.y]) 
-		self.radius = int(math.hypot(x - pointA[0], y - pointA[1]))
+
+		# Calculates the radius of the Arc
+		self.radius = int(math.hypot(x - event.x, y - event.y))
 		self.setX(0, x - self.radius)
 		self.setY(0, y - self.radius)
 		self.setX(1, x + self.radius)
 		self.setY(1, y + self.radius)
 
+		# To calculates the correct angle We need three points :
+		
+		# A the point at the cursor (event)
+		A = np.array([event.x,event.y])
+		# B the created point at the side of the center
+		B = np.array([x+self.radius,y])
+		# C the Center
+		C = np.array([x,y]) # I make another variable to be clear with my calculation
+		
+		# Function only to make the next calculation
+		def lengthSquare(X, Y) -> int: 
+			"""
+			Calculates the square length of two points
+			"""
+			xDiff = X[0] - Y[0] 
+			yDiff = X[1] - Y[1] 
+			return xDiff * xDiff + yDiff * yDiff 		
 
-		# Calculates the correct angle
-		# We create a temp point, that will represents a 
-		#	rectangle triangle between event, temp and center
-		temp = np.array([x,pointA[1]])
-		try:
-			def lengthSquare(X, Y): 
-			    xDiff = X[0] - Y[0] 
-			    yDiff = X[1] - Y[1] 
-			    return xDiff * xDiff + yDiff * yDiff 
+		BC = lengthSquare(B, C) 
+		AC = lengthSquare(A, C) 
+		AB = lengthSquare(A, B) 
+	  
+		# length of sides be sqrtA, sqrtB, sqrtC 
+		sqrtA = math.sqrt(BC); 
+		sqrtB = math.sqrt(AC); 
+		sqrtC = math.sqrt(AB); 
+	  
+		# From Cosine law 
+		# I keept alpha and betta if needed later
+		#alpha = math.acos((AC + AB - BC) /
+		#					 (2 * sqrtB * sqrtC)); 
+		#betta = math.acos((BC + AB - AC) / 
+		#					 (2 * sqrtA * sqrtC)); 
+		gamma = math.acos((BC + AC - AB) / 
+							 (2 * sqrtA * sqrtB));
 
-			AB = lengthSquare(pointA,temp)
-			BC = lengthSquare(temp,self.center)
-			CA = lengthSquare(self.center,pointA)
+		#The angle may have a different value depending on the cursor position relative to the center			
+		self.angle = int(gamma * 180 / math.pi) if (event.y < y) else int(-gamma * 180 / math.pi)
 
-			A = math.sqrt(AB)
-			B = math.sqrt(BC)
-			C = math.sqrt(CA)
-
-			self.angle = int(math.acos((AB+CA-BC) / (2*A*C)) * 180 / math.pi)
-		except ValueError:
-			self.angle = 0
-
+		# Reshape the Arc
 		canvas.coords(self.id,
-					  self.getX(0), self.getY(0),
-					  self.getX(1), self.getY(1))
-		#print(f"center : x : {self.center[0]} | y : {self.center[1]}")
-		#print(f"event  : x : {event.x} | y : {event.y}")
+			  self.getX(0), self.getY(0),
+			  self.getX(1), self.getY(1))
 
-		angle = -self.angle if(event.x>self.center[0]) else self.angle 
-
-		canvas.itemconfig(self.id,start=angle,extent=180)
+		canvas.itemconfig(self.id,start=self.angle,extent=180)
 
 	def end(self, **kwargs):
 		"""
@@ -106,55 +119,49 @@ class Arc(Element):
 		:return: method return nothing
 		:rtype:None
 		"""
-		event = kwargs.get('event')
-
-		x, y = self.center
-		temp = np.array([x,event.y])
-
-		canvas = kwargs.get('canvas')
-
-		line = canvas.create_line(
-			x, y,
-			temp[0],temp[1],
-			fill='blue', width=1)	
-
-		line2 = canvas.create_line(
-			x,y,
-			event.x,event.y,
-			fill='blue',width=1)	
-
 		# Save this element
 		NF = kwargs.get('NF')
 		NF.arcs = np.append(NF.arcs, np.array(self))
 
-		# We create the next element 
-		draw_Canvas = kwargs.get('draw_Canvas')
-		draw_Canvas.changeElement(self.getType())
-
-
 	def getL(self):
 		"""
 		Function that calculates L
+		Calculation from M BARD
+		:return: array with the sum of difference between coordonates 
+		:rtype: numpy.ndarray
 		"""
-		radian = self.angle * np.pi / 180
-		t = np.linspace(-radian,-np.pi + radian,10)
-		
-		c = [(0 + self.radius * np.cos(t_), 1 + self.radius * np.sin(t_)) for t_ in t]
-		x = [c_[0] for c_ in c]
-		y = [c_[1] for c_ in c]
+		# Both start and End Radians are negative for the position on the NF
+		# Honestly i don't know why it didn't work with the both positive values
+		start = -(self.angle * 2*np.pi / 360)
+		end = -((self.angle+180) * 2*np.pi / 360)
+		t = np.linspace(start,end,10)
+
+		sqrtC = [(0 + self.radius * np.cos(t_), 1 + self.radius * np.sin(t_)) for t_ in t]
+		x = [c_[0] for c_ in sqrtC]
+		y = [c_[1] for c_ in sqrtC]
+
 		return np.cumsum(
 			np.sqrt(
 				np.ediff1d(x, to_begin=0) ** 2
 				+ np.ediff1d(y, to_begin=0) ** 2))
 
 	def interpolate(self):
+		"""
+		Interpolation of the arc
+		Calculation from M BARD
+		:return: an array with all the Xs and Ys of local letters
+		:rtype: numpy.array
+		"""
 		x,y = self.center
-		radian = self.angle * np.pi / 180
-		t = np.linspace(-radian,-np.pi + radian,10)
-		c = [(x + self.radius * np.cos(t_), 
+
+		start = self.angle * 2*np.pi / 360
+		end = (self.angle+180) * 2*np.pi / 360
+		t = np.linspace(-start,-end,10)
+
+		sqrtC = [(x + self.radius * np.cos(t_), 
 			y + self.radius * np.sin(t_)) for t_ in t]
-		x_ = [c_[0] for c_ in c]
-		y_ = [c_[1] for c_ in c]
+		x_ = [c_[0] for c_ in sqrtC]
+		y_ = [c_[1] for c_ in sqrtC]
 		_x_ = itp.interp1d(self.getLDiv(), x_)
 		_y_ = itp.interp1d(self.getLDiv(), y_)
 
