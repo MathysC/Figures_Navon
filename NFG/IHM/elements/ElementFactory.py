@@ -29,7 +29,5 @@ class ElementFactory:
 			return Circle()
 		elif elementType == "eraser":
 			return Eraser()
-		elif elementType == "mouse":
-			...
 		else:
 			return None

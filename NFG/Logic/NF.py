@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image, ImageFont, ImageDraw, ImageTk
 from Logic.Setup import Setup
-from IHM.elements.Line import Line
+from IHM.elements.Element import Element
 
 
 class NF:
@@ -16,26 +16,31 @@ class NF:
 		:param d:
 		:param char:
 		"""
-		self.lines = np.array([])
-		self.arcs = np.array([])
-		self.circles = np.array([])
+
+		self.elements = np.array([])
 		self.d = None  # Densité
 		self.char = 'A'
 		self.color = (0, 0, 0)
 		self.size = 16
 		self.police = "arial.ttf"
 
+	def getElementById(self,toFound)-> Element:
+		"""
+		Getter of a single Element
+		"""
+		for element in self.elements:
+			if element.id == toFound:
+				return element
+		return None
+
+
 	def getG(self):
 		"""
 		Function that calculates the sum of all last element of each line
 		"""
 		last = np.array([])
-		for line in self.lines:
-			last = np.append(last, np.array(line.getL()[-1]))
-		for arc in self.arcs:
-			last = np.append(last,np.array(arc.getL()[-1]))
-		for circle in self.circles:
-			last = np.append(last,np.array(circle.getL()[-1]))
+		for element in self.elements:
+			last = np.append(last,np.array(element.getL()[-1]))
 		return sum(last)
 
 	def getN(self, element):
@@ -43,11 +48,6 @@ class NF:
 		Function that calculates N
 		"""
 		g = self.getG()
-		# print(f"g : {g} type : {type(g)}")
-		# print(f"d : {self.d} type : {type(self.d)}")
-		# print(f"size : {self.size} type : {type(self.size)}")
-		# print(f"L : {element.getL()[-1]} type : {type(element.getL()[-1])}")
-		print(type(element.getL()))
 		return int((
 						   self.d
 						   / 100 *
@@ -82,32 +82,9 @@ class NF:
 
 		font = ImageFont.truetype(self.police, self.size)
 
-		# A loop for each type of element
-		for line in self.lines:
-
-			# Calculation by M. BARD
-			a = np.linspace(0, 1, self.getN(line))
-			_x_, _y_ = line.interpolate()
-			x_, y_ = _x_(a), _y_(a)
-
-			# Add local char to each coords
-			for i in range(0, len(x_)):
-				draw.text((x_[i], y_[i]), self.char, self.color, font=font)
-
-		# self.getDuress(line)
-
-		for arc in self.arcs:
-			a = np.linspace(0, 1, self.getN(arc))
-			_x_, _y_ = arc.interpolate()
-			x_, y_ = _x_(a), _y_(a)
-			
-			# Add local char to each coords
-			for i in range(0, len(x_)):
-				draw.text((x_[i], y_[i]), self.char, self.color, font=font)
-
-		for circle in self.circles:
-			a = np.linspace(0, 1, self.getN(circle))
-			interp = circle.interpolate()
+		for element in self.elements:
+			a = np.linspace(0, 1, self.getN(element))
+			interp = element.interpolate()
 			for i in range(0,len(interp),2):
 				_x_, _y_ = interp[i],interp[i+1]
 				x_, y_ = _x_(a), _y_(a)
@@ -116,19 +93,9 @@ class NF:
 				for i in range(0, len(x_)):
 					draw.text((x_[i], y_[i]), self.char, self.color, font=font)
 
-
-
 		# Save the OutCome
 		im.show()
 		im.save("Outcome/Testautre.png")
-
-	def InfoLines(self):
-		info = np.array([])
-		for line in self.lines:
-			# Calculation by M. BARD
-			a = np.linspace(0, 1, self.getN(line))
-			_x_, _y_ = line.interpolate()
-			x_, y_ = _x_(a), _y_(a)
 
 	def finalImage(self):
 		# Get local image

@@ -29,12 +29,13 @@ class Ui_MainWindow:
 		
 		# Button that lists all created element (ONLY FOR TEST PHASE)
 		self.list_Button = Button(self.global_frame, height= 2,text="get the list", command=self.getlines)
-		self.list_Button.grid(row=0, column=1)
+		self.list_Button.grid(row=0, column=2)
 		
 		# Button that prints the NF
 		self.print_Button = Button(self.global_frame, height=2, text="preview", command=self.final)
-		self.print_Button.grid(row=0, column=2)
+		self.print_Button.grid(row=0, column=1)
 
+		self.mainWindow.bind('<Return>',self.final)
 
 	def start(self):
 		"""
@@ -49,19 +50,10 @@ class Ui_MainWindow:
 		"""
 		for i in range(0,100):
 			print("")
-		print("-----------Line-----------")
-		for line in self.NF.lines:
-			print(f"{line} {line.getCoords()}")
-		print("-----------Arc-----------")
-		for arc in self.NF.arcs:
-			print(f"{arc} {arc.getCoords()}")
-		print("-----------Circle-----------")
-		for circle in self.NF.circles:
-			print(f"{circle} {circle.getCoords()}")
+		for element in self.NF.elements:
+			print(f"{element.getType()} : {element.getCoords()}")
 
-
-
-	def final(self):
+	def final(self,event=None):
 		"""
 		Function that (currently only ) preview the NF
 		"""

@@ -121,7 +121,7 @@ class Arc(Element):
 		"""
 		# Save this element
 		NF = kwargs.get('NF')
-		NF.arcs = np.append(NF.arcs, np.array(self))
+		NF.elements = np.append(NF.elements, np.array(self))
 
 	def getL(self):
 		"""
@@ -166,3 +166,7 @@ class Arc(Element):
 		_y_ = itp.interp1d(self.getLDiv(), y_)
 
 		return np.array([_x_,_y_])
+
+
+	def foundNeighbours(self, **kwargs):
+		pass

@@ -59,6 +59,7 @@ class Draw_Canvas:
 		# Release event
 		self.draw_canvas.bind('<ButtonRelease-1>', self.end)
 
+
 	def changeElement(self, elementType):
 		"""
 		change the element
@@ -73,9 +74,7 @@ class Draw_Canvas:
 		Clear the arrays of element
 		"""
 		self.draw_canvas.delete("all")
-		self.NF.lines = np.array([])
-		self.NF.arcs = np.array([])
-		self.NF.circles = np.array([])
+		self.NF.elements = np.array([])
 
 	# Events to draw / modify / erase
 	def start(self, event):
@@ -84,7 +83,7 @@ class Draw_Canvas:
 		:param: event:
 		:type event: Event
 		"""
-		self.element.start(event=event, canvas=self.draw_canvas)
+		self.element.start(event=event, canvas=self.draw_canvas, draw_Canvas=self)
 
 	def motion(self, event):
 		"""
@@ -103,6 +102,7 @@ class Draw_Canvas:
 		self.element.end(event=event, canvas=self.draw_canvas, NF=self.NF, draw_Canvas=self)
 		# We create the next element 
 		self.changeElement(self.element.getType())
+
 	def update(self):
 		"""
 		Function that will update the options of the NF  

@@ -78,7 +78,7 @@ class Circle(Element):
 		:rtype:None
 		"""
 		NF = kwargs.get('NF')
-		NF.circles = np.append(NF.circles, np.array(self))
+		NF.elements = np.append(NF.elements, np.array(self))
 
 	def getL(self):
 		"""
@@ -122,3 +122,6 @@ class Circle(Element):
 			_y_ = itp.interp1d(self.getLDiv(), y_)
 			res = np.append(res,[np.array([_x_,_y_])])
 		return res
+
+		def foundNeighbours(self, **kwargs):
+			pass

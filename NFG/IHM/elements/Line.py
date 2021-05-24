@@ -1,7 +1,7 @@
 from IHM.elements.Element import Element
 import numpy as np
 import scipy.interpolate as itp
-
+import math
 
 class Line(Element):
 	"""
@@ -67,8 +67,8 @@ class Line(Element):
 		:rtype:None
 		"""
 		NF = kwargs.get('NF')
-
-		NF.lines = np.append(NF.lines, np.array(self))
+		self.foundNeighbours(canvas=kwargs.get('canvas'),NF=NF)
+		NF.elements = np.append(NF.elements, np.array(self))
 
 	def getL(self):
 		"""
@@ -86,3 +86,30 @@ class Line(Element):
 		_x_ = itp.interp1d(self.getLDiv(), self.x)
 		_y_ = itp.interp1d(self.getLDiv(), self.y)
 		return np.array([_x_, _y_])
+
+
+	def foundNeighbours(self, **kwargs):
+		"""
+		Checks at any point of the line if there is another element
+		"""
+
+		# Calculation of th before the loop to avoid useless repetition 
+		# https://stackoverflow.com/questions/22190193/finding-coordinates-of-a-point-on-a-line
+		canvas = kwargs.get('canvas')
+		NF = kwargs.get('NF')
+		th = math.atan2(self.getY(1) - self.getY(0), self.getX(1) - self.getX(0))
+		for i in range(0,int(math.hypot(self.getX(0)- self.getX(1), self.getY(0)- self.getY(1))),1):
+			# Get the next point
+			point = np.array([self.getX(0) + i * math.cos(th),
+			 self.getY(0) + i * math.sin(th)])
+
+
+			find = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
+			find = np.delete(find,np.where(find == self.id))
+			print(len(np.delete(find,np.where(l.size==0 for l in find)))) # TODO corriger l'erreur avec la suppression de ce delete
+			#for ide in np.delete(find,np.where(find,self.id)):
+			#	# Find other elements that are at those coords
+			#	self.neighbours = np.append(self.neighbours,np.array(NF.getElementById(ide)))
+
+
+		print(f"Outcome : {self.neighbours}")
