@@ -1,8 +1,8 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from PIL import Image, ImageFont, ImageDraw, ImageTk
 from Logic.Setup import Setup
 from IHM.elements.Element import Element
+from IHM.elements.Line import Line
 
 
 class NF:
@@ -61,19 +61,6 @@ class NF:
 		for l in templist:
 			print(f" Intersect with : {l.getCoords()} | {self.findIntersection(current, l)}")
 
-	@staticmethod
-	def findIntersection(line1, line2):
-		x1, x2 = line1.x
-		y1, y2 = line1.y
-
-		x3, x4 = line2.x
-		y3, y4 = line2.y
-
-		px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / (
-					(x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
-		py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / (
-					(x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
-		return np.array([px, py])
 
 	def final(self):
 		# Create the image
@@ -103,7 +90,9 @@ class NF:
 
 		# A calculation with the diagonal of draw canvas to have the image of correct size
 		# does not appear on the final result
-		diagonal = Line([0, 0, Setup.WIDTH, Setup.HEIGHT])
+		diagonal = Line()
+		diagonal.x = np.array([0,Setup.WIDTH])
+		diagonal.y = np.array([0,Setup.HEIGHT])
 		a = np.linspace(0, 1, self.getN(diagonal))
 		_x_, _y_ = diagonal.interpolate()
 		x_, y_ = _x_(a), _y_(a)
@@ -115,22 +104,20 @@ class NF:
 					   color='white')
 
 		# A loop for each type of element
-		for line in self.lines:
+		for element in self.elements:
 
 			# Calculation by M. BARD
-			a = np.linspace(0, 1, self.getN(line))
-			_x_, _y_ = line.interpolate()
-			x_, y_ = _x_(a), _y_(a)
-			print("----------------------------------------------------------------------")
-			print(f"x : {x_}")
-			print(f"y : {y_}")
-			print("----------------------------------------------------------------------")
-
-			# Add local image to each coords
-			for i in range(0, len(x_)):
-				im.paste(localIm,
-						 (int(x_[i] + localIm.width),
-						  int(y_[i] + localIm.height)))
+			a = np.linspace(0, 1, self.getN(element))
+			interp = element.interpolate()
+			for i in range(0,len(interp),2):
+				_x_, _y_ = interp[i],interp[i+1]
+				x_, y_ = _x_(a), _y_(a)
+				
+				# Add local image to each coords
+				for i in range(0, len(x_)):
+					im.paste(localIm,
+							 (int(x_[i] + localIm.width),
+							  int(y_[i] + localIm.height)))
 
 			# Only show the outcome
 		im.show()

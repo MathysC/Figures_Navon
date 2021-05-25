@@ -123,5 +123,5 @@ class Circle(Element):
 			res = np.append(res,[np.array([_x_,_y_])])
 		return res
 
-		def foundNeighbours(self, **kwargs):
-			pass
+	def findNeighbours(self, **kwargs):
+		pass

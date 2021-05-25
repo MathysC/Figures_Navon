@@ -20,6 +20,8 @@ class Element(ABC):
 		self.id = None			# The id of the element on the draw canvas
 		#self.constraints = np.array([], dtype =[('element',Element),('coords',np.darray),('circle',np.int32)]) # All the constraints of this element
 		self.neighbours = np.array([])
+		self.tag = "intersection"
+		self.interCircles = np.array([])
 	def getId(self):
 		"""
 		Getter of id
@@ -107,5 +109,5 @@ class Element(ABC):
 		pass
 
 	@abstractmethod
-	def foundNeighbours(self,**kwargs):
+	def findNeighbours(self,**kwargs):
 		pass

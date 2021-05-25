@@ -19,23 +19,10 @@ class Eraser(Element):
 
 	def start(self, **kwargs):
 		"""
-		found the element that is clicked 
-		:key event: event on canvas
-		:type event: Event
-		:key canvas: the canvas
-		:type canvas: tkinter canvas
-		:return: this method return nothing
-		:rtype: None
+		Not implemented function for this element
 		"""
 		pass
-		event = kwargs.get('event')
-		canvas = kwargs.get('canvas')
 
-
-		# onClick is a list of elements found nearby the click on the canvas but only the first created among all will be used
-		onClick = canvas.find_overlapping(event.x-1, event.y-1, event.x+1, event.y+1)
-		# We get the first element from onClick if the list is not empty
-		self.id = onClick[0] if onClick else None
 
 	def motion(self, **kwargs):
 		"""
@@ -80,5 +67,5 @@ class Eraser(Element):
 	def interpolate(self):
 		pass
 
-	def foundNeighbours(self,**kwargs):
+	def findNeighbours(self,**kwargs):
 		pass

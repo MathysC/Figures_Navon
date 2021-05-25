@@ -168,5 +168,5 @@ class Arc(Element):
 		return np.array([_x_,_y_])
 
 
-	def foundNeighbours(self, **kwargs):
+	def findNeighbours(self, **kwargs):
 		pass

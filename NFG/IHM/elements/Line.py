@@ -57,6 +57,7 @@ class Line(Element):
 		canvas.coords(self.id,
 					  self.getX(0), self.getY(0),
 					  self.getX(1), self.getY(1))
+		self.findNeighbours(canvas=kwargs.get('canvas'))
 
 	def end(self, **kwargs):
 		"""
@@ -67,7 +68,7 @@ class Line(Element):
 		:rtype:None
 		"""
 		NF = kwargs.get('NF')
-		self.foundNeighbours(canvas=kwargs.get('canvas'),NF=NF)
+
 		NF.elements = np.append(NF.elements, np.array(self))
 
 	def getL(self):
@@ -88,28 +89,47 @@ class Line(Element):
 		return np.array([_x_, _y_])
 
 
-	def foundNeighbours(self, **kwargs):
+	def findNeighbours(self, **kwargs):
 		"""
 		Checks at any point of the line if there is another element
 		"""
 
+		canvas = kwargs.get('canvas')
+		tag = self.tag+str(self.id) #self.tag from element and self.id to make a personal tag
+		radius = 2
+
+		canvas.delete(tag)
+			
+		self.interCircles = np.array([])
+		self.neighbours = np.array([])
 		# Calculation of th before the loop to avoid useless repetition 
 		# https://stackoverflow.com/questions/22190193/finding-coordinates-of-a-point-on-a-line
-		canvas = kwargs.get('canvas')
-		NF = kwargs.get('NF')
 		th = math.atan2(self.getY(1) - self.getY(0), self.getX(1) - self.getX(0))
+		
 		for i in range(0,int(math.hypot(self.getX(0)- self.getX(1), self.getY(0)- self.getY(1))),1):
 			# Get the next point
 			point = np.array([self.getX(0) + i * math.cos(th),
 			 self.getY(0) + i * math.sin(th)])
 
-
+			# We find all element that are at this point
 			find = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
+			
+			# We delete the current element from the list
 			find = np.delete(find,np.where(find == self.id))
-			print(len(np.delete(find,np.where(l.size==0 for l in find)))) # TODO corriger l'erreur avec la suppression de ce delete
-			#for ide in np.delete(find,np.where(find,self.id)):
-			#	# Find other elements that are at those coords
-			#	self.neighbours = np.append(self.neighbours,np.array(NF.getElementById(ide)))
+			
+			# We delete the circles that represents intersections
+			for circle in canvas.find_withtag(tag):
+				find = np.delete(find,np.where(find == circle))
+			
+			#Then if there is at least another one element
+			if(len(find)>=1):
+				#We create another circle at this point
+				circle = canvas.create_oval(int(point[0]-radius), int(point[1]-radius),
+					int(point[0]+radius), int(point[1]+radius),
+					fill="red", outline="red", width=1,tags=tag)
+				self.interCircles = np.append(self.interCircles,circle)
+
+			# Then we save the outcome
+			self.neighbours = np.append(self.neighbours,find)
 
 
-		print(f"Outcome : {self.neighbours}")

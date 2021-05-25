@@ -35,6 +35,7 @@ class Ui_MainWindow:
 		self.print_Button = Button(self.global_frame, height=2, text="preview", command=self.final)
 		self.print_Button.grid(row=0, column=1)
 
+
 		self.mainWindow.bind('<Return>',self.final)
 
 	def start(self):
