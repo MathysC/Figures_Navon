@@ -4,7 +4,7 @@ import math
 import scipy.interpolate as itp
 
 
-class Arc(Element):
+class SemiCircle(Element):
 	"""
 	Class that extends Element, implements the Arc
 	"""
@@ -121,7 +121,7 @@ class Arc(Element):
 		"""
 		# Save this element
 		NF = kwargs.get('NF')
-		NF.elements = np.append(NF.elements, np.array(self))
+		NF.addElement(self)
 
 	def getL(self):
 		"""

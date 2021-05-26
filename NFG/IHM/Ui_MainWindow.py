@@ -53,6 +53,7 @@ class Ui_MainWindow:
 			print("")
 		for element in self.NF.elements:
 			print(f"{element.getType()} : {element.getCoords()}")
+			print(f"  intersection : {element.getIntersections()}")
 
 	def final(self,event=None):
 		"""

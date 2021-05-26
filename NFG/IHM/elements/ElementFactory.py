@@ -1,6 +1,6 @@
 from IHM.elements.Element import Element
 from IHM.elements.Line import Line
-from IHM.elements.Arc import Arc
+from IHM.elements.SemiCircle import SemiCircle
 from IHM.elements.Eraser import Eraser
 from IHM.elements.Circle import Circle
 
@@ -24,7 +24,7 @@ class ElementFactory:
 		if elementType == "line":
 			return Line()
 		elif elementType == "arc":
-			return Arc()
+			return SemiCircle()
 		elif elementType == "circle":
 			return Circle()
 		elif elementType == "eraser":

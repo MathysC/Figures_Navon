@@ -69,7 +69,7 @@ class Line(Element):
 		"""
 		NF = kwargs.get('NF')
 
-		NF.elements = np.append(NF.elements, np.array(self))
+		NF.addElement(self)
 
 
 		self.FinishToFindNeighbours(canvas=kwargs.get('canvas'),NF=kwargs.get('NF'))
@@ -104,7 +104,7 @@ class Line(Element):
 		canvas.delete(tag)
 			
 		self.intersections = np.empty(0)
-		self.neighbours = np.array([])
+		self.neighbours = np.empty(0)
 		# Calculation of th before the loop to avoid useless repetition 
 		# https://stackoverflow.com/questions/22190193/finding-coordinates-of-a-point-on-a-line
 		th = math.atan2(self.getY(1) - self.getY(0), self.getX(1) - self.getX(0))
@@ -134,10 +134,9 @@ class Line(Element):
 						fill="red", outline="red", width=1,tags=self.tag+" "+tag+f" -{idElement}")
 
 					# Then we save the outcome
-					self.intersections = np.append(self.intersections,intersection)
-					print(f"canvas intersection {intersection} : {canvas.gettags(intersection)}")
+					self.addIntersection(intersection)
 
-					self.neighbours = np.append(self.neighbours,find)
+					self.addNeighbour(find)
 
 
 
@@ -152,16 +151,14 @@ class Line(Element):
 
 		# For each Neighbour of this element
 		for neighbour in self.neighbours:
-			neighbour = int(neighbour) # Cast of the 
+			neighbour = int(neighbour) # Cast of the id because numpy saved it as a float
 			SndElement = NF.getElementById(neighbour)
 			# Add this element to its list of neighbours
-			SndElement.neighbours = np.append(SndElement.neighbours,self.id)
+			SndElement.addNeighbour(self.id)
 		
 		# For each intersection of this element
-		for intersection in self.intersections:
-			intersection = int(intersection)
+		for intersection in self.getIntersections():
+			intersection = int(intersection)  # Cast of the id because numpy saved it as a float
 		#	 Found which one are with this neighbour
-			print(f"canvas intersection {intersection} : {canvas.gettags(intersection)}")
-			if f"-{neighbour}" in canvas.gettags(intersection):
-				print(f"neighbour : {neighbour}")
-				SndElement.intersections = np.append(SndElement.intersections,intersection)
+			if  f"-{self.id}" in canvas.gettags(intersection) and f"-{neighbour}" in canvas.gettags(intersection):
+				SndElement.addIntersection(intersection)

@@ -56,7 +56,7 @@ class Eraser(Element):
 			for element in NF.elements:
 				if element.getId() == onClick[0]:
 					# https://www.kite.com/python/answers/how-to-delete-values-from-a-numpy-array-in-python#:~:text=from%20an%20array-,Use%20numpy.,that%20match%20the%20specified%20condition%20.	
-					NF.elements = np.delete(NF.elements,np.where(NF.elements == element))
+					NF.removeElement(element)
 						
 
 					#Remove its intersections

@@ -78,7 +78,7 @@ class Circle(Element):
 		:rtype:None
 		"""
 		NF = kwargs.get('NF')
-		NF.elements = np.append(NF.elements, np.array(self))
+		NF.addElement(self)
 
 	def getL(self):
 		"""

@@ -2,7 +2,7 @@ from IHM.elements.ElementFactory import ElementFactory as Factory
 from Logic.Setup import Setup
 
 from IHM.elements.Line import Line
-from IHM.elements.Arc import Arc
+from IHM.elements.SemiCircle import SemiCircle
 
 from tkinter import *
 import numpy as np

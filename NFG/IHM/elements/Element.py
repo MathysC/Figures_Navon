@@ -69,23 +69,36 @@ class Element(ABC):
 	def getIntersections(self):
 		return self.intersections
 
-	def removeIntersections(self,intersections):
-		for intersection in intersections:
-			self.intersections = np.delete(
-				self.intersections,
-				np.where(self.intersections== intersection))
+	def removeIntersection(self,intersection):
+		self.intersections = np.delete(
+			self.intersections,
+			np.where(self.intersections == intersection))
 
-	def addIntersections(self,intersections):
-		for intersection in intersections:
-			self.intersections = np.append(
-				self.intersections, intersection)
+	def addIntersection(self,intersection):
+		self.intersections = np.append(
+			self.intersections, intersection)
 
 	def removeIntersectionsByTag(self,tag):
 		for intersection in self.intersections:
 			if tag == intersection.getTag():
 				self.intersections = np.delete(
 				self.intersections,
-				np.where(self.intersections== intersection))
+				np.where(self.intersections == intersection))
+
+
+	def getNeighbours(self):
+		return self.neighbours
+
+	def removeNeighbour(self,neighbour):
+		self.neighbours = np.delete(
+			self.neighbours,
+			np.where(self.neighbours == neighbour))
+
+	def addNeighbour(self,neighbour):
+		self.neighbours = np.append(
+			self.neighbours, neighbour)
+
+
 	def getCoords(self):
 		"""
 		Getter of Coords

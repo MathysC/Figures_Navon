@@ -33,6 +33,11 @@ class NF:
 				return element
 		return None
 
+	def addElement(self,element):
+		self.elements = np.append(self.elements,np.array(element))
+
+	def removeElement(self,element):
+		self.elements = np.delete(self.elements,np.where(self.elements == element))
 
 	def getG(self):
 		"""
