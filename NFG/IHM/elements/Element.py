@@ -18,10 +18,10 @@ class Element(ABC):
 		self.x = np.copy(Xs)	# All the X coordonates
 		self.y = np.copy(Ys) 	# All the Y coordonates
 		self.id = None			# The id of the element on the draw canvas
-		#self.constraints = np.array([], dtype =[('element',Element),('coords',np.darray),('circle',np.int32)]) # All the constraints of this element
-		self.neighbours = np.array([])
+		self.neighbours = np.array([], dtype=np.int32)
 		self.tag = "intersection"
-		self.interCircles = np.array([])
+		self.intersections = np.array([],dtype=np.int32)
+
 	def getId(self):
 		"""
 		Getter of id
@@ -66,6 +66,26 @@ class Element(ABC):
 		"""
 		self.y[i] = value
 
+	def getIntersections(self):
+		return self.intersections
+
+	def removeIntersections(self,intersections):
+		for intersection in intersections:
+			self.intersections = np.delete(
+				self.intersections,
+				np.where(self.intersections== intersection))
+
+	def addIntersections(self,intersections):
+		for intersection in intersections:
+			self.intersections = np.append(
+				self.intersections, intersection)
+
+	def removeIntersectionsByTag(self,tag):
+		for intersection in self.intersections:
+			if tag == intersection.getTag():
+				self.intersections = np.delete(
+				self.intersections,
+				np.where(self.intersections== intersection))
 	def getCoords(self):
 		"""
 		Getter of Coords

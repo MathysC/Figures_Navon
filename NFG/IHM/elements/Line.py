@@ -57,7 +57,7 @@ class Line(Element):
 		canvas.coords(self.id,
 					  self.getX(0), self.getY(0),
 					  self.getX(1), self.getY(1))
-		self.findNeighbours(canvas=kwargs.get('canvas'))
+		self.findNeighbours(canvas=kwargs.get('canvas'),NF=kwargs.get('NF'))
 
 	def end(self, **kwargs):
 		"""
@@ -70,6 +70,9 @@ class Line(Element):
 		NF = kwargs.get('NF')
 
 		NF.elements = np.append(NF.elements, np.array(self))
+
+
+		self.FinishToFindNeighbours(canvas=kwargs.get('canvas'),NF=kwargs.get('NF'))
 
 	def getL(self):
 		"""
@@ -95,12 +98,12 @@ class Line(Element):
 		"""
 
 		canvas = kwargs.get('canvas')
-		tag = self.tag+str(self.id) #self.tag from element and self.id to make a personal tag
+		tag = f"-{self.id}" #self.tag from element and self.id to make a personal tag
 		radius = 2
 
 		canvas.delete(tag)
 			
-		self.interCircles = np.array([])
+		self.intersections = np.empty(0)
 		self.neighbours = np.array([])
 		# Calculation of th before the loop to avoid useless repetition 
 		# https://stackoverflow.com/questions/22190193/finding-coordinates-of-a-point-on-a-line
@@ -116,20 +119,49 @@ class Line(Element):
 			
 			# We delete the current element from the list
 			find = np.delete(find,np.where(find == self.id))
-			
+
 			# We delete the circles that represents intersections
-			for circle in canvas.find_withtag(tag):
+			for circle in canvas.find_withtag(self.tag):
 				find = np.delete(find,np.where(find == circle))
-			
+				
 			#Then if there is at least another one element
 			if(len(find)>=1):
-				#We create another circle at this point
-				circle = canvas.create_oval(int(point[0]-radius), int(point[1]-radius),
-					int(point[0]+radius), int(point[1]+radius),
-					fill="red", outline="red", width=1,tags=tag)
-				self.interCircles = np.append(self.interCircles,circle)
 
-			# Then we save the outcome
-			self.neighbours = np.append(self.neighbours,find)
+				for idElement in find:
+					# We create an intersection at this point
+					intersection = canvas.create_oval(int(point[0]-radius), int(point[1]-radius),
+						int(point[0]+radius), int(point[1]+radius),
+						fill="red", outline="red", width=1,tags=self.tag+" "+tag+f" -{idElement}")
+
+					# Then we save the outcome
+					self.intersections = np.append(self.intersections,intersection)
+					print(f"canvas intersection {intersection} : {canvas.gettags(intersection)}")
+
+					self.neighbours = np.append(self.neighbours,find)
 
 
+
+	def FinishToFindNeighbours(self, **kwargs):
+		"""
+		Last function that apply change to the neighbours of this element
+		It had this element to the neighbour list of the neighbour itself
+		And the intersection to the intersection list of the neighbour itself too
+		"""
+		NF = kwargs.get('NF')
+		canvas = kwargs.get('canvas')
+
+		# For each Neighbour of this element
+		for neighbour in self.neighbours:
+			neighbour = int(neighbour) # Cast of the 
+			SndElement = NF.getElementById(neighbour)
+			# Add this element to its list of neighbours
+			SndElement.neighbours = np.append(SndElement.neighbours,self.id)
+		
+		# For each intersection of this element
+		for intersection in self.intersections:
+			intersection = int(intersection)
+		#	 Found which one are with this neighbour
+			print(f"canvas intersection {intersection} : {canvas.gettags(intersection)}")
+			if f"-{neighbour}" in canvas.gettags(intersection):
+				print(f"neighbour : {neighbour}")
+				SndElement.intersections = np.append(SndElement.intersections,intersection)

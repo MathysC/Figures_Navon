@@ -57,9 +57,16 @@ class Eraser(Element):
 				if element.getId() == onClick[0]:
 					# https://www.kite.com/python/answers/how-to-delete-values-from-a-numpy-array-in-python#:~:text=from%20an%20array-,Use%20numpy.,that%20match%20the%20specified%20condition%20.	
 					NF.elements = np.delete(NF.elements,np.where(NF.elements == element))
+						
+
+					#Remove its intersections
+					tag = f"-{element.getId()}" #self.tag from element and self.id to make a personal tag
+					canvas.delete(tag)
+
+					# Remove it from the canvas
+					canvas.delete(element.getId())
+
 					
-				# Remove it from the canvas
-				canvas.delete(self.id)
 
 	def getL(self):
 		pass
