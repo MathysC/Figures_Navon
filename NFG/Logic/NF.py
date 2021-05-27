@@ -59,14 +59,6 @@ class NF:
 					g / self.size) *
 				   element.getL()[-1] / g)
 
-	def getDuress(self, current):
-		templist = np.delete(self.lines, np.where(self.lines == current))
-		print("----------------------------------------------------------------------------------------------")
-		print(f"Current : {current.getCoords()} :")
-		for l in templist:
-			print(f" Intersect with : {l.getCoords()} | {self.findIntersection(current, l)}")
-
-
 	def final(self):
 		# Create the image
 		im = Image.new('RGB', (400 + self.size, 250 + self.size), color='white')

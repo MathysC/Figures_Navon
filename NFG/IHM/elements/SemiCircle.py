@@ -6,26 +6,26 @@ import scipy.interpolate as itp
 
 class SemiCircle(Element):
 	"""
-	Class that extends Element, implements the Arc
+	Class that extends Element, implements the Semi-Circle
 	"""
 
 	def __init__(self):
 		super().__init__()
 		self.center = np.zeros(2)
 		self.radius = 0
-		self.angle = 0
+		self.angle = 0 # Starting angle in degree
 
 	def getType(self) -> str:
 		"""
 		Getter of type 
-		:return: "arc"
+		:return: "semiCircle"
 		:rtype: str
 		"""
-		return "arc"
+		return "semiCircle"
 
 	def start(self, **kwargs):
 		"""
-		Start drawing an arc
+		Start drawing a semiCircle
 		:key event: event on canvas
 		:key canvas: the canvas
 		:return: this method return nothing
@@ -33,24 +33,28 @@ class SemiCircle(Element):
 		"""
 		event = kwargs.get('event')
 		canvas = kwargs.get('canvas')
+
+		# Set the center
+		self.center = np.array([event.x,event.y])
+		# Set the start of the semiCircle at the cursor
 		self.setX(0, event.x)
 		self.setX(1, event.x)
 		self.setY(0, event.y)
 		self.setY(1, event.y)
-
 
 		self.id = canvas.create_arc(
 			event.x, event.y,
 			event.x, event.y,
 			fill='black', width=1, style="arc")
 
-		self.center = np.array([event.x,event.y])
 
 	def motion(self, **kwargs):
 		"""
-		Change the position of the arc
+		Change the position of the semiCircle
 		:key event: event on canvas
+		:type event: TKINTER EVENT
 		:key canvas: the canvas
+		:type canvas: TKINTER CANVAS
 		:return: this method return nothing
 		:rtype: None
 		"""
@@ -58,7 +62,7 @@ class SemiCircle(Element):
 		canvas = kwargs.get('canvas')
 		x, y = self.center
 
-		# Calculates the radius of the Arc
+		# Calculates the radius of the SemiCircle
 		self.radius = int(math.hypot(x - event.x, y - event.y))
 		self.setX(0, x - self.radius)
 		self.setY(0, y - self.radius)
@@ -102,7 +106,7 @@ class SemiCircle(Element):
 							 (2 * sqrtA * sqrtB));
 
 		#The angle may have a different value depending on the cursor position relative to the center			
-		self.angle = int(gamma * 180 / math.pi) if (event.y < y) else int(-gamma * 180 / math.pi)
+		self.angle = math.degrees(gamma) if (event.y < y) else math.degrees(-gamma)
 
 		# Reshape the Arc
 		canvas.coords(self.id,
@@ -111,29 +115,36 @@ class SemiCircle(Element):
 
 		canvas.itemconfig(self.id,start=self.angle,extent=180)
 
+		self.findNeighbors(canvas=canvas)
+
 	def end(self, **kwargs):
 		"""
-		Add the arc at the NF's array of arcs
+		Add the semiCircle at the NF's array of semiCircles
+		Add this semiCircle to the neighbor list of its neighbor itself
+
 		:key NF: the Navon's Figure
 		:type NF: NF
+		:key canvas: the TKINTER Canvas
+		:type canvas: TKINTER Element 
 		:return: method return nothing
-		:rtype:None
+		:rtype: None
 		"""
 		# Save this element
 		NF = kwargs.get('NF')
 		NF.addElement(self)
+		self.FinishToFindNeighbors(canvas=kwargs.get('canvas'),NF=NF)
+
 
 	def getL(self):
 		"""
-		Function that calculates L
-		Calculation from M BARD
-		:return: array with the sum of difference between coordonates 
+		Function that calculates the sum (L) of the difference of square root of X and Y
+		:return: the sum
 		:rtype: numpy.ndarray
 		"""
 		# Both start and End Radians are negative for the position on the NF
 		# Honestly i don't know why it didn't work with the both positive values
-		start = -(self.angle * 2*np.pi / 360)
-		end = -((self.angle+180) * 2*np.pi / 360)
+		start = -math.radians(self.angle)
+		end = -math.radians(self.angle+180)
 		t = np.linspace(start,end,10)
 
 		sqrtC = [(0 + self.radius * np.cos(t_), 1 + self.radius * np.sin(t_)) for t_ in t]
@@ -147,16 +158,15 @@ class SemiCircle(Element):
 
 	def interpolate(self):
 		"""
-		Interpolation of the arc
-		Calculation from M BARD
-		:return: an array with all the Xs and Ys of local letters
-		:rtype: numpy.array
+		Function that calcultates the interpolation of X and Y of the element
+		:return: an array of the interpolation
+		:rtype: np.array
 		"""
 		x,y = self.center
 
-		start = self.angle * 2*np.pi / 360
-		end = (self.angle+180) * 2*np.pi / 360
-		t = np.linspace(-start,-end,10)
+		start = -math.radians(self.angle)
+		end = -math.radians(self.angle+180)
+		t = np.linspace(start,end,10)
 
 		sqrtC = [(x + self.radius * np.cos(t_), 
 			y + self.radius * np.sin(t_)) for t_ in t]
@@ -168,5 +178,52 @@ class SemiCircle(Element):
 		return np.array([_x_,_y_])
 
 
-	def findNeighbours(self, **kwargs):
-		pass
+	def findNeighbors(self, **kwargs):
+		"""
+		Check at any point of the semiCircle if there is another element and therefore an intersection to create
+		:key NF: the Navon's Figure
+		:type NF: NF
+		:key canvas: the TKINTER Canvas
+		:type canvas: TKINTER Element 
+		:return: method return nothing
+		:rtype: None
+		"""
+		canvas = kwargs.get('canvas')
+		radius = 2 # Set the radius of the circle used to represent the intersection
+
+		tag = f"-{self.id}" #self.tag from element and self.id to make a personal tag
+		# Reset intersections and neighbor 
+		canvas.delete(tag)
+		self.intersections = np.empty(0)
+		self.neighbors = np.empty(0)
+
+
+		# Check every angle of the semiCircle
+		for angle in range(int(self.angle),int(self.angle+180)):
+			# Get the next point
+			radian = math.radians(-angle)
+			point = np.array([self.center[0]+self.radius * math.cos(radian),
+			 self.center[1]+self.radius * math.sin(radian)])
+
+
+			# We find all element that are at this point
+			find = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
+			
+			# We delete the current element from the list
+			find = np.delete(find,np.where(find == self.id))
+
+			# We delete the circles that represents intersections
+			for circle in canvas.find_withtag(self.tag):
+				find = np.delete(find,np.where(find == circle))
+
+			#Then if there is at least another one element
+			if(len(find)>=1):
+				for idElement in find:
+					# We create an intersection at this point
+					intersection = canvas.create_oval(int(point[0]-radius), int(point[1]-radius),
+						int(point[0]+radius), int(point[1]+radius),
+						fill="red", outline="red", width=1,tags=self.tag+" "+tag+f" -{idElement}")
+
+					# Then we save the outcome
+					self.addIntersection(intersection)
+					self.addNeighbor(find)

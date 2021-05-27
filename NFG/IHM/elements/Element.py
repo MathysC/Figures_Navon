@@ -18,7 +18,7 @@ class Element(ABC):
 		self.x = np.copy(Xs)	# All the X coordonates
 		self.y = np.copy(Ys) 	# All the Y coordonates
 		self.id = None			# The id of the element on the draw canvas
-		self.neighbours = np.array([], dtype=np.int32)
+		self.neighbors = np.array([], dtype=np.int32)
 		self.tag = "intersection"
 		self.intersections = np.array([],dtype=np.int32)
 
@@ -86,17 +86,17 @@ class Element(ABC):
 				np.where(self.intersections == intersection))
 
 
-	def getNeighbours(self):
-		return self.neighbours
+	def getNeighbors(self):
+		return self.neighbors
 
-	def removeNeighbour(self,neighbour):
-		self.neighbours = np.delete(
-			self.neighbours,
-			np.where(self.neighbours == neighbour))
+	def removeNeighbor(self,neighbor):
+		self.neighbors = np.delete(
+			self.neighbors,
+			np.where(self.neighbors == neighbor))
 
-	def addNeighbour(self,neighbour):
-		self.neighbours = np.append(
-			self.neighbours, neighbour)
+	def addNeighbor(self,neighbor):
+		self.neighbors = np.append(
+			self.neighbors, neighbor)
 
 
 	def getCoords(self):
@@ -142,5 +142,31 @@ class Element(ABC):
 		pass
 
 	@abstractmethod
-	def findNeighbours(self,**kwargs):
+	def findNeighbors(self,**kwargs):
 		pass
+
+	def FinishToFindNeighbors(self, canvas, NF):
+		"""
+		Last function called in self.end that apply change to the neighbors of this element
+		It add THIS element to the neighbor list of the neighbor itself
+		And the intersections to the intersection list of the neighbor itself too
+		:key NF: the Navon's Figure
+		:type NF: NF
+		:key canvas: the TKINTER Canvas
+		:type canvas: TKINTER Element 
+		:return: method return nothing
+		:rtype: None
+		"""
+		# For each Neighbor of this element
+		for neighbor in self.neighbors:
+			neighbor = int(neighbor) # Cast of the id because numpy saved it as a float
+			SndElement = NF.getElementById(neighbor)
+			# Add this element to its list of neighbors
+			SndElement.addNeighbor(self.id)
+		
+		# For each intersection of this element
+		for intersection in self.getIntersections():
+			intersection = int(intersection)  # Cast of the id because numpy saved it as a float
+		#	 Found which one are with this neighbor
+			if  f"-{self.id}" in canvas.gettags(intersection) and f"-{neighbor}" in canvas.gettags(intersection):
+				SndElement.addIntersection(intersection)

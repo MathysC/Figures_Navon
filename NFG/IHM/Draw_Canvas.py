@@ -28,7 +28,7 @@ class Draw_Canvas:
 		# Draw Line
 		Button(self.option_frame, width=3, bg="white", text="line", command=lambda: self.changeElement('line')).grid(row=0, column=0)
 		# Draw arc
-		Button(self.option_frame, width=3, bg="white", text="arc", command=lambda: self.changeElement('arc')).grid(row=0, column=1)
+		Button(self.option_frame, width=3, bg="white", text="arc", command=lambda: self.changeElement('semiCircle')).grid(row=0, column=1)
 		# Draw Circle
 		Button(self.option_frame,width=3, bg="white", text="circle", command=lambda: self.changeElement('circle')).grid(row=1,column=0)
 		# Eraser

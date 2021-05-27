@@ -23,7 +23,7 @@ class ElementFactory:
 		"""
 		if elementType == "line":
 			return Line()
-		elif elementType == "arc":
+		elif elementType == "semiCircle":
 			return SemiCircle()
 		elif elementType == "circle":
 			return Circle()

@@ -68,6 +68,8 @@ class Circle(Element):
 		canvas.coords(self.id,
 					  self.getX(0), self.getY(0),
 					  self.getX(1), self.getY(1))
+		# We add this element to its neighbors
+		self.findNeighbors(canvas=kwargs.get('canvas'),NF=kwargs.get('NF'))
 
 	def end(self, **kwargs):
 		"""
@@ -79,6 +81,10 @@ class Circle(Element):
 		"""
 		NF = kwargs.get('NF')
 		NF.addElement(self)
+
+		# We add this element to its neighbors
+		self.FinishToFindNeighbors(canvas=kwargs.get('canvas'),NF=kwargs.get('NF'))
+
 
 	def getL(self):
 		"""
@@ -123,5 +129,53 @@ class Circle(Element):
 			res = np.append(res,[np.array([_x_,_y_])])
 		return res
 
-	def findNeighbours(self, **kwargs):
-		pass
+	def findNeighbors(self, **kwargs):
+		"""
+		Check at any point of the perimeter of this element if there is another element and therefore an intersection to create
+		:key NF: the Navon's Figure
+		:type NF: NF
+		:key canvas: the TKINTER Canvas
+		:type canvas: TKINTER Element 
+		:return: method return nothing
+		:rtype: None
+		"""
+		canvas = kwargs.get('canvas')
+		radius = 2 # Set the radius of the circle used to represent the intersection
+
+		tag = f"-{self.id}" #self.tag from element and self.id to make a personal tag
+		# Reset intersections and neighbor 
+		canvas.delete(tag)
+		self.intersections = np.empty(0)
+		self.neighbors = np.empty(0)
+
+
+		# Go around the circle
+		for angle in range(359):
+			# Get the next point
+
+			radian = math.radians(angle)
+			point = np.array([self.center[0]+self.radius * math.cos(radian),
+			 self.center[1]+self.radius * math.sin(radian)])
+
+
+			# We find all element that are at this point
+			find = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
+			
+			# We delete the current element from the list
+			find = np.delete(find,np.where(find == self.id))
+
+			# We delete the circles that represents intersections
+			for circle in canvas.find_withtag(self.tag):
+				find = np.delete(find,np.where(find == circle))
+
+			#Then if there is at least another one element
+			if(len(find)>=1):
+				for idElement in find:
+					# We create an intersection at this point
+					intersection = canvas.create_oval(int(point[0]-radius), int(point[1]-radius),
+						int(point[0]+radius), int(point[1]+radius),
+						fill="red", outline="red", width=1,tags=self.tag+" "+tag+f" -{idElement}")
+
+					# Then we save the outcome
+					self.addIntersection(intersection)
+					self.addNeighbor(find)

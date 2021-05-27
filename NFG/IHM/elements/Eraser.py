@@ -74,5 +74,5 @@ class Eraser(Element):
 	def interpolate(self):
 		pass
 
-	def findNeighbours(self,**kwargs):
+	def findNeighbors(self,**kwargs):
 		pass
