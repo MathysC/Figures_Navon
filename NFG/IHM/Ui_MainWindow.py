@@ -19,7 +19,6 @@ class Ui_MainWindow:
 		self.mainWindow.resizable(FALSE, FALSE)
 
 		self.NF = NF()
-
 		# Create the Draw part and the options
 		self.draw = Draw_Canvas(self.mainWindow, self.NF)
 
@@ -35,8 +34,10 @@ class Ui_MainWindow:
 		self.print_Button = Button(self.global_frame, height=2, text="preview", command=self.final)
 		self.print_Button.grid(row=0, column=1)
 
-
 		self.mainWindow.bind('<Return>',self.final)
+
+
+
 
 	def start(self):
 		"""
@@ -49,15 +50,17 @@ class Ui_MainWindow:
 		(ONLY FOR TEST PHASE)
 		Function to get the print of all lines
 		"""
-		for i in range(0,100):
-			print("")
+		#for i in range(0,100):
+		#	print("")
 		for element in self.NF.elements:
-			print(f"{element.getType()} : {element.getCoords()}")
-			print(f"  intersection : {element.getIntersections()}")
-
+			print(f"{element.getType()} {element.getId()} : {element.getCoords()}")
+			for intersection in element.getIntersections():
+				intersection = int(intersection)
+				print(f"  intersection [{intersection}] : coords : {self.draw.draw_canvas.coords(intersection)}")
+			print(f"  neighbors : {element.getNeighbors()}")
 	def final(self,event=None):
 		"""
 		Function that (currently only ) preview the NF
 		"""
 		self.draw.update()
-		self.NF.final()
+		self.NF.final(self.draw.draw_canvas)

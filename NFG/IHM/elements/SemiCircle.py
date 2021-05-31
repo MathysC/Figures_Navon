@@ -1,4 +1,5 @@
 from IHM.elements.Element import Element
+from Logic.Setup import Setup
 import numpy as np
 import math
 import scipy.interpolate as itp
@@ -189,7 +190,6 @@ class SemiCircle(Element):
 		:rtype: None
 		"""
 		canvas = kwargs.get('canvas')
-		radius = 2 # Set the radius of the circle used to represent the intersection
 
 		tag = f"-{self.id}" #self.tag from element and self.id to make a personal tag
 		# Reset intersections and neighbor 
@@ -220,8 +220,8 @@ class SemiCircle(Element):
 			if(len(find)>=1):
 				for idElement in find:
 					# We create an intersection at this point
-					intersection = canvas.create_oval(int(point[0]-radius), int(point[1]-radius),
-						int(point[0]+radius), int(point[1]+radius),
+					intersection = canvas.create_oval(int(point[0]-Setup.RADIUSINTER), int(point[1]-Setup.RADIUSINTER),
+						int(point[0]+Setup.RADIUSINTER), int(point[1]+Setup.RADIUSINTER),
 						fill="red", outline="red", width=1,tags=self.tag+" "+tag+f" -{idElement}")
 
 					# Then we save the outcome

@@ -3,7 +3,7 @@ from PIL import Image, ImageFont, ImageDraw, ImageTk
 from Logic.Setup import Setup
 from IHM.elements.Element import Element
 from IHM.elements.Line import Line
-
+import math
 
 class NF:
 	"""
@@ -16,7 +16,6 @@ class NF:
 		:param d:
 		:param char:
 		"""
-
 		self.elements = np.array([])
 		self.d = None  # Densité
 		self.char = 'A'
@@ -59,7 +58,7 @@ class NF:
 					g / self.size) *
 				   element.getL()[-1] / g)
 
-	def final(self):
+	def final(self,canvas):
 		# Create the image
 		im = Image.new('RGB', (400 + self.size, 250 + self.size), color='white')
 		draw = ImageDraw.Draw(im)
@@ -71,7 +70,8 @@ class NF:
 			interp = element.interpolate()
 			for i in range(0,len(interp),2):
 				_x_, _y_ = interp[i],interp[i+1]
-				x_, y_ = _x_(a), _y_(a)
+				x_, y_ = self.prepareCoords(canvas,element,_x_(a), _y_(a))
+				
 
 				# Add local char to each coords
 				for i in range(0, len(x_)):
@@ -81,7 +81,46 @@ class NF:
 		im.show()
 		im.save("Outcome/Testautre.png")
 
-	def finalImage(self):
+	def prepareCoords(self,canvas,element,x_,y_):
+		"""
+		Remove from the list of coordinates (where images / local characters will be placed) 
+		every point that is ~~ almost identical to the intersection
+		"""
+		ToDeletex_ = np.array([])
+		ToDeletey_ = np.array([])
+		inter = np.array([]) # Array to distinguish intersections created by this element 
+
+
+		# Found all intersection created by this element 
+		for intersection in element.getIntersections():
+			intersection = int(intersection)
+			# We check who created this intersection with the second tag ('intersection', '-self.id','-otherElement.id')
+			if canvas.gettags(intersection)[1] == f"-{element.getId()}" :
+				inter = np.append(inter,intersection)
+		# Then for each of those intersection, check if there is a point (x_,y_) to delete
+		for intersection in inter:
+			intersection = int(intersection)
+
+			# Get the point of the intersection
+			coords =np.array([
+				canvas.coords(intersection)[0]+Setup.RADIUSINTER,
+				canvas.coords(intersection)[1]+Setup.RADIUSINTER])
+
+			for ite in range(0,len(x_)):
+				distance = int(math.hypot(coords[0] - x_[ite], coords[1] - y_[ite]))
+				if distance <= self.size:
+					ToDeletex_ = np.append(ToDeletex_,x_[ite])
+					ToDeletey_ = np.append(ToDeletey_,y_[ite])
+
+			for x in ToDeletex_:
+				x_ = np.delete(x_,np.where(x_ == x))
+				
+			for y in ToDeletey_:
+				y_ = np.delete(y_,np.where(y_ == y))
+
+		return x_,y_
+
+	def finalImage(self,canvas):
 		# Get local image
 		localIm = Image.open('lena.jpg')
 
@@ -92,7 +131,6 @@ class NF:
 		diagonal.y = np.array([0,Setup.HEIGHT])
 		a = np.linspace(0, 1, self.getN(diagonal))
 		_x_, _y_ = diagonal.interpolate()
-		x_, y_ = _x_(a), _y_(a)
 
 		# Create the Image for the NF
 		im = Image.new('RGB',

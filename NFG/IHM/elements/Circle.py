@@ -1,4 +1,6 @@
 from IHM.elements.Element import Element
+from Logic.Setup import Setup
+
 import numpy as np
 import math
 import scipy.interpolate as itp
@@ -140,7 +142,6 @@ class Circle(Element):
 		:rtype: None
 		"""
 		canvas = kwargs.get('canvas')
-		radius = 2 # Set the radius of the circle used to represent the intersection
 
 		tag = f"-{self.id}" #self.tag from element and self.id to make a personal tag
 		# Reset intersections and neighbor 
@@ -159,7 +160,7 @@ class Circle(Element):
 
 
 			# We find all element that are at this point
-			find = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
+			find = np.array(canvas.find_overlapping(point[0]-1, point[1]-1, point[0]+1, point[1]+1))
 			
 			# We delete the current element from the list
 			find = np.delete(find,np.where(find == self.id))
@@ -172,8 +173,8 @@ class Circle(Element):
 			if(len(find)>=1):
 				for idElement in find:
 					# We create an intersection at this point
-					intersection = canvas.create_oval(int(point[0]-radius), int(point[1]-radius),
-						int(point[0]+radius), int(point[1]+radius),
+					intersection = canvas.create_oval(int(point[0]-Setup.RADIUSINTER), int(point[1]-Setup.RADIUSINTER),
+						int(point[0]+Setup.RADIUSINTER), int(point[1]+Setup.RADIUSINTER),
 						fill="red", outline="red", width=1,tags=self.tag+" "+tag+f" -{idElement}")
 
 					# Then we save the outcome

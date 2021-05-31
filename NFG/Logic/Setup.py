@@ -9,3 +9,5 @@ class Setup:
 	SIZESQUARE = 250 / MINNBSQUARE
 	TABLESQUARE = {}
 	FONT = ('arial',8)
+
+	RADIUSINTER = 2 # Set the radius of the circle used to represent the intersection
