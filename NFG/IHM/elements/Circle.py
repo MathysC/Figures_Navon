@@ -24,6 +24,41 @@ class Circle(Element):
 		"""
 		return "circle"
 
+
+	def getRadius(self):
+		"""
+		Getter of radius
+		:return: the radius
+		:rtype: int
+		"""
+		return self.radius
+
+	def setRadius(self, newR):
+		"""
+		Setter of radius
+		:param: newR
+		:type newR: int
+		"""
+		self.radius = newR
+
+
+	def getCenter(self):
+		"""
+		Getter of center
+		:return: the x and y of the center
+		:rtype: np.array
+		"""
+		return self.center
+
+	def setCenter(self, newC):
+		"""
+		Setter of radius
+		:param: the array of new coordonates
+		:type newR: np.array
+		"""
+		self.center = newC
+
+
 	def start(self, **kwargs):
 		"""
 		Start drawing a circle
@@ -162,6 +197,7 @@ class Circle(Element):
 			# We find all element that are at this point
 			find = np.array(canvas.find_overlapping(point[0]-1, point[1]-1, point[0]+1, point[1]+1))
 			
+
 			# We delete the current element from the list
 			find = np.delete(find,np.where(find == self.id))
 

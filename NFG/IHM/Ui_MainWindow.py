@@ -50,8 +50,8 @@ class Ui_MainWindow:
 		(ONLY FOR TEST PHASE)
 		Function to get the print of all lines
 		"""
-		#for i in range(0,100):
-		#	print("")
+		for i in range(0,100):
+			print("")
 		for element in self.NF.elements:
 			print(f"{element.getType()} {element.getId()} : {element.getCoords()}")
 			for intersection in element.getIntersections():
@@ -63,4 +63,4 @@ class Ui_MainWindow:
 		Function that (currently only ) preview the NF
 		"""
 		self.draw.update()
-		self.NF.final(self.draw.draw_canvas)
+		self.NF.finalImage(self.draw.draw_canvas)
