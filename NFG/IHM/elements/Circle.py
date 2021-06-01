@@ -19,10 +19,42 @@ class Circle(Element):
 	def getType(self):
 		"""
 		Getter of type 
-		:return: "line"
+		:return: "circle"
 		:rtype: str
 		"""
 		return "circle"
+
+	def getRadius(self):
+		"""
+		Getter of radius
+		:return: the radius
+		:rtype: int
+		"""
+		return self.radius
+
+	def setRadius(self, newR):
+		"""
+		Setter of radius
+		:param: newR
+		:type newR: int
+		"""
+		self.radius = newR
+
+	def getCenter(self):
+		"""
+		Getter of center
+		:return: the x and y of the center
+		:rtype: np.array
+		"""
+		return self.center
+
+	def setCenter(self, newC):
+		"""
+		Setter of radius
+		:param: the array of new coordonates
+		:type newR: np.array
+		"""
+		self.center = newC
 
 	def start(self, **kwargs):
 		"""

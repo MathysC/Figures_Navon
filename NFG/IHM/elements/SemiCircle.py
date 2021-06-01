@@ -24,6 +24,38 @@ class SemiCircle(Element):
 		"""
 		return "semiCircle"
 
+	def getRadius(self):
+		"""
+		Getter of radius
+		:return: the radius
+		:rtype: int
+		"""
+		return self.radius
+
+	def setRadius(self, newR):
+		"""
+		Setter of radius
+		:param: newR
+		:type newR: int
+		"""
+		self.radius = newR
+
+	def getCenter(self):
+		"""
+		Getter of center
+		:return: the x and y of the center
+		:rtype: np.array
+		"""
+		return self.center
+
+	def setCenter(self, newC):
+		"""
+		Setter of radius
+		:param: the array of new coordonates
+		:type newR: np.array
+		"""
+		self.center = newC
+
 	def start(self, **kwargs):
 		"""
 		Start drawing a semiCircle
@@ -47,7 +79,6 @@ class SemiCircle(Element):
 			event.x, event.y,
 			event.x, event.y,
 			fill='black', width=1, style="arc")
-
 
 	def motion(self, **kwargs):
 		"""
@@ -135,7 +166,6 @@ class SemiCircle(Element):
 		NF.addElement(self)
 		self.FinishToFindNeighbors(canvas=kwargs.get('canvas'),NF=NF)
 
-
 	def getL(self):
 		"""
 		Function that calculates the sum (L) of the difference of square root of X and Y
@@ -177,7 +207,6 @@ class SemiCircle(Element):
 		_y_ = itp.interp1d(self.getLDiv(), y_)
 
 		return np.array([_x_,_y_])
-
 
 	def findNeighbors(self, **kwargs):
 		"""

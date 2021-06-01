@@ -26,6 +26,10 @@ class NF:
 	def getElementById(self,toFound)-> Element:
 		"""
 		Getter of a single Element
+		:param: toFound
+		:type toFound: int
+		:return: the element whose toFound value is id or None if nothing found
+		:rtype: Element
 		"""
 		for element in self.elements:
 			if element.id == toFound:
@@ -33,32 +37,45 @@ class NF:
 		return None
 
 	def addElement(self,element):
+		"""
+		add an Element to elements list
+		:param: element
+		:type element: Element
+		"""
 		self.elements = np.append(self.elements,np.array(element))
 
 	def removeElement(self,element):
+		"""
+		remove an Element from elements list
+		:param: element
+		:type element: Element
+		"""
 		self.elements = np.delete(self.elements,np.where(self.elements == element))
 
 	def getG(self):
 		"""
-		Function that calculates the sum of all last element of each line
+		Function that calculates the sum of all last index of each element.getL
+		:return: the sum of the last element 
+		.. seealso:: Element.getL()
 		"""
 		last = np.array([])
 		for element in self.elements:
 			last = np.append(last,np.array(element.getL()[-1]))
 		return sum(last)
 
-	def getN(self, element):
+	def getN(self, element,size, density):
 		"""
 		Function that calculates N
 		"""
 		g = self.getG()
 		return int((
-						   self.d
+						   density
 						   / 100 *
-					g / self.size) *
+					g / size) *
 				   element.getL()[-1] / g)
 
 	def final(self,canvas):
+
 		# Create the image
 		im = Image.new('RGB', (400 + self.size, 250 + self.size), color='white')
 		draw = ImageDraw.Draw(im)
@@ -66,22 +83,108 @@ class NF:
 		font = ImageFont.truetype(self.police, self.size)
 
 		for element in self.elements:
-			a = np.linspace(0, 1, self.getN(element))
+			a = np.linspace(0, 1, self.getN(element = element, size = self.size, density = self.d))
 			interp = element.interpolate()
-			for i in range(0,len(interp),2):
-				_x_, _y_ = interp[i],interp[i+1]
-				x_, y_ = self.prepareCoords(canvas,element,_x_(a), _y_(a))
+			for i in range(0, len(interp), 2):
+				_x_, _y_ = interp[i:i+2]
+				x_, y_ = self.prepareCoords(canvas, element, _x_(a), _y_(a), self.size)
 				
 
 				# Add local char to each coords
 				for i in range(0, len(x_)):
-					draw.text((x_[i], y_[i]), self.char, self.color, font=font)
+					draw.text((x_[i], y_[i]), self.char, self.color, font = font)
 
 		# Save the OutCome
 		im.show()
 		im.save("Outcome/Testautre.png")
 
-	def prepareCoords(self,canvas,element,x_,y_):
+	def finalImage(self,canvas):
+		localIm = Image.open('lena.jpg')	# Get local image
+		lengthDiag = math.sqrt(localIm.width**2 + localIm.height**2)	# Get the length of its diagonal
+
+		# We create an imaginary diagonal with the localIm in order to have the NF of correct size
+		# does not appear on the final result
+		diagonal = Line()
+		diagonal.x = np.array([0,Setup.WIDTH])
+		diagonal.y = np.array([0,Setup.HEIGHT])
+		# The density of the diagonal need to be at 100%
+		# Or the final Outcome will be awful
+		a = np.linspace(0, 1, self.getN(diagonal,16,density=100))
+		_x_, _y_ = diagonal.interpolate()
+		x_, y_ = _x_(a), _y_(a)
+
+		print(len(x_))
+
+		# Create the Image for the NF
+		im = Image.new('RGB',
+					   (Setup.WIDTH + int(localIm.width * len(x_) + localIm.width),
+						Setup.HEIGHT + int(localIm.height * len(y_) + localIm.width)),
+					   color='white')
+
+		# The NF isn't at the same size as the draw Canvas, so we have to calculate the Scale diff
+		Scale = np.array([
+			( int(im.width)  / Setup.WIDTH ) ,
+			( int(im.height) / Setup.HEIGHT )] )
+
+		# A loop for each type of element
+		for element in self.elements:
+
+			# Scale up the current element
+			if element.getType() == "circle" or element.getType()=="semiCircle":
+				# From the Center for the circle and semiCircle
+				element.setRadius(int(element.getRadius() * Scale[0]))
+				x, y = element.getCenter()
+				element.setCenter(np.array([x * Scale[0], y * Scale[1]]))
+				element.setX(0, x - element.getRadius())
+				element.setY(0, y - element.getRadius())
+				element.setX(1, x + element.getRadius())
+				element.setY(1, y + element.getRadius())
+			else:
+				# From extremities for the line
+				element.setX(0, element.getX(0) * Scale[0])
+				element.setY(0, element.getY(0) * Scale[1])
+				element.setX(1, element.getX(1) * Scale[0])
+				element.setY(1, element.getY(1) * Scale[1])
+
+
+
+
+			# Calculation of the coords of each local image
+			a = np.linspace(0, 1, self.getN(element, lengthDiag, self.d))
+			interp = element.interpolate()
+			for i in range(0,len(interp),2):
+				_x_, _y_ = interp[i:i+2]
+				x_, y_ = _x_(a), _y_(a)
+				
+				# Add local image to each coords
+				for i in range(0, len(x_)):
+					im.paste(localIm,
+							 (int(x_[i] + localIm.width),
+							  int(y_[i] + localIm.height)))
+
+
+			#Scale down the current element
+			if element.getType() == "circle" or element.getType()=="semiCircle":
+				# From the Center for the circle and semiCircle
+				element.setRadius(int(element.getRadius() / Scale[0]))
+				x, y = element.getCenter()
+				element.setCenter(np.array([x / Scale[0], y / Scale[1]]))
+				element.setX(0, x + element.getRadius())
+				element.setY(0, y + element.getRadius())
+				element.setX(1, x - element.getRadius())
+				element.setY(1, y - element.getRadius())
+			else:
+				element.setX(0, element.getX(0) / Scale[0])
+				element.setY(0, element.getY(0) / Scale[1])
+				element.setX(1, element.getX(1) / Scale[0])
+				element.setY(1, element.getY(1) / Scale[1])
+
+
+			# Only show the outcome
+		im.show()
+		im.save("Outcome/NewTestImage3.png")
+
+	def prepareCoords(self,canvas,element,x_,y_, gap):
 		"""
 		Remove from the list of coordinates (where images / local characters will be placed) 
 		every point that is ~~ almost identical to the intersection
@@ -102,58 +205,20 @@ class NF:
 			intersection = int(intersection)
 
 			# Get the point of the intersection
-			coords =np.array([
-				canvas.coords(intersection)[0]+Setup.RADIUSINTER,
-				canvas.coords(intersection)[1]+Setup.RADIUSINTER])
+			coords = np.array([
+				canvas.coords(intersection)[0] + Setup.RADIUSINTER,
+				canvas.coords(intersection)[1] + Setup.RADIUSINTER])
 
 			for ite in range(0,len(x_)):
 				distance = int(math.hypot(coords[0] - x_[ite], coords[1] - y_[ite]))
-				if distance <= self.size:
-					ToDeletex_ = np.append(ToDeletex_,x_[ite])
-					ToDeletey_ = np.append(ToDeletey_,y_[ite])
+				if distance <= gap:
+					ToDeletex_ = np.append(ToDeletex_, x_[ite])
+					ToDeletey_ = np.append(ToDeletey_, y_[ite])
 
 			for x in ToDeletex_:
-				x_ = np.delete(x_,np.where(x_ == x))
+				x_ = np.delete(x_, np.where(x_ == x))
 				
 			for y in ToDeletey_:
-				y_ = np.delete(y_,np.where(y_ == y))
+				y_ = np.delete(y_, np.where(y_ == y))
 
 		return x_,y_
-
-	def finalImage(self,canvas):
-		# Get local image
-		localIm = Image.open('lena.jpg')
-
-		# A calculation with the diagonal of draw canvas to have the image of correct size
-		# does not appear on the final result
-		diagonal = Line()
-		diagonal.x = np.array([0,Setup.WIDTH])
-		diagonal.y = np.array([0,Setup.HEIGHT])
-		a = np.linspace(0, 1, self.getN(diagonal))
-		_x_, _y_ = diagonal.interpolate()
-
-		# Create the Image for the NF
-		im = Image.new('RGB',
-					   (Setup.WIDTH + int(localIm.width * len(x_)),
-						Setup.HEIGHT + int(localIm.height * len(y_))),
-					   color='white')
-
-		# A loop for each type of element
-		for element in self.elements:
-
-			# Calculation by M. BARD
-			a = np.linspace(0, 1, self.getN(element))
-			interp = element.interpolate()
-			for i in range(0,len(interp),2):
-				_x_, _y_ = interp[i],interp[i+1]
-				x_, y_ = _x_(a), _y_(a)
-				
-				# Add local image to each coords
-				for i in range(0, len(x_)):
-					im.paste(localIm,
-							 (int(x_[i] + localIm.width),
-							  int(y_[i] + localIm.height)))
-
-			# Only show the outcome
-		im.show()
-		im.save("Outcome/NewTestImage2.png")

@@ -64,3 +64,4 @@ class Ui_MainWindow:
 		"""
 		self.draw.update()
 		self.NF.final(self.draw.draw_canvas)
+		self.NF.finalImage(self.draw.draw_canvas)
