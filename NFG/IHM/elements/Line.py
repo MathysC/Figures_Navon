@@ -31,15 +31,16 @@ class Line(Element):
 		event = kwargs.get('event')
 		canvas = kwargs.get('canvas')
 
-		# The line begin at the click
-		self.setX(0, event.x)
-		self.setX(1, event.x)
-		self.setY(0, event.y)
-		self.setY(1, event.y)
+		point = self.gather(canvas,kwargs.get('NF'),np.array([event.x,event.y])) # Find if there is any element close to this one
+		# The line begins at the click
+		self.setX(0, point[0])
+		self.setX(1, point[0])
+		self.setY(0, point[1])
+		self.setY(1, point[1])
 
 		self.id = canvas.create_line(
-			event.x, event.y,
-			event.x, event.y,
+			self.getX(0), self.getY(0),
+			self.getX(1), self.getY(1),
 			fill='black', width=1)
 
 	def motion(self, **kwargs):
@@ -49,14 +50,17 @@ class Line(Element):
 		:type event: TKINTER EVENT
 		:key canvas: the canvas
 		:type canvas: TKINTER CANVAS
+		:key NF: the Navon's Figure
+		:type NF: NF
 		:return: this method return nothing
 		:rtype: None
 		"""
 		event = kwargs.get('event')
 		canvas = kwargs.get('canvas')
 
-		self.setX(1, event.x)
-		self.setY(1, event.y)
+		point = self.gather(canvas,kwargs.get('NF'),np.array([event.x,event.y])) # Find if there is any element close to this one
+		self.setX(1, point[0])
+		self.setY(1, point[1])
 
 		canvas.coords(self.id,
 					  self.getX(0), self.getY(0),
@@ -101,19 +105,15 @@ class Line(Element):
 		_y_ = itp.interp1d(self.getLDiv(), self.y)
 		return np.array([_x_, _y_])
 
-
-	def findNeighbors(self, **kwargs):
+	def findNeighbors(self, canvas):
 		"""
 		Check at any point of the line if there is another element and therefore an intersection to create
-		:key NF: the Navon's Figure
-		:type NF: NF
-		:key canvas: the TKINTER Canvas
+		:param: the TKINTER Canvas
 		:type canvas: TKINTER Element 
 		:return: method return nothing
 		:rtype: None
 		"""
-		canvas = kwargs.get('canvas')
-
+		
 		""" There are three tags for intersections :
 			Intersection
 			-{The ID of this element}
@@ -140,7 +140,7 @@ class Line(Element):
 			 self.getY(0) + i * math.sin(th)])
 
 			# We find all element that are at this point
-			found = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
+			found = np.array(canvas.find_overlapping(point[0]-1, point[1]-1, point[0]+1, point[1]+1))
 			
 			# We delete the current element from the list
 			found = np.delete(found,np.where(found == self.id))
@@ -160,3 +160,44 @@ class Line(Element):
 					# Then we save the outcome
 					self.addIntersection(intersection)
 					self.addNeighbor(neighbor)
+
+	def whereToGather(self,pointA) -> np.array:
+		"""
+		Found where to place the pointA on top of the other element
+		:param: pointA
+		:type pointA: np.array([ x , y ])
+		:return: the new coordonates
+		:rtype: np.array([ x , y ])
+		"""
+		# To find where to place pointA on top of this element
+		# We need 3 points :
+
+		# A : the point from other element
+		# B : The closest end of this line
+		pointB = np.array([])
+
+		# To find the closest end, we calculate the difference in length between each end and pointA
+		LineB = int(math.hypot(self.getX(0)- pointA[0], self.getY(0)- pointA[1])) # Distance from Beginning of the Line
+		LineE = int(math.hypot(self.getX(1)- pointA[0], self.getY(1)- pointA[1])) # Distance from End of the Line
+
+		if LineB < LineE:
+			pointB = np.array([self.getX(0), self.getY(0)])
+		else:
+			pointB = np.array([self.getX(1), self.getY(1)])
+
+		# C : The calculate point that will be the closest to A
+		pointC = np.array([])
+		previous = current = 9999 # Initialize previous and current value at extremely high value 
+							#to begin the while loop because their is not do while loop in python
+		lengthBC = 0 # The length of pointB to pointC
+
+		# https://stackoverflow.com/questions/22190193/finding-coordinates-of-a-point-on-a-line
+		th = math.atan2(self.getY(1) - self.getY(0), self.getX(1) - self.getX(0))
+		while current <= previous:
+			previous = current # Change the previous element
+			pointC = np.array([self.getX(0) + lengthBC * math.cos(th),
+			 self.getY(0) + lengthBC * math.sin(th)]) # Calculate pointC
+			lengthBC += 1 # Increment the length, 1 by 1 
+			current = int(math.hypot(pointC[0] - pointA[0], pointC[1] - pointA[1])) # Calculate the length A-C
+
+		return pointC

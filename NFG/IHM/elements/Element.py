@@ -170,3 +170,45 @@ class Element(ABC):
 		#	 Found which one are with this neighbor
 			if  f"-{self.id}" in canvas.gettags(intersection) and f"-{neighbor}" in canvas.gettags(intersection):
 				SndElement.addIntersection(intersection)
+
+
+	def gather(self, canvas, NF, pointA) -> np.array:
+		"""
+		Found the coordinates where the element will be.
+		If there is any element nearby, the pointA will be put on top of it.
+		Else, it stay where the event.xy are.
+		:param: NF : the Navon's Figure
+		:type NF: NF
+		:param: canvas, the TKINTER Canvas
+		:type canvas: TKINTER Element 
+		:param: pointA
+		:type pointA: np.array([ x , y ])
+		:return: the new coordonates
+		:rtype: np.array([ x , y ])
+		... seealso: self.whereToGather(self,pointA)
+		"""
+		radius = 8
+		# Found the closest element of pointA
+		found = np.array(canvas.find_overlapping(
+			pointA[0] - radius, pointA[1] - radius,
+			pointA[0] + radius, pointA[1] + radius))
+
+		# We delete the current element from the list
+		found = np.delete(found,np.where(found == self.id))
+#
+#		# We delete the circles that represents intersections
+		for circle in canvas.find_withtag(self.tag):
+			found = np.delete(found,np.where(found == circle))
+#
+		if(len(found)>=1):
+			# Get the coords of the founded element
+			# Even if found is composed of several element, we only use the first found
+			return NF.getElementById(found[0]).whereToGather(pointA)
+
+		return pointA
+			# Found which end of the founded element is the closest of this element
+
+
+	@abstractmethod
+	def whereToGather(self,pointA):
+		pass

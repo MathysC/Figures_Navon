@@ -83,7 +83,7 @@ class Draw_Canvas:
 		:param: event:
 		:type event: Event
 		"""
-		self.element.start(event=event, canvas=self.draw_canvas, draw_Canvas=self)
+		self.element.start(event=event, canvas=self.draw_canvas, draw_Canvas=self, NF=self.NF)
 
 	def motion(self, event):
 		"""

@@ -67,18 +67,18 @@ class Circle(Element):
 		event = kwargs.get('event')
 		canvas = kwargs.get('canvas')
 
+
+		self.center = self.gather(canvas,kwargs.get('NF'),np.array([event.x,event.y])) # Find if there is any element close to this one
 		# The circle begins at the click
-		self.setX(0, event.x)
-		self.setX(1, event.x)
-		self.setY(0, event.y)
-		self.setY(1, event.y)
+		self.setX(0, self.center[0])
+		self.setX(1, self.center[0])
+		self.setY(0, self.center[1])
+		self.setY(1, self.center[1])
 
 		self.id = canvas.create_oval(
-			event.x, event.y,
-			event.x, event.y,
+			self.getX(0), self.getY(0),
+			self.getX(1), self.getY(1),
 			width=1)
-
-		self.center = np.array([event.x,event.y])
 
 	def motion(self, **kwargs):
 		"""
@@ -92,8 +92,9 @@ class Circle(Element):
 		canvas = kwargs.get('canvas')
 
 		x, y = self.center
+		point = self.gather(canvas,kwargs.get('NF'),np.array([event.x,event.y])) # Find if there is any element close to this one
 
-		self.radius = int(math.hypot(x - event.x, y - event.y))
+		self.radius = int(math.hypot(x - point[0], y - point[1]))
 		self.setX(0, x - self.radius)
 		self.setY(0, y - self.radius)
 		self.setX(1, x + self.radius)
@@ -103,7 +104,7 @@ class Circle(Element):
 					  self.getX(0), self.getY(0),
 					  self.getX(1), self.getY(1))
 		# We add this element to its neighbors
-		self.findNeighbors(canvas=kwargs.get('canvas'),NF=kwargs.get('NF'))
+		self.findNeighbors(canvas=kwargs.get('canvas'))
 
 	def end(self, **kwargs):
 		"""
@@ -163,18 +164,15 @@ class Circle(Element):
 			res = np.append(res,[np.array([_x_,_y_])])
 		return res
 
-	def findNeighbors(self, **kwargs):
+	def findNeighbors(self, canvas):
 		"""
 		Check at any point of the perimeter of this element if there is another element and therefore an intersection to create
-		:key NF: the Navon's Figure
-		:type NF: NF
-		:key canvas: the TKINTER Canvas
+		:param: the TKINTER Canvas
 		:type canvas: TKINTER Element 
 		:return: method return nothing
 		:rtype: None
 		"""
-		canvas = kwargs.get('canvas')
-
+		
 		tag = f"-{self.id}" #self.tag from element and self.id to make a personal tag
 		# Reset intersections and neighbor 
 		canvas.delete(tag)
@@ -212,3 +210,28 @@ class Circle(Element):
 					# Then we save the outcome
 					self.addIntersection(intersection)
 					self.addNeighbor(find)
+
+	def whereToGather(self,pointA):
+		"""
+		Found where to place the pointA on top of the other element
+		:param: pointA
+		:type pointA: np.array([ x , y ])
+		:return: the new coordonates
+		:rtype: np.array([ x , y ])
+		"""
+		xC, yC = self.center
+		xA, yA = pointA
+		if yA == yC:
+			if xA < xC:
+				return np.array([xC - self.radius, yC])
+			else:
+				return np.array([xC + self.radius, yC])
+
+		elif xA == xC:
+			if yA < yC:
+				return np.array([xC, yC - self.radius])
+			else:
+				return np.array([xC, yC + self.radius])
+
+
+		return 

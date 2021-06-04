@@ -113,7 +113,6 @@ class NF:
 		_x_, _y_ = diagonal.interpolate()
 		x_, y_ = _x_(a), _y_(a)
 
-		print(len(x_))
 
 		# Create the Image for the NF
 		im = Image.new('RGB',
@@ -152,9 +151,9 @@ class NF:
 			# Calculation of the coords of each local image
 			a = np.linspace(0, 1, self.getN(element, lengthDiag, self.d))
 			interp = element.interpolate()
-			for i in range(0,len(interp),2):
+			for i in range(0, len(interp), 2):
 				_x_, _y_ = interp[i:i+2]
-				x_, y_ = _x_(a), _y_(a)
+				x_, y_ = self.prepareCoords(canvas, element, _x_(a), _y_(a), lengthDiag*2)
 				
 				# Add local image to each coords
 				for i in range(0, len(x_)):

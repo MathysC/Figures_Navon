@@ -208,17 +208,15 @@ class SemiCircle(Element):
 
 		return np.array([_x_,_y_])
 
-	def findNeighbors(self, **kwargs):
+	def findNeighbors(self, canvas):
 		"""
 		Check at any point of the semiCircle if there is another element and therefore an intersection to create
-		:key NF: the Navon's Figure
-		:type NF: NF
-		:key canvas: the TKINTER Canvas
+		:param: the TKINTER Canvas
 		:type canvas: TKINTER Element 
 		:return: method return nothing
 		:rtype: None
 		"""
-		canvas = kwargs.get('canvas')
+		
 
 		tag = f"-{self.id}" #self.tag from element and self.id to make a personal tag
 		# Reset intersections and neighbor 
@@ -236,7 +234,7 @@ class SemiCircle(Element):
 
 
 			# We find all element that are at this point
-			find = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
+			find = np.array(canvas.find_overlapping(point[0]-1, point[1]-1, point[0]+1, point[1]+1))
 			
 			# We delete the current element from the list
 			find = np.delete(find,np.where(find == self.id))
@@ -256,3 +254,6 @@ class SemiCircle(Element):
 					# Then we save the outcome
 					self.addIntersection(intersection)
 					self.addNeighbor(find)
+
+	def whereToGather(self,pointA):
+		pass

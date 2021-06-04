@@ -76,3 +76,6 @@ class Eraser(Element):
 
 	def findNeighbors(self,**kwargs):
 		pass
+
+	def whereToGather(self,pointA):
+		pass
