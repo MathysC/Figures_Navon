@@ -221,17 +221,62 @@ class Circle(Element):
 		"""
 		xC, yC = self.center
 		xA, yA = pointA
+
+		# There are eight ways to gather a circle
+
+		# Four are on axes 
+
+		# If the Y are the same
 		if yA == yC:
+			# But the X are different
 			if xA < xC:
 				return np.array([xC - self.radius, yC])
 			else:
 				return np.array([xC + self.radius, yC])
-
+		# If the X are the same
 		elif xA == xC:
+			# But the Y are different
 			if yA < yC:
 				return np.array([xC, yC - self.radius])
 			else:
 				return np.array([xC, yC + self.radius])
 
 
-		return 
+		# And the four last are on each side of the circle
+
+		# PS : I don't know why for the Right part of each side i have to use the negative values of the left part of each part
+		# On the top side :
+		if yA < yC:
+			if xA < xC:
+				# "Top - Left"
+				return self.findPointB(180, 90, pointA)
+			else:
+				# "Top - Right"
+				return self.findPointB(-180, -90, pointA)
+
+		# On the Bottom Side
+		elif yA > yC:
+			if xA < xC:
+				# "Bottom - Left"
+				return self.findPointB(90, 0, pointA)
+			else:
+				# "Bottom - Right"
+				return self.findPointB(-90, 0, pointA)
+
+		# If nothing above this line was used, return the pointA 
+		return pointA
+
+	def findPointB(self, angle1, angle2,pointA):
+		previous = current = 9999 # Initialize previous and current value at extremely high value 
+						#to begin the while loop because their is not do while loop in python
+		lengthAB = 0 # The length of pointA to pointB
+
+		while current <= previous or angle1 <= angle2:
+			previous = current # Change the previous element
+			radian = math.radians(angle1)
+			pointB = np.array([self.center[0]+self.radius * math.cos(radian),
+			 self.center[1]+self.radius * math.sin(radian)])
+			angle1+=1 # Increment the angle1, 1 by 1 
+			current = int(math.hypot(pointB[0] - pointA[0], pointB[1] - pointA[1])) # Calculate the length A-B
+
+		return pointB

@@ -206,8 +206,6 @@ class Element(ABC):
 			return NF.getElementById(found[0]).whereToGather(pointA)
 
 		return pointA
-			# Found which end of the founded element is the closest of this element
-
 
 	@abstractmethod
 	def whereToGather(self,pointA):
