@@ -243,6 +243,9 @@ class SemiCircle(Element):
 			for circle in canvas.find_withtag(self.tag):
 				find = np.delete(find,np.where(find == circle))
 
+			# Delete all the same multiple value at the same point
+			find = np.unique(find)
+
 			#Then if there is at least another one element
 			if(len(find)>=1):
 				for idElement in find:
@@ -256,4 +259,54 @@ class SemiCircle(Element):
 					self.addNeighbor(find)
 
 	def whereToGather(self,pointA):
-		pass
+		"""
+		Found where to place the pointA on top of the other element
+		:param: pointA
+		:type pointA: np.array([ x , y ])
+		:return: the new coordonates
+		:rtype: np.array([ x , y ])
+		"""
+		xC, yC = self.center
+		xA, yA = pointA
+
+		# As the circle, we need to found on each part of the element the pointA is nearby
+		# So we can use the same function for the two different element
+		
+		# PS : I don't know why for the Right part of each side i have to use the negative values of the left part of each part
+		# On the top side :
+		if yA < yC:
+			if xA < xC:
+				print("Top - Left")
+				return self.findPointB(180, 90, pointA)
+			else:
+				print("Top - Right")
+				return self.findPointB(-180, -90, pointA)
+
+		# On the Bottom Side
+		elif yA > yC:
+			if xA < xC:
+				print("Bottom - Left")
+				return self.findPointB(90, 0, pointA)
+			else:
+				print("Bottom - Right")
+				return self.findPointB(-90, 0, pointA)
+
+		# If nothing above this line was used, return the pointA 
+		return pointA
+
+
+
+	def findPointB(self, angle1, angle2,pointA):
+		previous = current = 9999 # Initialize previous and current value at extremely high value 
+						#to begin the while loop because their is not do while loop in python
+		lengthAB = 0 # The length of pointA to pointB
+
+		while current <= previous or angle1 <= angle2:
+			previous = current # Change the previous element
+			radian = math.radians(angle1)
+			pointB = np.array([self.center[0]+self.radius * math.cos(radian),
+			 self.center[1]+self.radius * math.sin(radian)])
+			angle1+=1 # Increment the angle1, 1 by 1 
+			current = int(math.hypot(pointB[0] - pointA[0], pointB[1] - pointA[1])) # Calculate the length A-B
+
+		return pointB

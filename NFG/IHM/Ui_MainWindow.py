@@ -56,7 +56,7 @@ class Ui_MainWindow:
 			print(f"{element.getType()} {element.getId()} : {element.getCoords()}")
 			for intersection in element.getIntersections():
 				intersection = int(intersection)
-				print(f"  intersection [{intersection}] : coords : {self.draw.draw_canvas.coords(intersection)}")
+				print(f" intersection [{intersection}] : coords : {self.draw.draw_canvas.coords(intersection)} | tags : {self.draw.draw_canvas.gettags(intersection)}")
 			print(f"  neighbors : {element.getNeighbors()}")
 	def final(self,event=None):
 		"""
@@ -64,4 +64,4 @@ class Ui_MainWindow:
 		"""
 		self.draw.update()
 		self.NF.final(self.draw.draw_canvas)
-		self.NF.finalImage(self.draw.draw_canvas)
+		#self.NF.finalImage(self.draw.draw_canvas)

@@ -181,15 +181,14 @@ class NF:
 
 			# Only show the outcome
 		im.show()
-		im.save("Outcome/NewTestImage3.png")
+		#im.save("Outcome/NewTestImage3.png")
 
 	def prepareCoords(self,canvas,element,x_,y_, gap):
 		"""
 		Remove from the list of coordinates (where images / local characters will be placed) 
 		every point that is ~~ almost identical to the intersection
 		"""
-		ToDeletex_ = np.array([])
-		ToDeletey_ = np.array([])
+		ToDelete = np.array([])
 		inter = np.array([]) # Array to distinguish intersections created by this element 
 
 
@@ -197,7 +196,7 @@ class NF:
 		for intersection in element.getIntersections():
 			intersection = int(intersection)
 			# We check who created this intersection with the second tag ('intersection', '-self.id','-otherElement.id')
-			if canvas.gettags(intersection)[1] == f"-{element.getId()}" :
+			if canvas.gettags(intersection)[2] == f"-{element.getId()}" :
 				inter = np.append(inter,intersection)
 		# Then for each of those intersection, check if there is a point (x_,y_) to delete
 		for intersection in inter:
@@ -205,19 +204,15 @@ class NF:
 
 			# Get the point of the intersection
 			coords = np.array([
-				canvas.coords(intersection)[0] + Setup.RADIUSINTER,
-				canvas.coords(intersection)[1] + Setup.RADIUSINTER])
+				(canvas.coords(intersection)[0] + canvas.coords(intersection)[2]) / 2,
+				(canvas.coords(intersection)[1] + canvas.coords(intersection)[3]) / 2])
 
 			for ite in range(0,len(x_)):
 				distance = int(math.hypot(coords[0] - x_[ite], coords[1] - y_[ite]))
-				if distance <= gap:
-					ToDeletex_ = np.append(ToDeletex_, x_[ite])
-					ToDeletey_ = np.append(ToDeletey_, y_[ite])
+				if distance < self.size/2:
+					ToDelete = np.append(ToDelete,ite)
 
-			for x in ToDeletex_:
-				x_ = np.delete(x_, np.where(x_ == x))
-				
-			for y in ToDeletey_:
-				y_ = np.delete(y_, np.where(y_ == y))
+			x_ = np.delete(x_,ToDelete.astype(int))
+			y_ = np.delete(y_,ToDelete.astype(int))
 
 		return x_,y_

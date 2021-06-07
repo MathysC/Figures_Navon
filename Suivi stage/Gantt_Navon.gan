@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2021-04-05" view-index="0" gantt-divider-location="268" resource-divider-location="300" version="3.0.3005" locale="fr_FR">
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2021-04-09" view-index="0" gantt-divider-location="387" resource-divider-location="300" version="3.0.3005" locale="fr_FR">
     <description/>
-    <view zooming-state="default:5" id="gantt-chart">
-        <field id="tpd3" name="Nom" width="195" order="0"/>
-        <field id="tpd4" name="Date de début" width="31" order="1"/>
-        <field id="tpd5" name="Date de fin" width="38" order="2"/>
+    <view zooming-state="default:3" id="gantt-chart">
+        <field id="tpd3" name="Nom" width="222" order="0"/>
+        <field id="tpd4" name="Date de début" width="104" order="1"/>
+        <field id="tpd5" name="Date de fin" width="57" order="2"/>
         <option id="color.recent">
-            <![CDATA[#990099 #33ff33 #ff0033 #f4f4f4]]>
+            <![CDATA[#66ffff #990099 #cc00cc #33ff33 #ff0033 #f4f4f4]]>
         </option>
     </view>
     <view id="resource-table">
@@ -36,13 +36,13 @@
             <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
             <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
         </taskproperties>
-        <task id="2" name="Voir les bibliothèques" color="#f4f4f4" meeting="false" start="2021-04-07" duration="4" complete="100" thirdDate="2021-04-07" thirdDate-constraint="0" priority="2" expand="true">
+        <task id="2" name="Voir les bibliothèques" color="#33ff33" meeting="false" start="2021-04-07" duration="4" complete="100" thirdDate="2021-04-07" thirdDate-constraint="0" priority="2" expand="true">
             <notes>
                 <![CDATA[Fin : Approfondir les recherches sur Numpy]]>
             </notes>
             <depend id="7" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="7" name="ReConception du code" color="#f4f4f4" meeting="false" start="2021-04-13" duration="1" complete="50" thirdDate="2021-04-05" thirdDate-constraint="0" priority="4" expand="true">
+        <task id="7" name="ReConception du code" color="#f4f4f4" meeting="false" start="2021-04-13" duration="1" complete="100" thirdDate="2021-04-05" thirdDate-constraint="0" priority="4" expand="true">
             <notes>
                 <![CDATA[Conception vu une fois
 Mais à refaire car les plans ont changé]]>
@@ -84,28 +84,55 @@ Problème mineur : Le canvas m'était inconnu aussi, mais moins compliqué à ex
         </task>
         <task id="61" name="Réunion Hebdo" color="#990099" meeting="false" start="2021-04-27" duration="1" complete="100" thirdDate="2021-04-08" thirdDate-constraint="0" expand="true">
             <notes>
-                <![CDATA[Les test (navon1,navon2,navon3) de M. Bard sont satisfaisant, on part avec cela afin de commencer le code du projet]]>
-            </notes>
-            <depend id="9" type="2" difference="0" hardness="Strong"/>
-        </task>
-        <task id="9" name="Début du code" color="#8cb6ce" shape="1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1" meeting="false" start="2021-04-28" duration="9" complete="0" thirdDate="2021-04-05" thirdDate-constraint="0" priority="2" expand="true">
-            <notes>
-                <![CDATA[1. Code par Matrice
-Le code actuelle fonctionne via des courbes et fonctions mathématiques, il faut changer cela par des utilisations de matrices, afin de simplifier son utilisation, sa modification et sa sauvegarde.
+                <![CDATA[Les test (navon1,navon2,navon3) de M. Bard sont satisfaisant, on part avec cela afin de commencer le code du projet
 
-Annulé ! 
-2. On fait un pas en arrière, utilisation de matplotlib. Résultats meilleurs]]>
+On part sur des mathématiques analytiques. Les matrices ne permettent pas de gérer les densités convenablement]]>
             </notes>
-            <depend id="110" type="2" difference="0" hardness="Strong"/>
         </task>
+        <task id="168" name="Création MainWindow" color="#8cb6ce" meeting="false" start="2021-04-27" duration="1" complete="100" thirdDate="2021-04-05" thirdDate-constraint="0" expand="true"/>
+        <task id="174" name="Création d'un fichier SETUP" color="#8cb6ce" meeting="false" start="2021-04-27" duration="1" complete="100" thirdDate="2021-04-05" thirdDate-constraint="0" expand="true"/>
+        <task id="169" name="Création Draw Canvas" color="#8cb6ce" meeting="false" start="2021-04-27" duration="2" complete="100" thirdDate="2021-04-05" thirdDate-constraint="0" expand="true"/>
+        <task id="170" name="Implementation Element" color="#66ffff" meeting="false" start="2021-04-28" duration="3" complete="100" thirdDate="2021-04-05" thirdDate-constraint="0" expand="true"/>
+        <task id="153" name="ElementFabric" color="#66ffff" meeting="false" start="2021-05-03" duration="1" complete="100" thirdDate="2021-04-05" thirdDate-constraint="0" expand="true">
+            <notes>
+                <![CDATA[Implementation du Fabric Pattern
+]]>
+            </notes>
+        </task>
+        <task id="158" name="Implementation Line" color="#66ffff" meeting="false" start="2021-05-03" duration="2" complete="100" thirdDate="2021-04-05" thirdDate-constraint="0" expand="true"/>
         <task id="63" name="Réunion Hebdo" color="#990099" meeting="false" start="2021-05-04" duration="1" complete="100" thirdDate="2021-04-08" thirdDate-constraint="0" expand="true">
             <notes>
                 <![CDATA[Réunion hebdo portant sur l'avancée du code
 Matplolib est bon pour faire les calculs nécessaires à NF mais il faut utiliser une autre bibliothèque telle que Pillow etc afin de faire le boulot de la création de l'image etc]]>
             </notes>
         </task>
-        <task id="110" name="Réunion Hebdo" color="#990099" meeting="false" start="2021-05-11" duration="1" complete="0" thirdDate="2021-04-28" thirdDate-constraint="0" expand="true"/>
-        <task id="27" name="Système de sauvegarde" color="#8cb6ce" shape="1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1" meeting="false" start="2021-05-12" duration="6" complete="0" thirdDate="2021-04-22" thirdDate-constraint="0" priority="2" expand="true">
+        <task id="185" name="Amélioration Draw_Canvas" color="#8cb6ce" meeting="false" start="2021-05-04" duration="1" complete="100" thirdDate="2021-04-19" thirdDate-constraint="0" expand="true"/>
+        <task id="188" name="Implementation Eraser" color="#66ffff" meeting="false" start="2021-05-05" duration="2" complete="100" thirdDate="2021-04-19" thirdDate-constraint="0" expand="true"/>
+        <task id="199" name="Gestion NF par Image" color="#66ffff" meeting="false" start="2021-05-06" duration="1" complete="100" thirdDate="2021-04-19" thirdDate-constraint="0" expand="true"/>
+        <task id="193" name="Début Arc" color="#66ffff" meeting="false" start="2021-05-06" duration="2" complete="100" thirdDate="2021-04-19" thirdDate-constraint="0" expand="true"/>
+        <task id="204" name="Changement plot à Pillow" color="#8cb6ce" meeting="false" start="2021-05-07" duration="1" complete="100" thirdDate="2021-04-19" thirdDate-constraint="0" expand="true"/>
+        <task id="130" name="Réunion Hebdo" color="#990099" meeting="false" start="2021-05-11" duration="1" complete="100" thirdDate="2021-04-19" thirdDate-constraint="0" expand="true">
+            <notes>
+                <![CDATA[Discussion sur la gestion des superposition : 
+Supprimer les éléments locaux qui gênent
+
+Sur l'implémentation des arcs
+
+Sur l'utilisation d'image locale
+
+
+]]>
+            </notes>
+        </task>
+        <task id="131" name="Code" color="#8cb6ce" shape="1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1" meeting="false" start="2021-05-11" duration="4" complete="100" thirdDate="2021-05-12" thirdDate-constraint="0" expand="true">
+            <notes>
+                <![CDATA[Fin de l'implémentation des arcs v1
+Début de l'implémentation des images locales
+Fin gestion des superpositions (Cote IHM uniquement)]]>
+            </notes>
+        </task>
+        <task id="140" name="Réunion Hebdo" color="#990099" meeting="false" start="2021-05-17" duration="1" complete="100" thirdDate="2021-05-19" thirdDate-constraint="0" expand="true"/>
+        <task id="27" name="Système de sauvegarde" color="#cc00cc" shape="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" meeting="false" start="2021-06-22" duration="1" complete="0" thirdDate="2021-04-22" thirdDate-constraint="0" priority="2" expand="true">
             <notes>
                 <![CDATA[Système de sauvegarde (sûrement en CSV) permettant de faire plusieurs figures de Navon à la fois.
 Modification de plusieurs figures sans trop de manip inutile
@@ -141,12 +168,10 @@ l'utilisation de la sauvegarde]]>
         <allocation task-id="59" resource-id="0" function="SoftwareDevelopment:2" responsible="false" load="100.0"/>
         <allocation task-id="49" resource-id="0" function="SoftwareDevelopment:2" responsible="true" load="100.0"/>
         <allocation task-id="60" resource-id="0" function="SoftwareDevelopment:2" responsible="false" load="100.0"/>
-        <allocation task-id="110" resource-id="0" function="SoftwareDevelopment:2" responsible="false" load="100.0"/>
         <allocation task-id="61" resource-id="0" function="SoftwareDevelopment:2" responsible="false" load="100.0"/>
         <allocation task-id="59" resource-id="1" function="Default:1" responsible="true" load="100.0"/>
         <allocation task-id="49" resource-id="1" function="Default:1" responsible="false" load="100.0"/>
         <allocation task-id="60" resource-id="1" function="Default:1" responsible="true" load="100.0"/>
-        <allocation task-id="110" resource-id="1" function="Default:1" responsible="true" load="100.0"/>
         <allocation task-id="61" resource-id="1" function="Default:1" responsible="true" load="100.0"/>
     </allocations>
     <vacations/>

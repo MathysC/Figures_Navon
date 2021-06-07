@@ -190,7 +190,7 @@ class Circle(Element):
 
 
 			# We find all element that are at this point
-			find = np.array(canvas.find_overlapping(point[0]-1, point[1]-1, point[0]+1, point[1]+1))
+			find = np.array(canvas.find_overlapping(point[0]-1, point[1]-1, point[0]-1, point[1]-1))
 			
 			# We delete the current element from the list
 			find = np.delete(find,np.where(find == self.id))
@@ -198,6 +198,10 @@ class Circle(Element):
 			# We delete the circles that represents intersections
 			for circle in canvas.find_withtag(self.tag):
 				find = np.delete(find,np.where(find == circle))
+
+			# Delete all the same multiple value at the same point
+			find = np.unique(find)
+			print(find)
 
 			#Then if there is at least another one element
 			if(len(find)>=1):
@@ -209,7 +213,7 @@ class Circle(Element):
 
 					# Then we save the outcome
 					self.addIntersection(intersection)
-					self.addNeighbor(find)
+					self.addNeighbor(idElement)
 
 	def whereToGather(self,pointA):
 		"""

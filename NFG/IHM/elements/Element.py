@@ -78,12 +78,13 @@ class Element(ABC):
 		self.intersections = np.append(
 			self.intersections, intersection)
 
-	def removeIntersectionsByTag(self,tag):
+	def removeIntersectionsByTag(self,tag,canvas):
 		for intersection in self.intersections:
-			if tag == intersection.getTag():
+			intersection = int(intersection) # Cast because numpy save int32 with decimal and we need to use int without decimal
+			if tag in canvas.gettags(intersection):
 				self.intersections = np.delete(
-				self.intersections,
-				np.where(self.intersections == intersection))
+				 self.intersections,
+				 np.where(self.intersections == intersection))
 
 
 	def getNeighbors(self):

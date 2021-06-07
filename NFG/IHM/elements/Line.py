@@ -140,7 +140,7 @@ class Line(Element):
 			 self.getY(0) + i * math.sin(th)])
 
 			# We find all element that are at this point
-			found = np.array(canvas.find_overlapping(point[0]-1, point[1]-1, point[0]+1, point[1]+1))
+			found = np.array(canvas.find_overlapping(point[0]-1, point[1]-1, point[0]-1, point[1]-1))
 			
 			# We delete the current element from the list
 			found = np.delete(found,np.where(found == self.id))
@@ -148,6 +148,9 @@ class Line(Element):
 			# We delete the circles that represents intersections
 			for circle in canvas.find_withtag(self.tag):
 				found = np.delete(found,np.where(found == circle))
+
+			# Delete all the same multiple value at the same point
+			found = np.unique(found)
 				
 			#Then if there is at least another one element found
 			if(len(found)>=1):

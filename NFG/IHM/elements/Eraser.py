@@ -53,19 +53,25 @@ class Eraser(Element):
 		# If the mouse is on the same element
 		# Remove it from the NF
 		if(onClick):
-			for element in NF.elements:
-				if element.getId() == onClick[0]:
-					# https://www.kite.com/python/answers/how-to-delete-values-from-a-numpy-array-in-python#:~:text=from%20an%20array-,Use%20numpy.,that%20match%20the%20specified%20condition%20.	
-					NF.removeElement(element)
-						
+			element = NF.getElementById(onClick[0])
+			# https://www.kite.com/python/answers/how-to-delete-values-from-a-numpy-array-in-python#:~:text=from%20an%20array-,Use%20numpy.,that%20match%20the%20specified%20condition%20.	
+			NF.removeElement(element)
+				
 
-					#Remove its intersections
-					tag = f"-{element.getId()}" #self.tag from element and self.id to make a personal tag
-					canvas.delete(tag)
+			# Remove all the constraints from this element
+			tag = f"-{element.getId()}" 
 
-					# Remove it from the canvas
-					canvas.delete(element.getId())
-
+			# Remove this element as a neighbor from its neighbors themself
+			for neighbor in element.getNeighbors():
+				otherElement = NF.getElementById(neighbor)
+				otherElement.removeNeighbor(onClick[0])
+				# And remove its intersections
+				otherElement.removeIntersectionsByTag(tag,canvas=canvas)
+			canvas.delete(tag)		
+			# Remove it from the canvas
+			canvas.delete(onClick[0])
+			# And finally, remove this element
+			del(element)
 					
 
 	def getL(self):
