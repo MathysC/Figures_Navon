@@ -86,7 +86,6 @@ class Element(ABC):
 				 self.intersections,
 				 np.where(self.intersections == intersection))
 
-
 	def getNeighbors(self):
 		return self.neighbors
 
@@ -99,6 +98,13 @@ class Element(ABC):
 		self.neighbors = np.append(
 			self.neighbors, neighbor)
 
+	def getTag(self):
+		"""
+		Getter of the tag for intersections
+		:return: 'intersection'
+		:rtype: str
+		"""
+		return self.tag
 
 	def getCoords(self):
 		"""
@@ -115,9 +121,11 @@ class Element(ABC):
 	def getL(self):
 		pass
 
-	def getLDiv(self):
+	def getDividedL(self):
 		"""
 		Function that calculates each value of the L array div by its last element
+		:return: the division
+		:rtype: numpy.ndarray
 		"""
 		return self.getL() / self.getL()[-1]
 
@@ -146,9 +154,9 @@ class Element(ABC):
 	def findNeighbors(self,**kwargs):
 		pass
 
-	def FinishToFindNeighbors(self, canvas, NF):
+	def addToNeighbors(self, canvas, NF):
 		"""
-		Last function called in self.end that apply change to the neighbors of this element
+		Last function called in self.end that apply change to the neighbors of this element :
 		It add THIS element to the neighbor list of the neighbor itself
 		And the intersections to the intersection list of the neighbor itself too
 		:key NF: the Navon's Figure
@@ -175,8 +183,9 @@ class Element(ABC):
 
 	def gather(self, canvas, NF, pointA) -> np.array:
 		"""
-		Found the coordinates where the element will be.
-		If there is any element nearby, the pointA will be put on top of it.
+		Found the nearest element to gather with element, and calculate the coords where to gather both element.
+		
+		If there is any element nearby, calculate where the pointA will be put on top of it.
 		Else, it stay where the event.xy are.
 		:param: NF : the Navon's Figure
 		:type NF: NF
@@ -189,18 +198,21 @@ class Element(ABC):
 		... seealso: self.whereToGather(self,pointA)
 		"""
 		radius = 8
-		# Found the closest element of pointA
+		# Find the closest element of pointA
 		found = np.array(canvas.find_overlapping(
 			pointA[0] - radius, pointA[1] - radius,
 			pointA[0] + radius, pointA[1] + radius))
 
 		# We delete the current element from the list
 		found = np.delete(found,np.where(found == self.id))
-#
-#		# We delete the circles that represents intersections
+
+		# We delete the circles that represents intersections
 		for circle in canvas.find_withtag(self.tag):
 			found = np.delete(found,np.where(found == circle))
-#
+
+		# Delete all the same multiple value at the same point
+		found = np.unique(found)
+
 		if(len(found)>=1):
 			# Get the coords of the founded element
 			# Even if found is composed of several element, we only use the first found

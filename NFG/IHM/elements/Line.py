@@ -82,7 +82,7 @@ class Line(Element):
 		NF.addElement(self)
 
 		# We add this element to its neighbors
-		self.FinishToFindNeighbors(canvas=kwargs.get('canvas'),NF=NF)
+		self.addToNeighbors(canvas=kwargs.get('canvas'),NF=NF)
 
 	def getL(self):
 		"""
@@ -101,8 +101,8 @@ class Line(Element):
 		:return: an array of the interpolation
 		:rtype: np.array
 		"""
-		_x_ = itp.interp1d(self.getLDiv(), self.x)
-		_y_ = itp.interp1d(self.getLDiv(), self.y)
+		_x_ = itp.interp1d(self.getDividedL(), self.x)
+		_y_ = itp.interp1d(self.getDividedL(), self.y)
 		return np.array([_x_, _y_])
 
 	def findNeighbors(self, canvas):

@@ -1,6 +1,5 @@
 from IHM.elements.Element import Element
 from Logic.Setup import Setup
-
 import numpy as np
 import math
 import scipy.interpolate as itp
@@ -24,7 +23,7 @@ class Circle(Element):
 		"""
 		return "circle"
 
-	def getRadius(self):
+	def getRadius(self) -> int:
 		"""
 		Getter of radius
 		:return: the radius
@@ -40,7 +39,7 @@ class Circle(Element):
 		"""
 		self.radius = newR
 
-	def getCenter(self):
+	def getCenter(self) -> np.array:
 		"""
 		Getter of center
 		:return: the x and y of the center
@@ -103,8 +102,9 @@ class Circle(Element):
 		canvas.coords(self.id,
 					  self.getX(0), self.getY(0),
 					  self.getX(1), self.getY(1))
-		# We add this element to its neighbors
-		self.findNeighbors(canvas=kwargs.get('canvas'))
+	
+		# We find its neighbors
+		self.findNeighbors(canvas=canvas)
 
 	def end(self, **kwargs):
 		"""
@@ -118,7 +118,7 @@ class Circle(Element):
 		NF.addElement(self)
 
 		# We add this element to its neighbors
-		self.FinishToFindNeighbors(canvas=kwargs.get('canvas'),NF=kwargs.get('NF'))
+		self.addToNeighbors(canvas=kwargs.get('canvas'),NF=kwargs.get('NF'))
 
 
 	def getL(self):
@@ -159,8 +159,8 @@ class Circle(Element):
 				y + self.radius * np.sin(t_)) for t_ in t]
 			x_ = [c_[0] for c_ in sqrtC]
 			y_ = [c_[1] for c_ in sqrtC]
-			_x_ = itp.interp1d(self.getLDiv(), x_)
-			_y_ = itp.interp1d(self.getLDiv(), y_)
+			_x_ = itp.interp1d(self.getDividedL(), x_)
+			_y_ = itp.interp1d(self.getDividedL(), y_)
 			res = np.append(res,[np.array([_x_,_y_])])
 		return res
 

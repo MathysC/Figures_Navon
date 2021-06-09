@@ -24,7 +24,7 @@ class SemiCircle(Element):
 		"""
 		return "semiCircle"
 
-	def getRadius(self):
+	def getRadius(self) -> int:
 		"""
 		Getter of radius
 		:return: the radius
@@ -40,7 +40,7 @@ class SemiCircle(Element):
 		"""
 		self.radius = newR
 
-	def getCenter(self):
+	def getCenter(self) -> np.array:
 		"""
 		Getter of center
 		:return: the x and y of the center
@@ -147,6 +147,7 @@ class SemiCircle(Element):
 
 		canvas.itemconfig(self.id,start=self.angle,extent=180)
 
+		# We find its neighbors
 		self.findNeighbors(canvas=canvas)
 
 	def end(self, **kwargs):
@@ -164,7 +165,7 @@ class SemiCircle(Element):
 		# Save this element
 		NF = kwargs.get('NF')
 		NF.addElement(self)
-		self.FinishToFindNeighbors(canvas=kwargs.get('canvas'),NF=NF)
+		self.addToNeighbors(canvas=kwargs.get('canvas'),NF=NF)
 
 	def getL(self):
 		"""
@@ -203,8 +204,8 @@ class SemiCircle(Element):
 			y + self.radius * np.sin(t_)) for t_ in t]
 		x_ = [c_[0] for c_ in sqrtC]
 		y_ = [c_[1] for c_ in sqrtC]
-		_x_ = itp.interp1d(self.getLDiv(), x_)
-		_y_ = itp.interp1d(self.getLDiv(), y_)
+		_x_ = itp.interp1d(self.getDividedL(), x_)
+		_y_ = itp.interp1d(self.getDividedL(), y_)
 
 		return np.array([_x_,_y_])
 
@@ -293,8 +294,6 @@ class SemiCircle(Element):
 
 		# If nothing above this line was used, return the pointA 
 		return pointA
-
-
 
 	def findPointB(self, angle1, angle2,pointA):
 		previous = current = 9999 # Initialize previous and current value at extremely high value 
