@@ -77,7 +77,7 @@ class NF:
 	def final(self,canvas):
 
 		# Create the image
-		im = Image.new('RGB', (400 + self.size, 250 + self.size), color='white')
+		im = Image.new('RGB', (int(Setup.WIDTH/2) + self.size, Setup.HEIGHT + self.size), color='white')
 		draw = ImageDraw.Draw(im)
 
 		font = ImageFont.truetype(self.police, self.size)
