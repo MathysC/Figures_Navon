@@ -17,11 +17,17 @@ class NF:
 		:param char:
 		"""
 		self.elements = np.array([])
-		self.d = None  # Densité
+		self.d = 100  # Densité
 		self.char = 'A'
 		self.color = (0, 0, 0)
 		self.size = 16
 		self.police = "arial.ttf"
+
+	def getElements(self):
+		return self.elements
+
+	def setElements(self,newList):
+		self.elements = newList
 
 	def getElementById(self,toFound)-> Element:
 		"""
@@ -54,7 +60,7 @@ class NF:
 
 	def getG(self):
 		"""
-		Function that calculates the sum of all last index of each element.getL
+		Function that calculates the sum of length of all elements
 		:return: the sum of the last element 
 		.. seealso:: Element.getL()
 		"""
@@ -65,14 +71,36 @@ class NF:
 
 	def getN(self, element,size, density):
 		"""
-		Function that calculates N
+		Function that calculates N 
+		(The percentage * the sum of all length (g) / size of the local element ) / the length of the element / g
+		.. seealso:: self.get()
 		"""
 		g = self.getG()
 		return int((
-						   density
+					   density
 						   / 100 *
 					g / size) *
 				   element.getL()[-1] / g)
+
+
+	def printElement(self,element,draw):
+		spaces = np.linspace(0, 1, self.getN(element = element, size = self.size, density = self.d))
+		interp = element.interpolate()
+		font = ImageFont.truetype(self.police, self.size)	
+
+		for i in range(0, len(interp), 2):
+			_x_, _y_ = interp[i:i+2]
+			x_, y_ = _x_(spaces), _y_(spaces)
+			
+
+			# Add local char to each coords
+			for i in range(0, len(x_)):
+				draw.text((x_[i], y_[i]), self.char, self.color, font = font)
+
+
+	def printAllElement(self, draw):
+		for element in self.elements:
+			self.printElement(element,draw)
 
 	def final(self,canvas):
 
@@ -83,6 +111,7 @@ class NF:
 		font = ImageFont.truetype(self.police, self.size)
 
 		for element in self.elements:
+			# Return spaced number from getN() interval
 			a = np.linspace(0, 1, self.getN(element = element, size = self.size, density = self.d))
 			interp = element.interpolate()
 			for i in range(0, len(interp), 2):

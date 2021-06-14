@@ -134,13 +134,14 @@ class Line(Element):
 		th = math.atan2(self.getY(1) - self.getY(0), self.getX(1) - self.getX(0))
 		
 		# For each point of the line
-		for i in range(0,int(math.hypot(self.getX(0)- self.getX(1), self.getY(0)- self.getY(1))),1):
-			# Get the coords of the
+		for i in range(0,int(math.hypot(self.getX(0) - self.getX(1), self.getY(0) - self.getY(1))),1):
+			# Get the coords of the point
 			point = np.array([self.getX(0) + i * math.cos(th),
 			 self.getY(0) + i * math.sin(th)])
 
 			# We find all element that are at this point
-			found = np.array(canvas.find_overlapping(point[0]-1, point[1]-1, point[0]-1, point[1]-1))
+			found = np.array(canvas.find_overlapping(point[0]-1, point[1]-1, point[0]+1, point[1]+1))
+			#found = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
 			
 			# We delete the current element from the list
 			found = np.delete(found,np.where(found == self.id))

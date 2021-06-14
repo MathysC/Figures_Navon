@@ -1,12 +1,13 @@
 from PIL import Image, ImageFont, ImageDraw
 from tkinter import *
+import tkinter.ttk
 from PIL import Image, ImageTk
 import math
 from Logic.Setup import Setup
-from Logic.NF import NF
 
 from IHM.Canvas.Draw_Canvas import Draw_Canvas
-
+from IHM.Canvas.Generator_Canvas import Generator_Canvas
+from IHM.Canvas.Outcome_Canvas import Outcome_Canvas
 
 class Ui_MainWindow:
 	"""
@@ -15,14 +16,14 @@ class Ui_MainWindow:
 	def __init__(self):
 		self.mainWindow = Tk()
 		# Prepare the Setup
+		# We must prepare those variable at this moment because we can get information about the user's screen only by this way
 		Setup.WIDTH = self.mainWindow.winfo_screenwidth()-80
 		Setup.HEIGHT = self.mainWindow.winfo_screenheight()-80
 		
 		self.mainWindow.title("NFG - Navon's Figure Generator")
 		self.mainWindow.geometry(f"{Setup.WIDTH}x{Setup.HEIGHT}")
-		self.mainWindow.state('zoomed')
+		self.mainWindow.state('zoomed') # Start the program with the window at its maximum size (not a fullscreen though)
 
-		self.canvas = {}
 		# Menus
 		mainMenu = Menu(self.mainWindow)
 		self.mainWindow.config(menu=mainMenu)
@@ -33,41 +34,61 @@ class Ui_MainWindow:
 		fileMenu.add_separator()
 		fileMenu.add_command(label = "Quit", command=self.mainWindow.quit)
 
-		self.options_frame = Frame(self.mainWindow,width = Setup.WIDTH,bd=2,bg="white")
-		self.options_frame.grid(row=0,column=0,columnspan=2,sticky="nsew")
+		# We create Frames and Canvas
+		bg = "white"
+		# Right part of the window, where differents options are (font, size, image etc) and the current outcome of the Navon's Figure
+		self.options_RightCanvas = Frame(self.mainWindow,width = Setup.WIDTH/2, bg=bg, bd=1, relief=RAISED) # The option frame at the top right
+		self.options_RightCanvas.grid(row=0,column=1,sticky="nsew")
 
-#		self.options_frame.grid(sticky='nsew')
-		self.cboxvalue = StringVar()
-		self.checkbox =Checkbutton(master=self.options_frame,text="Switch Canvas",bg="white",bd=1,var=self.cboxvalue,onvalue="draw",offvalue="generator")
+
+		self.right_Canvas = Frame(master=self.mainWindow,width = Setup.WIDTH/2, bg=bg) # The Canvas frame at the right bottom~
+		self.right_Canvas.grid(row=1,column=1)
+
+		self.draw_outcome = Outcome_Canvas(self.right_Canvas) # The Canvas use in the right part for the draw canvas 
+		self.gen_outcome = Outcome_Canvas(self.right_Canvas) # The Canvas use in the right part for the generator canvas 
+
+
+		# The Frame where the draw Canvas and the Generator canvas will be put
+		self.left_Canvas = Frame(self.mainWindow,width = Setup.WIDTH/2,bg=bg) # The Canvas frame at the left bottom~
+		self.left_Canvas.grid(row=1,column=0,sticky="nsw")
+
+
+		# Options part where buttons for the Draw Canvas and the switch canvas will be put
+		self.options_LeftCanvas = Frame(self.mainWindow,width = Setup.WIDTH/2, bg=bg, bd=1, relief=RAISED) # The option frame at the top left
+		self.options_LeftCanvas.grid(row=0,column=0,sticky="nsew")
+
+		# The switch between Draw Canvas and Generator Canvas
+		self.cboxvalue = StringVar(value='draw') # To start the application with the draw canvas
+		self.checkbox =Checkbutton(master=self.options_LeftCanvas,
+			text="Use Draw Canvas",bg=bg,
+			var=self.cboxvalue, onvalue='draw', offvalue='generator', 
+			command=self.changeCanvas)
 		self.checkbox.grid(row=0,column=0)
 
-		## Create the frame that contains the global buttons (preview etc)
-		#self.global_frame = LabelFrame(self.mainWindow,font=Setup.FONT,bd=1,bg="white", relief=RIDGE)
-		#self.global_frame.place(x=0,y=Setup.HEIGHT,width=Setup.WIDTH+70,height=50)
-		#
-		## Button that lists all created element (ONLY FOR TEST PHASE)
-		#self.list_Button = Button(self.global_frame, height= 2,text="get the list", command=self.getlist)
-		#self.list_Button.grid(row=0, column=2)
-		#
-		## Button that prints the NF
-		#self.print_Button = Button(self.global_frame, height=2, text="preview", command=self.final)
-		#self.print_Button.grid(row=0, column=1)
-
-
-		self.res_canvas = Canvas(self.mainWindow,height=Setup.HEIGHT,width=Setup.WIDTH/2, bg="blue", relief=RIDGE, bd=1)
-		self.res_canvas.grid(row=1,column=1,sticky="nse")
-
-		self.canvas_frame = Frame(self.mainWindow,width = Setup.WIDTH,bd=2,bg="white")
-		self.canvas_frame.grid(row=1,column=0,sticky="nsw")
-
-		self.NF = NF()
-		# Create the Draw part and the options
-		self.canvas['draw'] = Draw_Canvas(self.canvas_frame, self.NF,self.options_frame)
+		self.draw = Draw_Canvas(self.left_Canvas,self.options_LeftCanvas,self.draw_outcome) # the Draw part and the options
+		self.generator = Generator_Canvas(self.left_Canvas,self.gen_outcome) # The Generator part
+	
+		# Bind the Enter touch with the final function
 		self.mainWindow.bind('<Return>',self.final)
 
+		# Show the draw_canvas
+		self.changeCanvas()
 
 	def changeCanvas(self,event=None):
-		pass
+		"""
+		Make appear and disappear the canvas of the application
+		"""
+		if self.cboxvalue.get() == 'draw':
+			self.generator.getMainElement().grid_forget() # Make invisible the generator canvas
+			self.gen_outcome.getMainElement().grid_forget() # Make invisible its outcome canvas
+			self.draw.getMainElement().grid(row=2,column=0,columnspan=2,sticky="nsw") # Make visible the draw canvas
+			self.draw_outcome.getMainElement().grid(row=0,column=0,sticky="w",rowspan=2) # Make visibile it's outcome canvas
+
+		else:
+			self.draw.getMainElement().grid_forget() # Make invisible the draw canvas
+			self.draw_outcome.getMainElement().grid_forget() # Make invisible its outcome canvas
+			self.generator.getMainElement().grid(row=2, column=0, columnspan=2, sticky="nsw") # Make visible the generator canvas
+			self.gen_outcome.getMainElement().grid(row=0,column=0,sticky="w",rowspan=2) # Make visibile it's outcome canvas
 
 	def start(self):
 		"""
@@ -75,23 +96,15 @@ class Ui_MainWindow:
 		"""
 		self.mainWindow.mainloop()
 
-	def getlist(self):
-		"""
-		(ONLY FOR TEST PHASE)
-		Function to get the print of all lines
-		"""
-		#for i in range(0,100):
-		#	print("")
-		for element in self.NF.elements:
-			print(f"{element.getType()} {element.getId()} : {element.getCoords()}")
-			for intersection in element.getIntersections():
-				intersection = int(intersection)
-				print(f" intersection [{intersection}] : coords : {self.canvas['draw'].draw_canvas.coords(intersection)} | tags : {self.canvas['draw'].draw_canvas.gettags(intersection)}")
-			print(f"  neighbors : {element.getNeighbors()}")
 	def final(self,event=None):
 		"""
 		Function that (currently only ) preview the NF
 		"""
-		self.canvas['draw'].update()
-		self.NF.final(self.canvas['draw'].draw_canvas)
-		#self.NF.finalImage(self.canvas['draw'].draw_canvas)
+		if self.cboxvalue.get() == 'draw':
+			self.draw.update()
+			self.draw.final()
+			#self.NF.finalImage(self.canvas['draw'].draw_canvas)
+		else:
+			self.generator.update()
+			self.generator.final()
+		
