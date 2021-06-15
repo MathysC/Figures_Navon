@@ -40,6 +40,9 @@ class Ui_MainWindow:
 		self.options_RightCanvas = Frame(self.mainWindow,width = Setup.WIDTH/2, bg=bg, bd=1, relief=RAISED) # The option frame at the top right
 		self.options_RightCanvas.grid(row=0,column=1,sticky="nsew")
 
+		Button(self.options_RightCanvas, bg=bg, text="choose an Image").grid(row=0, column=0)
+
+
 
 		self.right_Canvas = Frame(master=self.mainWindow,width = Setup.WIDTH/2, bg=bg) # The Canvas frame at the right bottom~
 		self.right_Canvas.grid(row=1,column=1)

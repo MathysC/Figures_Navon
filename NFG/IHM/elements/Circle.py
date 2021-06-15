@@ -120,13 +120,19 @@ class Circle(Element):
 		# We add this element to its neighbors
 		self.addToNeighbors(canvas=kwargs.get('canvas'),NF=kwargs.get('NF'))
 
-
-	def getL(self):
+		# Add the element to the outcome canvas
+		draw_canvas = kwargs.get('draw_canvas')
+		draw_canvas.getOutcome().addElementToIm(self)
+		
+	def getL(self) -> np.ndarray:
 		"""
 		Function that calculates L
 		this method only used one quarter of the circle because 
 			the circle is created with 4 different quarter 
 			instead of 1 simple circle
+
+		:return: the length of the element
+		:rtype: numpy.ndarray
 		"""
 		angle = np.linspace(-np.pi/2,-np.pi, 10)
 		x,y = self.center
@@ -135,15 +141,16 @@ class Circle(Element):
 		y + self.radius * np.sin(a_)) for a_ in angle]
 		x_ = np.array([c_[0] for c_ in sqrtC])
 		y_ = np.array([c_[1] for c_ in sqrtC])
-
 		return np.cumsum(
 			np.sqrt(
 				np.ediff1d(x_, to_begin=0) ** 2
 				+ np.ediff1d(y_, to_begin=0) ** 2))
 
-	def interpolate(self):
+	def interpolate(self) -> np.ndarray:
 		"""
 		Function that calculates the interpolation of X and Y of the element
+		:return: the interpolation of the circle
+		:rtype: np.ndarray
 		"""
 		res = np.array([])
 		angle = np.array(
@@ -162,6 +169,7 @@ class Circle(Element):
 			_x_ = itp.interp1d(self.getDividedL(), x_)
 			_y_ = itp.interp1d(self.getDividedL(), y_)
 			res = np.append(res,[np.array([_x_,_y_])])
+		print(type(res))
 		return res
 
 	def findNeighbors(self, canvas):
@@ -201,8 +209,6 @@ class Circle(Element):
 
 			# Delete all the same multiple value at the same point
 			find = np.unique(find)
-			print(find)
-
 			#Then if there is at least another one element
 			if(len(find)>=1):
 				for idElement in find:
@@ -215,10 +221,10 @@ class Circle(Element):
 					self.addIntersection(intersection)
 					self.addNeighbor(idElement)
 
-	def whereToGather(self,pointA):
+	def whereToGather(self,pointA) -> np.array:
 		"""
 		Found where to place the pointA on top of the other element
-		:param: pointA
+		:param pointA: point to be brought closer to another element
 		:type pointA: np.array([ x , y ])
 		:return: the new coordonates
 		:rtype: np.array([ x , y ])
@@ -270,17 +276,26 @@ class Circle(Element):
 		# If nothing above this line was used, return the pointA 
 		return pointA
 
-	def findPointB(self, angle1, angle2,pointA):
+	def findPointB(self, start, end, pointA) -> np.array:
+		"""
+		Function used to find the position of the point of intersection on the circle
+		:param pointA: the point to help find PointB
+		:type pointA: np.array([x, y])
+		:param start: the starting angle
+		:type start: int
+		:param end: the ending angle
+		:type end: int
+		"""
 		previous = current = 9999 # Initialize previous and current value at extremely high value 
 						#to begin the while loop because their is not do while loop in python
 		lengthAB = 0 # The length of pointA to pointB
 
-		while current <= previous or angle1 <= angle2:
+		while current <= previous or start <= end:
 			previous = current # Change the previous element
-			radian = math.radians(angle1)
+			radian = math.radians(start)
 			pointB = np.array([self.center[0]+self.radius * math.cos(radian),
 			 self.center[1]+self.radius * math.sin(radian)])
-			angle1+=1 # Increment the angle1, 1 by 1 
+			start+=1 # Increment the start, 1 by 1 
 			current = int(math.hypot(pointB[0] - pointA[0], pointB[1] - pointA[1])) # Calculate the length A-B
 
 		return pointB

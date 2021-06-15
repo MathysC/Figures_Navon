@@ -187,11 +187,11 @@ class Element(ABC):
 		
 		If there is any element nearby, calculate where the pointA will be put on top of it.
 		Else, it stay where the event.xy are.
-		:param: NF : the Navon's Figure
+		:param NF: the Navon's Figure
 		:type NF: NF
-		:param: canvas, the TKINTER Canvas
+		:param canvas: the TKINTER Canvas
 		:type canvas: TKINTER Element 
-		:param: pointA
+		:param pointA: point to be brought closer to another element
 		:type pointA: np.array([ x , y ])
 		:return: the new coordonates
 		:rtype: np.array([ x , y ])

@@ -72,7 +72,9 @@ class Eraser(Element):
 			canvas.delete(onClick[0])
 			# And finally, remove this element
 			del(element)
-					
+
+			draw_canvas = kwargs.get('draw_canvas')
+			draw_canvas.outcome.update()				
 
 	def getL(self):
 		pass

@@ -73,7 +73,8 @@ class NF:
 		"""
 		Function that calculates N 
 		(The percentage * the sum of all length (g) / size of the local element ) / the length of the element / g
-		.. seealso:: self.get()
+		.. seealso:: self.getG()
+		.. seealso:: Element.getL()
 		"""
 		g = self.getG()
 		return int((
@@ -98,7 +99,7 @@ class NF:
 				draw.text((x_[i], y_[i]), self.char, self.color, font = font)
 
 
-	def printAllElement(self, draw):
+	def printAllElements(self, draw):
 		for element in self.elements:
 			self.printElement(element,draw)
 

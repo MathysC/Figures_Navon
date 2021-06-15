@@ -167,11 +167,15 @@ class SemiCircle(Element):
 		NF.addElement(self)
 		self.addToNeighbors(canvas=kwargs.get('canvas'),NF=NF)
 
-	def getL(self):
+		# Add the element to the outcome canvas
+		draw_canvas = kwargs.get('draw_canvas')
+		draw_canvas.getOutcome().addElementToIm(self)
+
+	def getL(self) -> np.ndarray:
 		"""
 		Function that calculates the sum (L) of the difference of square root of X and Y
-		:return: the sum
-		:rtype: numpy.ndarray
+		:return: the length of the element
+		:rtype: np.ndarray
 		"""
 		# Both start and End Radians are negative for the position on the NF
 		# Honestly i don't know why it didn't work with the both positive values
@@ -188,7 +192,7 @@ class SemiCircle(Element):
 				np.ediff1d(x, to_begin=0) ** 2
 				+ np.ediff1d(y, to_begin=0) ** 2))
 
-	def interpolate(self):
+	def interpolate(self) -> np.array:
 		"""
 		Function that calcultates the interpolation of X and Y of the element
 		:return: an array of the interpolation
@@ -217,8 +221,6 @@ class SemiCircle(Element):
 		:return: method return nothing
 		:rtype: None
 		"""
-		
-
 		tag = f"-{self.id}" #self.tag from element and self.id to make a personal tag
 		# Reset intersections and neighbor 
 		canvas.delete(tag)
@@ -262,7 +264,7 @@ class SemiCircle(Element):
 	def whereToGather(self,pointA):
 		"""
 		Found where to place the pointA on top of the other element
-		:param: pointA
+		:param pointA: the point to gather
 		:type pointA: np.array([ x , y ])
 		:return: the new coordonates
 		:rtype: np.array([ x , y ])
@@ -295,17 +297,17 @@ class SemiCircle(Element):
 		# If nothing above this line was used, return the pointA 
 		return pointA
 
-	def findPointB(self, angle1, angle2,pointA):
+	def findPointB(self, start, end,pointA):
 		previous = current = 9999 # Initialize previous and current value at extremely high value 
 						#to begin the while loop because their is not do while loop in python
 		lengthAB = 0 # The length of pointA to pointB
 
-		while current <= previous or angle1 <= angle2:
+		while current <= previous or start <= end:
 			previous = current # Change the previous element
-			radian = math.radians(angle1)
+			radian = math.radians(start)
 			pointB = np.array([self.center[0]+self.radius * math.cos(radian),
 			 self.center[1]+self.radius * math.sin(radian)])
-			angle1+=1 # Increment the angle1, 1 by 1 
+			start+=1 # Increment the start, 1 by 1 
 			current = int(math.hypot(pointB[0] - pointA[0], pointB[1] - pointA[1])) # Calculate the length A-B
 
 		return pointB

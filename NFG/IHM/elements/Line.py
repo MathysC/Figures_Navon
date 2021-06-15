@@ -84,18 +84,22 @@ class Line(Element):
 		# We add this element to its neighbors
 		self.addToNeighbors(canvas=kwargs.get('canvas'),NF=NF)
 
-	def getL(self):
+		# Add the element to the outcome canvas
+		draw_canvas = kwargs.get('draw_canvas')
+		draw_canvas.getOutcome().addElementToIm(self)
+
+	def getL(self) -> np.ndarray:
 		"""
 		Function that calculates the sum (L) of the difference of square root of X and Y
-		:return: the sum
-		:rtype: numpy.ndarray
+		:return: the length of the element
+		:rtype: np.ndarray
 		"""
 		return np.cumsum(
 			np.sqrt(
 				np.ediff1d(self.x, to_begin=0) ** 2
 				+ np.ediff1d(self.y, to_begin=0) ** 2))
 
-	def interpolate(self):
+	def interpolate(self) -> np.array:
 		"""
 		Function that calcultates the interpolation of X and Y of the element
 		:return: an array of the interpolation

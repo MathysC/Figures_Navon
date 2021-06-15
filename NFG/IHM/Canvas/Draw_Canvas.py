@@ -68,7 +68,7 @@ class Draw_Canvas(Ui_Canvas):
 	def changeElement(self, elementType):
 		"""
 		change the element
-		:param: elementType
+		:param elementType: the type of the next element wanted
 		:type elementType: str
 		"""
 		self.element = Factory.Create(elementType)
@@ -80,12 +80,13 @@ class Draw_Canvas(Ui_Canvas):
 		"""
 		self.draw_canvas.delete("all")
 		self.outcome.getNF().setElements(np.array([]))
+		self.outcome.clearCanvas()
 
 	# Events to draw / modify / set
 	def start(self, event):
 		"""
 		Call the function start of the current element
-		:param: event:
+		:param event: the event 
 		:type event: Event
 		"""
 		self.element.start(event=event, canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
@@ -93,7 +94,7 @@ class Draw_Canvas(Ui_Canvas):
 	def motion(self, event):
 		"""
 		Call the function motion of the current element
-		:param: event
+		:param event: the event 
 		:type event: Event
 		"""
 		self.element.motion(event=event, canvas=self.draw_canvas, NF=self.outcome.getNF())
@@ -101,11 +102,10 @@ class Draw_Canvas(Ui_Canvas):
 	def end(self, event):
 		"""
 		Call the function end of the current element
-		:param: event
+		:param event: the event 
 		:type event: Event
 		"""
-		self.element.end(event=event, canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_Canvas=self)
-		self.outcome.addElementToIm(self.element)
+		self.element.end(event=event, canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
 
 		# We create the next element 
 		self.changeElement(self.element.getType())
@@ -119,3 +119,7 @@ class Draw_Canvas(Ui_Canvas):
 
 	def final(self):
 		self.outcome.getNF().final(self.draw_canvas)
+
+
+	def getOutcome(self):
+		return self.outcome
