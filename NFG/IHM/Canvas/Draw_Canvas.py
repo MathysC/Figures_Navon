@@ -13,49 +13,60 @@ class Draw_Canvas(Ui_Canvas):
 	Class that implements the draw canvas and the options
 	"""
 
-	def __init__(self, master,optionFrame,outcome):
+	def __init__(self, master,optionFrame,row,startColumn,outcome):
 
 		# The Canvas
-		self.draw_canvas = Canvas(master, 
+		self.draw_frame = Frame(master, 
 			bg="white", bd=1,
 			height=Setup.HEIGHT, 
 			width=int(Setup.WIDTH/2), 
 			relief=RAISED)
-		super().__init__(mainElement=self.draw_canvas)
+		super().__init__(mainElement=self.draw_frame)
+		self.draw_canvas= Canvas(self.draw_frame, 
+			bg="white",
+			height=Setup.HEIGHT, 
+			width=int(Setup.WIDTH/2))
+		self.draw_canvas.grid(row=0,column=0)
 
+		padx = 1 # Var to change the padx quickly for each element
+
+		self.toolsFrame = LabelFrame(optionFrame,text="Tools")
+		self.toolsFrame.grid(row=row,column=0,sticky="w")
 		# Insert several buttons in the top left frame 
 		# Button to draw Line
 		strImg = Setup.PATHIMG+"line"+Setup.ICONSIZE
 		image = ImageTk.PhotoImage(Image.open(strImg))
-		LineB = Button(optionFrame, bg="white", text="line", command=lambda: self.changeElement('line'),image=image)
-		LineB.grid(row=0, column=1)
+		LineB = Button(self.toolsFrame, text="line", command=lambda: self.changeElement('line'),image=image,)
+		LineB.grid(row=row, column=startColumn,padx=padx)
 		LineB.image = image
 
 		# Button to draw SemiCircle
 		strImg = Setup.PATHIMG+"semiCircle"+Setup.ICONSIZE
 		image = ImageTk.PhotoImage(Image.open(strImg))
-		SemiCircleB =Button(optionFrame, bg="white", text="semiCircle", command=lambda: self.changeElement('semiCircle'),image=image)
-		SemiCircleB.grid(row=0, column=2)
+		SemiCircleB =Button(self.toolsFrame, text="semiCircle", command=lambda: self.changeElement('semiCircle'),image=image)
+		SemiCircleB.grid(row=row, column=startColumn+1,padx=padx)
 		SemiCircleB.image = image
 
 		# Button to draw Circle
 		strImg = Setup.PATHIMG+"circle"+Setup.ICONSIZE
 		image = ImageTk.PhotoImage(Image.open(strImg))		
-		CircleB = Button(optionFrame, bg="white", text="circle", command=lambda: self.changeElement('circle'),image=image)
-		CircleB.grid(row=0,column=3)
+		CircleB = Button(self.toolsFrame, text="circle", command=lambda: self.changeElement('circle'),image=image)
+		CircleB.grid(row=row,column=startColumn+2,padx=padx)
 		CircleB.image = image
 
 		# Button to use the Eraser
 		strImg = Setup.PATHIMG+"eraser"+Setup.ICONSIZE
 		image = ImageTk.PhotoImage(Image.open(strImg))
-		EraserB = Button(optionFrame, bg="white", text="eraser", command=lambda: self.changeElement('eraser'),image=image)
-		EraserB.grid(row=0, column=4)
+		EraserB = Button(self.toolsFrame, text="eraser", command=lambda: self.changeElement('eraser'),image=image)
+		EraserB.grid(row=row, column=startColumn+3,padx=padx)
 		EraserB.image = image
 
 		# Button to clear the entire canvas
-		Button(optionFrame, bg="white", text="clear",height=1,command=self.clear).grid(row=0, column=5)
+		Button(self.toolsFrame, text="clear",height=1,command=self.clear).grid(row=row, column=startColumn+4,padx=padx)
 
-		
+		self.gridval = StringVar(value="disappear") # To start the application with the draw canvas
+		Checkbutton(self.toolsFrame, text="use a grid", command=self.changeGrid,
+			var=self.gridval, onvalue="appear", offvalue="disappear").grid(row=row,column=startColumn+5)
 		self.element = Factory.Create('line') # At the beginning, the user can draw lines
 
 		# Events
@@ -65,6 +76,9 @@ class Draw_Canvas(Ui_Canvas):
 
 		self.outcome = outcome # The Outcome Canvas
 
+	def changeGrid(self):
+		pass
+		
 	def changeElement(self, elementType):
 		"""
 		change the element
