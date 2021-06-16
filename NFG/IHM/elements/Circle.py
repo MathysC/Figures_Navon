@@ -279,12 +279,12 @@ class Circle(Element):
 	def findPointB(self, start, end, pointA) -> np.array:
 		"""
 		Function used to find the position of the point of intersection on the circle
-		:param pointA: the point to help find PointB
-		:type pointA: np.array([x, y])
 		:param start: the starting angle
 		:type start: int
 		:param end: the ending angle
 		:type end: int
+		:param pointA: the point to help find PointB
+		:type pointA: np.array([x, y])
 		"""
 		previous = current = 9999 # Initialize previous and current value at extremely high value 
 						#to begin the while loop because their is not do while loop in python
