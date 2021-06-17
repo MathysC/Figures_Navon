@@ -1,4 +1,4 @@
-from PIL import Image,ImageTk, ImageFont, ImageDraw
+from PIL import Image, ImageTk, ImageFont, ImageDraw
 from tkinter import *
 from tkinter import ttk #i had to separate both importation in order to use ttk
 from tkinter import font
@@ -29,112 +29,112 @@ class Ui_MainWindow:
 		#self.mainWindow.configure(bg=bgLeft)
 
 
+		# Menus
+		mainMenu = Menu(self.mainWindow)
+		self.mainWindow.config(menu=mainMenu)
+		fileMenu = Menu(master=mainMenu,tearoff=0)
+		mainMenu.add_cascade(label = "File", menu = fileMenu)
+		saveMenu = Menu(master=fileMenu,tearoff=0)
+		fileMenu.add_cascade(label = "Save As ... ", menu=saveMenu)
+		fileMenu.add_separator()
+		fileMenu.add_command(label = "Quit", command=self.mainWindow.quit)
+
+
 		# The mainWindow is composed of 3 big parts :
 
 		## Draw functions
 		self.left_Canvas = LabelFrame(master=self.mainWindow, width=Setup.WIDTH/2, text="Draw your own Navon's Figure")
-		self.left_Canvas.grid(row=0,column=0,rowspan=2)
+		self.left_Canvas.grid(row=0, column=0, rowspan=2, sticky="nswe")
 		
 		## Generator functions
-		self.right_Canvas = LabelFrame(master=self.mainWindow, width=Setup.WIDTH/2, text="Generate your Navon's Figure" )
-		self.right_Canvas.grid(row=0,column=1)
+		self.right_Canvas = LabelFrame(master=self.mainWindow, width=Setup.WIDTH/2, text="Generate your own Navon's Figure" )
+		self.right_Canvas.grid(row=0, column=1, sticky="nswe")
 
 		## Outcomes 
 		self.outcome_Canvas = LabelFrame(master=self.mainWindow, width= Setup.WIDTH/4, text="Outcome")
-		self.outcome_Canvas.grid(row=1,column=1)
+		self.outcome_Canvas.grid(row=1, column=1, sticky="swe")
 
 		### And there are 2 outcomes, the Draw one and the Generator one
-		self.draw_outcome = Outcome_Canvas(self.outcome_Canvas) # The Canvas use in the right part for the draw canvas 
+		self.draw_outcome = Outcome_Canvas(self.outcome_Canvas) # The Canvas use in the right part for the draw canvas
 		self.gen_outcome = Outcome_Canvas(self.outcome_Canvas) # The Canvas use in the right part for the generator canvas 
 
+
+		self.draw = Draw_Canvas(master=self.left_Canvas, outcome=self.draw_outcome)
+		self.draw.getMainElement().grid(row=1, column=0)
+
+
+		# The right part is composed of the Generator and the outcomes of Draw Canvas and the Generator
 		## Generator
 		self.generator = Generator_Canvas(self.right_Canvas, self.gen_outcome)
 
-		# The left part is split in 2 parts : The draw canvas and the options
-		self.left_options = Frame(self.left_Canvas)
-		self.left_options.grid(row=0,column=0,sticky="nswe")
+		self.generatorByFile= LabelFrame(self.right_Canvas, text="Import a list of Navon's Figure to Generate")
+		self.generatorByFile.grid(row=0, column=0)
 
-		### Import and Export Options 
-		self.serializationDraw = LabelFrame(self.left_options, text="Import / Export")
-		self.serializationDraw.grid(row=0,column=0,columnspan=2,sticky="nswe")
+		Button(self.generatorByFile, text="import as CSV", command=self.importCSV, padx=self.padx).grid(row=0, column=0)
+		Entry(self.generatorByFile, width=50).grid(row=0, column=2, padx=self.padx)
+		Button(self.generatorByFile, text="export as Images", command=self.exportCSV, padx=self.padx).grid(row=0, column=3, sticky="we")
 
-		Button(self.serializationDraw, text="import draw", command=self.importDraw,padx=self.padx).grid(row=0,column=0)
-		Entry(self.serializationDraw,width=50).grid(row=0, column=2, padx=self.padx)
-		Button(self.serializationDraw, text="export draw", command=self.exportDraw,padx=self.padx).grid(row=0, column=3, sticky="we")
 
-		## Every Tools used to create a Navon's Figure
-		self.toolsDraw = LabelFrame(self.left_options, text="Options")
-		self.toolsDraw.grid(row=1, column=0, columnspan=5, sticky="we")
+		## Every Tools used to create a Navon's Figure in Generator Canvas
+		self.toolsGen = LabelFrame(self.right_Canvas, text="Options")
+		self.toolsGen.grid(row=1, column=0, columnspan=5, sticky="we")
 
 		### Density
-		Label(self.toolsDraw, text="Density :",padx=self.padx).grid(row=0, column=0)
-		Spinbox(self.toolsDraw, from_=1, to=100, width=4).grid(row=0, column=1,padx=self.padx)
+		Label(self.toolsGen, text="Density :", padx=self.padx).grid(row=0, column=0)
+		Spinbox(self.toolsGen, from_=1, to=100, width=4).grid(row=0, column=1, padx=self.padx)
 
 		### Size 
-		Label(self.toolsDraw, text="Size :",padx=self.padx).grid(row=0, column=2)
-		Spinbox(self.toolsDraw, from_=1, to=100, width=4).grid(row=0, column=3,padx=self.padx)
+		Label(self.toolsGen, text="Size :", padx=self.padx).grid(row=0, column=2)
+		Spinbox(self.toolsGen, from_=1, to=100, width=4).grid(row=0, column=3, padx=self.padx)
 
 		### Font
-		Label(self.toolsDraw, text="Font :",padx=self.padx).grid(row=0, column=4)
-		self.cbfonts = ttk.Combobox(self.toolsDraw,values=font.families(), state="readonly",width=15)
-		self.cbfonts.grid(row=0, column=5,padx=self.padx)
-		self.cbfonts.bind("<<ComboboxSelected>>", self.changeFont)
+		Label(self.toolsGen, text="Font :", padx=self.padx).grid(row=0, column=4)
+		self.cbGfonts = ttk.Combobox(self.toolsGen, values=font.families(), state="readonly", width=15)
+		self.cbGfonts.grid(row=0, column=5, padx=self.padx)
+		self.cbGfonts.bind("<<ComboboxSelected>>", self.changeFont)
 
 		### Checkbox to choose between local character and local image
-		self.cbvLocal = StringVar(value="Char")
-		Checkbutton(self.toolsDraw, text="Use a local Image",
-			var=self.cbvLocal, onvalue="Image", offvalue="Char", 
-			command= self.changeLocalElement).grid(row=0,column=6)
+		self.cbvDLocal = StringVar(value="Char")
+		Checkbutton(self.toolsGen, text="Use a local Image", 
+			var=self.cbvDLocal, onvalue="Image", offvalue="Char", 
+			command= self.changeLocalDraw).grid(row=0, column=6)
 
 		### Local Character (if used, the Local Image is disabled)
-		self.labelChar = Label(self.toolsDraw, text="Local char :",padx=self.padx)
-		self.entryChar = Entry(self.toolsDraw, width=2)
-		self.labelChar.grid(row=0, column=7)
-		self.entryChar.grid(row=0, column=8,padx=self.padx)
+		self.labelDChar = Label(self.toolsGen, text="Local char :", padx=self.padx)
+		self.entryDChar = Entry(self.toolsGen, width=2)
+		self.labelDChar.grid(row=0, column=7)
+		self.entryDChar.grid(row=0, column=8, padx=self.padx)
 
 
 		### Local Image (if used, the Local Character is disabled)
-		self.labelImg = Label(self.toolsDraw, text="Local Image :",padx=self.padx)
-		self.entryImg = Button(self.toolsDraw,text="Search an Image")
-		self.deleteImg = Button(self.toolsDraw,text="delete Image")
-
-		self.draw = Draw_Canvas(master=self.left_Canvas,optionFrame=self.left_options, row=2, startColumn=0, outcome=self.draw_outcome)
-		self.draw.getMainElement().grid(row=1,column=0)
+		self.labelDImg = Label(self.toolsGen, text="Local Image :", padx=self.padx)
+		self.entryDImg = Button(self.toolsGen, text="Search an Image")
+		self.deleteDImg = Button(self.toolsGen, text="delete Image")
 
 		# Bind the Enter touch with the final function
-		self.mainWindow.bind('<Return>',self.final)
+		self.mainWindow.bind('<Return>', self.final)
 
 		# Show the draw_canvas
 		self.changeCanvas()
 
 
-	def changeFont(self,event=None):
-		font = self.cbfonts.get()
-	def changeLocalElement(self):
-		"""
-		Make appear and disappear the canvas of the application
-		"""
-		if self.cbvLocal.get() == 'Char': 	# Make appear Local Character Option
-			self.labelImg.grid_forget() 
-			self.entryImg.grid_forget()
-			self.deleteImg.grid_forget()
-			self.labelChar.grid(row=0, column=7)
-			self.entryChar.grid(row=0, column=8,padx=self.padx)
 
-		else:								# Make appear Local Image Option
-			self.labelImg.grid(row=0, column=9)
-			self.entryImg.grid(row=0, column=10,padx=self.padx)
-			self.deleteImg.grid(row=0, column=11,padx=self.padx)
-			self.labelChar.grid_forget()
-			self.entryChar.grid_forget()
 
-	def importDraw(self):
+	def changeFont(self, event=None):
+		font = self.cbDfonts.get()
+
+
+	def changeLocalDraw(self):
 		pass
 
-	def exportDraw(self):
+	def importCSV(self):
 		pass
 
-	def changeCanvas(self,event=None):
+	def exportCSV(self):
+		pass
+
+
+	def changeCanvas(self, event=None):
 		return
 		"""
 		Make appear and disappear the canvas of the application
@@ -142,17 +142,17 @@ class Ui_MainWindow:
 		if self.cboxvalue.get() == 'draw': 	# Make appear DRAW CANVAS
 			self.generator.getMainElement().grid_forget() # Make invisible the generator canvas
 			self.gen_outcome.getMainElement().grid_forget() # Make invisible its outcome canvas
-			self.draw.getMainElement().grid(row=2,column=0,columnspan=2,sticky="nsw") # Make visible the draw canvas
-			self.draw_outcome.getMainElement().grid(row=0,column=0,sticky="w",rowspan=2) # Make visibile it's outcome canvas
+			self.draw.getMainElement().grid(row=2, column=0, columnspan=2, sticky="nsw") # Make visible the draw canvas
+			self.draw_outcome.getMainElement().grid(row=0, column=0, sticky="w", rowspan=2) # Make visibile it's outcome canvas
 
 		else:								# Make appear GENERATOR CANVAS
 			self.draw.getMainElement().grid_forget() # Make invisible the draw canvas
 			self.draw_outcome.getMainElement().grid_forget() # Make invisible its outcome canvas
 			self.generator.getMainElement().grid(row=2, column=0, columnspan=2, sticky="nsw") # Make visible the generator canvas
 			self.generator.getMainElement().grid_propagate(0) # We call this function every time the generator is displayed otherwise the element inside will be lost
-			self.gen_outcome.getMainElement().grid(row=0,column=0,sticky="w",rowspan=2) # Make visibile it's outcome canvas
+			self.gen_outcome.getMainElement().grid(row=0, column=0, sticky="w", rowspan=2) # Make visibile it's outcome canvas
 
-	def limitEntry(self,limit,var):
+	def limitEntry(self, limit, var):
 		"""
 		Limit an ttk.Entry widget 
 		:param limit: the limit of the entry
@@ -160,7 +160,6 @@ class Ui_MainWindow:
 		:param var: the variable associated to the Entry Widget
 		:type var: tkinter.Variable
 		"""
-		print("lol")
 		print(f"var : {var.get()}")
 		if len(var.get()) > limit: 
 			var.set(var.get()[:int(limit)])
@@ -171,7 +170,7 @@ class Ui_MainWindow:
 		"""
 		self.mainWindow.mainloop()
 
-	def final(self,event=None):
+	def final(self, event=None):
 		"""
 		Function that (currently only ) preview the NF
 		.. seealso:: Draw_Canvas.update()

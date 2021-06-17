@@ -4,6 +4,9 @@ from Logic.Setup import Setup
 
 
 from tkinter import *
+from tkinter import ttk #i had to separate both importation in order to use ttk
+from tkinter import font
+
 from PIL import Image, ImageTk
 import numpy as np
 
@@ -13,62 +16,119 @@ class Draw_Canvas(Ui_Canvas):
 	Class that implements the draw canvas and the options
 	"""
 
-	def __init__(self, master,optionFrame,row,startColumn,outcome):
+	def __init__(self,master,outcome):
 
-		# The Canvas
+		padx = 1 # Var to change the padx quickly for each element
+
+		# The left part of the interface is split in 2 parts : The draw canvas and the options
+
+		# The Frame that contains the draw canvas
 		self.draw_frame = Frame(master, 
 			bg="white", bd=1,
 			height=Setup.HEIGHT, 
 			width=int(Setup.WIDTH/2), 
 			relief=RAISED)
 		super().__init__(mainElement=self.draw_frame)
+		# The draw canvas itself
 		self.draw_canvas= Canvas(self.draw_frame, 
 			bg="white",
-			height=Setup.HEIGHT, 
+			height=int(Setup.HEIGHT),
 			width=int(Setup.WIDTH/2))
-		self.draw_canvas.grid(row=0,column=0)
+		self.draw_canvas.grid(row=0,column=0) # The draw canvas is the only element in the draw_frame
 
-		padx = 1 # Var to change the padx quickly for each element
 
-		self.toolsFrame = LabelFrame(optionFrame,text="Tools")
-		self.toolsFrame.grid(row=row,column=0,sticky="w")
-		# Insert several buttons in the top left frame 
+		# All options for the Draw Canvas are in this frame
+		self.options = Frame(master=master)
+		self.options.grid(row=0, column=0, sticky="nswe")
+
+		## Import and Export Options 
+		self.serialization = LabelFrame(self.options, text="Import / Export") # serialization frame
+		self.serialization.grid(row=0, column=0, sticky="nsw")
+
+		Button(self.serialization, text="import draw DAT", command=self.importDAT, padx=padx).grid(row=0, column=0)
+		Button(self.serialization, text="export draw DAT", command=self.exportDAT, padx=padx).grid(row=0, column=1)
+		Button(self.serialization, text="export draw IMG", command=self.exportIMG, padx=padx).grid(row=0, column=2)
+
+
+		## Every tools used to create a Navon's Figure are in this frame
+		self.tools = LabelFrame(self.options, text="Options")
+		self.tools.grid(row=1, column=0, columnspan=5, sticky="we")
+
+		### Density
+		Label(self.tools, text="Density :", padx=padx).grid(row=0, column=0)
+		Spinbox(self.tools, from_=1, to=100, width=4).grid(row=0, column=1, padx=padx)
+
+		### Size 
+		Label(self.tools, text="Size :", padx=padx).grid(row=0, column=2)
+		Spinbox(self.tools, from_=1, to=100, width=4).grid(row=0, column=3, padx=padx)
+
+		### Font
+		Label(self.tools, text="Font :", padx=padx).grid(row=0, column=4)
+		self.cbfonts = ttk.Combobox(self.tools, values=font.families(), state="readonly", width=15) # ComboBox Fonts
+		self.cbfonts.grid(row=0, column=5, padx=padx)
+		self.cbfonts.bind("<<ComboboxSelected>>", self.changeFont)
+
+		### Checkbox to choose between local character and local image
+		self.cbvLocal = StringVar(value="Char") # ComboBox Variable for le Local Element
+		Checkbutton(self.tools, text="Use a local Image", 
+			var=self.cbvLocal, onvalue="Image", offvalue="Char", 
+			command= self.changeLocalElement).grid(row=0, column=6)
+
+		### Local Character (if used, the Local Image is disabled)
+		self.labelChar = Label(self.tools, text="Local char :", padx=padx)
+		self.entryChar = Entry(self.tools, width=2)
+		self.labelChar.grid(row=0, column=7)
+		self.entryChar.grid(row=0, column=8, padx=padx)
+
+		### Local Image (if used, the Local Character is disabled)
+		self.labelImg = Label(self.tools, text="Local Image :", padx=padx)
+		self.entryImg = Button(self.tools, text="Search an Image")
+		self.deleteImg = Button(self.tools, text="delete Image")
+
+
+		## Every Paint Tools are in this frame	
+		self.paint = LabelFrame(self.options,text="Tools")
+		self.paint.grid(row=2,column=0,sticky="w")
+
+ 		# Checkbox for a grid that help the user to draw
+		self.gridval = StringVar(value="disappear") # To start the application without a grid on the canvas
+		Checkbutton(self.paint, text="Grid", command=self.changeGrid,
+			var=self.gridval, onvalue="appear", offvalue="disappear").grid(row=0,column=0)
+
 		# Button to draw Line
 		strImg = Setup.PATHIMG+"line"+Setup.ICONSIZE
 		image = ImageTk.PhotoImage(Image.open(strImg))
-		LineB = Button(self.toolsFrame, text="line", command=lambda: self.changeElement('line'),image=image,)
-		LineB.grid(row=row, column=startColumn,padx=padx)
+		LineB = Button(self.paint, text="line", command=lambda: self.changeElement('line'),image=image,)
+		LineB.grid(row=0, column=0+1,padx=padx)
 		LineB.image = image
 
 		# Button to draw SemiCircle
 		strImg = Setup.PATHIMG+"semiCircle"+Setup.ICONSIZE
 		image = ImageTk.PhotoImage(Image.open(strImg))
-		SemiCircleB =Button(self.toolsFrame, text="semiCircle", command=lambda: self.changeElement('semiCircle'),image=image)
-		SemiCircleB.grid(row=row, column=startColumn+1,padx=padx)
+		SemiCircleB =Button(self.paint, text="semiCircle", command=lambda: self.changeElement('semiCircle'),image=image)
+		SemiCircleB.grid(row=0, column=0+2,padx=padx)
 		SemiCircleB.image = image
 
 		# Button to draw Circle
 		strImg = Setup.PATHIMG+"circle"+Setup.ICONSIZE
 		image = ImageTk.PhotoImage(Image.open(strImg))		
-		CircleB = Button(self.toolsFrame, text="circle", command=lambda: self.changeElement('circle'),image=image)
-		CircleB.grid(row=row,column=startColumn+2,padx=padx)
+		CircleB = Button(self.paint, text="circle", command=lambda: self.changeElement('circle'),image=image)
+		CircleB.grid(row=0,column=0+3,padx=padx)
 		CircleB.image = image
 
 		# Button to use the Eraser
 		strImg = Setup.PATHIMG+"eraser"+Setup.ICONSIZE
 		image = ImageTk.PhotoImage(Image.open(strImg))
-		EraserB = Button(self.toolsFrame, text="eraser", command=lambda: self.changeElement('eraser'),image=image)
-		EraserB.grid(row=row, column=startColumn+3,padx=padx)
+		EraserB = Button(self.paint, text="eraser", command=lambda: self.changeElement('eraser'),image=image)
+		EraserB.grid(row=0, column=0+4,padx=padx)
 		EraserB.image = image
 
 		# Button to clear the entire canvas
-		Button(self.toolsFrame, text="clear",height=1,command=self.clear).grid(row=row, column=startColumn+4,padx=padx)
+		Button(self.paint, text="clear",height=1,command=self.clear).grid(row=0, column=0+5,padx=padx)
 
-		self.gridval = StringVar(value="disappear") # To start the application with the draw canvas
-		Checkbutton(self.toolsFrame, text="use a grid", command=self.changeGrid,
-			var=self.gridval, onvalue="appear", offvalue="disappear").grid(row=row,column=startColumn+5)
+
+
 		self.element = Factory.Create('line') # At the beginning, the user can draw lines
-
 		# Events
 		self.draw_canvas.bind('<Button-1>', self.start) # Click event
 		self.draw_canvas.bind('<B1-Motion>', self.motion) # Motion event
@@ -137,3 +197,34 @@ class Draw_Canvas(Ui_Canvas):
 
 	def getOutcome(self):
 		return self.outcome
+
+	def importDAT(self):
+		pass
+
+	def exportDAT(self):
+		pass
+
+	def exportIMG(self):
+		pass
+
+	def changeFont(self, event=None):
+		font = self.cbDfonts.get()
+
+
+	def changeLocalElement(self):
+		"""
+		Make appear and disappear the options of the local element from the draw canvas
+		"""
+		if self.cbvLocal.get() == 'Char': 	# Make appear Local Character Option
+			self.labelImg.grid_forget() 
+			self.entryImg.grid_forget()
+			self.deleteImg.grid_forget()
+			self.labelChar.grid(row=0, column=7)
+			self.entryChar.grid(row=0, column=8, padx=1)
+
+		else:								# Make appear Local Image Option
+			self.labelImg.grid(row=0, column=9)
+			self.entryImg.grid(row=0, column=10, padx=1)
+			self.deleteImg.grid(row=0, column=11, padx=1)
+			self.labelChar.grid_forget()
+			self.entryChar.grid_forget()
