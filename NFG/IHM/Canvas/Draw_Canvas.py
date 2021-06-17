@@ -16,7 +16,7 @@ class Draw_Canvas(Ui_Canvas):
 	Class that implements the draw canvas and the options
 	"""
 
-	def __init__(self,master,outcome):
+	def __init__(self,master,outcome,tobind):
 
 		padx = 1 # Var to change the padx quickly for each element
 
@@ -24,30 +24,24 @@ class Draw_Canvas(Ui_Canvas):
 
 		# The Frame that contains the draw canvas
 		self.draw_frame = Frame(master, 
-			bg="white", bd=1,
+			bg="white",
 			height=Setup.HEIGHT, 
 			width=int(Setup.WIDTH/2), 
 			relief=RAISED)
 		super().__init__(mainElement=self.draw_frame)
-		# The draw canvas itself
-		self.draw_canvas= Canvas(self.draw_frame, 
-			bg="white",
-			height=int(Setup.HEIGHT),
-			width=int(Setup.WIDTH/2))
-		self.draw_canvas.grid(row=0,column=0) # The draw canvas is the only element in the draw_frame
 
 
 		# All options for the Draw Canvas are in this frame
-		self.options = Frame(master=master)
+		self.options = Frame(master=self.draw_frame)
 		self.options.grid(row=0, column=0, sticky="nswe")
 
 		## Import and Export Options 
 		self.serialization = LabelFrame(self.options, text="Import / Export") # serialization frame
 		self.serialization.grid(row=0, column=0, sticky="nsw")
 
-		Button(self.serialization, text="import draw DAT", command=self.importDAT, padx=padx).grid(row=0, column=0)
-		Button(self.serialization, text="export draw DAT", command=self.exportDAT, padx=padx).grid(row=0, column=1)
-		Button(self.serialization, text="export draw IMG", command=self.exportIMG, padx=padx).grid(row=0, column=2)
+		Button(self.serialization, text="import .DAT", command=self.importDAT, padx=padx).grid(row=0, column=0)
+		Button(self.serialization, text="export as .DAT", command=self.exportDAT, padx=padx).grid(row=0, column=1)
+		Button(self.serialization, text="export as IMG", command=self.exportIMG, padx=padx).grid(row=0, column=2)
 
 
 		## Every tools used to create a Navon's Figure are in this frame
@@ -126,6 +120,12 @@ class Draw_Canvas(Ui_Canvas):
 		# Button to clear the entire canvas
 		Button(self.paint, text="clear",height=1,command=self.clear).grid(row=0, column=0+5,padx=padx)
 
+		# The draw canvas itself
+		self.draw_canvas= Canvas(self.draw_frame, 
+			bg="white",
+			height=int(Setup.HEIGHT),
+			width=int(Setup.WIDTH/2))
+		self.draw_canvas.grid(row=1,column=0) # The draw canvas is the only element in the draw_frame
 
 
 		self.element = Factory.Create('line') # At the beginning, the user can draw lines
@@ -133,7 +133,8 @@ class Draw_Canvas(Ui_Canvas):
 		self.draw_canvas.bind('<Button-1>', self.start) # Click event
 		self.draw_canvas.bind('<B1-Motion>', self.motion) # Motion event
 		self.draw_canvas.bind('<ButtonRelease-1>', self.end) # Release event
-
+		self.getMainElement().bind(tobind[0],tobind[1])
+		self.bindallframe(self.getMainElement(),tobind[0], tobind[1])
 		self.outcome = outcome # The Outcome Canvas
 
 	def changeGrid(self):
@@ -228,3 +229,30 @@ class Draw_Canvas(Ui_Canvas):
 			self.deleteImg.grid(row=0, column=11, padx=1)
 			self.labelChar.grid_forget()
 			self.entryChar.grid_forget()
+
+	def bindallframe(self,parent,event,func):
+		for child in parent.winfo_children():
+			self.bindallframe(child,event,func)
+			child.bind(event,func)
+
+	def changeStageFrame(self,parent,state):
+		for child in parent.winfo_children():
+			self.changeStageFrame(child,state)
+			child.configure(state=state)
+
+
+	def disableChildren(self,parent):
+	    for child in parent.winfo_children():
+	        wtype = child.winfo_class()
+	        if wtype not in ('Frame','Labelframe'):
+	            child.configure(state='disable')
+	        else:
+	            self.disableChildren(child)
+
+	def enableChildren(self,parent):
+	    for child in parent.winfo_children():
+	        wtype = child.winfo_class()
+	        if wtype not in ('Frame','Labelframe'):
+	            child.configure(state='normal')
+	        else:
+	            self.enableChildren(child)

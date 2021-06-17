@@ -11,7 +11,7 @@ import numpy as np
 class Outcome_Canvas(Ui_Canvas):
 	def __init__(self, master):
 		self.nf = NF()
-		self.charIm = Image.new('RGB', (int(Setup.WIDTH/2), Setup.HEIGHT), color='white')
+		self.charIm = Image.new('RGB', (int(Setup.WIDTH/2-1), Setup.HEIGHT), color='white')
 		self.draw = ImageDraw.Draw(self.charIm)
 		# Due to how works the Python garbage collector, i have to save the current image in a variable 
 		# https://stackoverflow.com/questions/3359717/cannot-display-an-image-in-tkinter
@@ -26,7 +26,7 @@ class Outcome_Canvas(Ui_Canvas):
 #		self.outcomeOptions_Frame.grid(row=0, column=0, sticky="nsew")
 
 		# The Outcome canvas where the user can see his or her current draw
-		self.out_canvas = Canvas(master ,height=Setup.HEIGHT, width=int(Setup.WIDTH/2), bg="white")
+		self.out_canvas = Canvas(master ,height=Setup.HEIGHT, width=int(Setup.WIDTH/2-10), bg="white")
 		super().__init__(self.out_canvas)
 
 	def getNF(self):
