@@ -56,44 +56,39 @@ class Generator_Canvas(Ui_Canvas):
 
 
 		## Every tools used to create a Navon's Figure are in this frame
-		self.tools = LabelFrame(self.gen_Frame, text="Options")
+		self.tools = LabelFrame(self.gen_Frame, text="Options for preview")
 		self.tools.grid(row=1, column=0, columnspan=5, sticky="we")
 
-		### Density
-		Label(self.tools, text="Density :", padx=padx).grid(row=0, column=0)
-		Spinbox(self.tools, from_=1, to=100, width=4).grid(row=0, column=1, padx=padx)
-
-		### Size 
-		Label(self.tools, text="Size :", padx=padx).grid(row=0, column=2)
-		Spinbox(self.tools, from_=1, to=100, width=4).grid(row=0, column=3, padx=padx)
+		### Checkbox to choose between local character and local image
+		self.currentElement= "char" # ComboBox Variable for le Local Element
+		self.buttonChangeElement = Button(self.tools, text="Use a local Image",command= lambda: self.changeLocalElement(padx))
+		self.buttonChangeElement.grid(row=0, column=0, columnspan=2, sticky="w")
 
 		### Font
-		Label(self.tools, text="Font :", padx=padx).grid(row=0, column=4)
-		self.cbfonts = ttk.Combobox(self.tools, values=font.families(), state="readonly", width=15) # ComboBox Fonts
-		self.cbfonts.grid(row=0, column=5, padx=padx)
-		self.cbfonts.bind("<<ComboboxSelected>>", self.changeFont)
-
-		### Checkbox to choose between local character and local image
-		self.cbvLocal = StringVar(value="Char") # ComboBox Variable for le Local Element
-		Checkbutton(self.tools, text="Use a local Image", 
-			var=self.cbvLocal, onvalue="Image", offvalue="Char",
-			relief=RAISED, 
-			command= self.changeLocalElement).grid(row=0, column=6)
+		self.lbfont = Label(self.tools, text="Font :", padx=padx) # Grid managed in self.changeLocalElement
+		self.cbfonts = ttk.Combobox(self.tools, values=font.families(), state="readonly", width=15) # ComboBox Fonts # Grid managed in self.changeLocalElement
 
 		### Local Character (if used, the Local Image is disabled)
 		self.labelChar = Label(self.tools, text="Local char :", padx=padx)
 		self.entryChar = Entry(self.tools, width=2)
-		self.labelChar.grid(row=0, column=7)
-		self.entryChar.grid(row=0, column=8, padx=padx)
 
 		### Local Image (if used, the Local Character is disabled)
 		self.labelImg = Label(self.tools, text="Local Image :", padx=padx)
-		self.entryImg = Button(self.tools, text="Search an Image")
-		self.deleteImg = Button(self.tools, text="delete Image")
+		self.entryImg = Button(self.tools, text="Search an Image",height=1)
+
+		### Density
+		Label(self.tools, text="Density :", padx=padx).grid(row=1, column=0, sticky="w")
+		Spinbox(self.tools, from_=1, to=100, width=4).grid(row=1, column=1, padx=padx, sticky="w")
+
+		### Size 
+		Label(self.tools, text="Size :", padx=padx).grid(row=1, column=2, sticky="w")
+		self.spChar = Spinbox(self.tools, from_=1, to=100, width=4) # Grid managed in self.changeLocalElement
+		self.spImg = Spinbox(self.tools, from_=1, to=100, width=4) # Grid managed in self.changeLocalElement
+		
 
 		self.getMainElement().bind(tobind[0],tobind[1])
 		self.bindallframe(self.getMainElement(),tobind[0], tobind[1])
-
+		self.changeLocalElement(padx)
 	def func(self,event=None):
 		print("selected")
 
@@ -107,23 +102,32 @@ class Generator_Canvas(Ui_Canvas):
 		font = self.cbDfonts.get()
 
 
-	def changeLocalElement(self):
+	def changeLocalElement(self,padx):
 		"""
 		Make appear and disappear the options of the local element from the draw canvas
 		"""
-		if self.cbvLocal.get() == 'Char': 	# Make appear Local Character Option
-			self.labelImg.grid_forget() 
+		if self.currentElement == 'char': 	# Make appear Local Character Option
+			self.spImg.grid_forget()
+			self.labelImg.grid_forget()
 			self.entryImg.grid_forget()
-			self.deleteImg.grid_forget()
-			self.labelChar.grid(row=0, column=7)
-			self.entryChar.grid(row=0, column=8, padx=1)
-
+			self.spChar.grid(row=1, column=3, padx=padx, sticky="w")
+			self.labelChar.grid(row=0, column=2, columnspan=2, padx=padx, sticky="w")
+			self.entryChar.grid(row=0, column=4, padx=padx, sticky="w")
+			self.lbfont.grid(row=0, column=5, padx=padx, sticky="e")
+			self.cbfonts.grid(row=0, column=6, padx=padx)
+			self.buttonChangeElement.configure(text="Use local Image")
+			self.currentElement = "image"
 		else:								# Make appear Local Image Option
-			self.labelImg.grid(row=0, column=9)
-			self.entryImg.grid(row=0, column=10, padx=1)
-			self.deleteImg.grid(row=0, column=11, padx=1)
+			self.spChar.grid_forget()
+			self.cbfonts.grid_forget()
+			self.lbfont.grid_forget()
 			self.labelChar.grid_forget()
 			self.entryChar.grid_forget()
+			self.spImg.grid(row=1, column=3, padx=padx, sticky="w")
+			self.labelImg.grid(row=0, column=2, columnspan=2, sticky="w")
+			self.entryImg.grid(row=0, column=4, sticky="w")
+			self.buttonChangeElement.configure(text="Use local Character")
+			self.currentElement = "char"
 
 	def importCSV(self):
 		pass

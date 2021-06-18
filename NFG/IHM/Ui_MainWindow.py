@@ -43,7 +43,7 @@ class Ui_MainWindow:
 		# The mainWindow is composed of 3 big parts :
 
 		## Draw functions
-		self.left_Canvas = LabelFrame(master=self.mainWindow, width=Setup.WIDTH/2, text="Draw your own Navon's Figure")
+		self.left_Canvas = LabelFrame(master=self.mainWindow, width=Setup.WIDTH/2, text="Draw your own global form")
 		self.left_Canvas.grid(row=0, column=0, rowspan=2, sticky="nswe")
 		
 		self.left_Canvas.bind("<Button-3>", lambda e: self.changeFocus("draw"))
@@ -65,7 +65,7 @@ class Ui_MainWindow:
 
 
 		self.draw = Draw_Canvas(master=self.left_Canvas,outcome=self.draw_outcome,
-			tobind=np.array(["<Button-3>",lambda e: self.changeFocus('draw')]))
+			tobind=np.array(["<Button-3>",lambda e: self.changeFocus('draw')])) 
 
 		self.draw.getMainElement().grid(row=1, column=0)
 
@@ -81,10 +81,10 @@ class Ui_MainWindow:
 		self.mainWindow.bind('<Return>', self.final)
 
 		## 
-		# Show the draw_canvas
-		self.draw_outcome.getMainElement().grid(row=0, column=0, sticky="w", rowspan=2) # Make visibile it's outcome canvas
+		# Start the app with the focus on the draw canvas
+		self.changeFocus("draw")
 
-
+		self.currentCanvas="draw"
 
 	def changeFocus(self, frame):
 		"""
@@ -95,11 +95,17 @@ class Ui_MainWindow:
 			self.generator.disableChildren(self.generator.getMainElement())
 			self.draw_outcome.getMainElement().grid(row=0, column=0, sticky="w", rowspan=2) # Make visibile it's outcome canvas
 			self.gen_outcome.getMainElement().grid_forget()
+			self.draw.bindCanvas()
+			self.currentCanvas="draw"
+
 		else:
 			self.draw.disableChildren(self.draw.getMainElement())
 			self.generator.enableChildren(self.generator.getMainElement())	
 			self.gen_outcome.getMainElement().grid(row=0, column=0, sticky="w", rowspan=2) # Make visibile it's outcome canvas
 			self.draw_outcome.getMainElement().grid_forget()
+			self.draw.unbindCanvas()
+			self.currentCanvas="generator"
+
 	def limitEntry(self, limit, var):
 		"""
 		Limit an ttk.Entry widget 
@@ -126,7 +132,7 @@ class Ui_MainWindow:
 		.. seealso:: Generator_Canvas.update()
 		.. seealso:: Generator_Canvas.final()
 		"""
-		if self.cboxvalue.get() == 'draw':
+		if self.currentCanvas == 'draw':
 			self.draw.update()
 			self.draw.final()
 			#self.NF.finalImage(self.canvas['draw'].draw_canvas)
