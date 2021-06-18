@@ -50,8 +50,8 @@ class Circle(Element):
 	def setCenter(self, newC):
 		"""
 		Setter of radius
-		:param: the array of new coordonates
-		:type newR: np.array
+		:param newC: the array of new coordonates
+		:type newC: np.array
 		"""
 		self.center = newC
 
@@ -169,7 +169,6 @@ class Circle(Element):
 			_x_ = itp.interp1d(self.getDividedL(), x_)
 			_y_ = itp.interp1d(self.getDividedL(), y_)
 			res = np.append(res,[np.array([_x_,_y_])])
-		print(type(res))
 		return res
 
 	def findNeighbors(self, canvas):

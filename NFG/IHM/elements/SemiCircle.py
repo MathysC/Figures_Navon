@@ -279,19 +279,15 @@ class SemiCircle(Element):
 		# On the top side :
 		if yA < yC:
 			if xA < xC:
-				print("Top - Left")
 				return self.findPointB(180, 90, pointA)
 			else:
-				print("Top - Right")
 				return self.findPointB(-180, -90, pointA)
 
 		# On the Bottom Side
 		elif yA > yC:
 			if xA < xC:
-				print("Bottom - Left")
 				return self.findPointB(90, 0, pointA)
 			else:
-				print("Bottom - Right")
 				return self.findPointB(-90, 0, pointA)
 
 		# If nothing above this line was used, return the pointA 

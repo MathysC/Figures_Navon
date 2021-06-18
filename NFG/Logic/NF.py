@@ -69,20 +69,29 @@ class NF:
 			last = np.append(last,np.array(element.getL()[-1]))
 		return sum(last)
 
-	def getN(self, element,size, density):
+	def getN(self, element,size, density) -> int:
 		"""
 		Function that calculates N 
 		(The percentage * the sum of all length (g) / size of the local element ) / the length of the element / g
+		:param element: the current element
+		:type element: Element
+		:param size: the size of the local element
+		:type size: int
+		:param density: the density of the NF
+		:type density: int
 		.. seealso:: self.getG()
 		.. seealso:: Element.getL()
 		"""
-		g = self.getG()
-		return int((
-					   density
-						   / 100 *
-					g / size) *
-				   element.getL()[-1] / g)
-
+		try : 
+			g = self.getG()
+			res = int((
+				density
+				/ 100 *
+				g / size) *
+				element.getL()[-1] / g)
+		except (ValueError):
+			res = 0
+		return res
 
 	def printElement(self,element,draw):
 		spaces = np.linspace(0, 1, self.getN(element = element, size = self.size, density = self.d))

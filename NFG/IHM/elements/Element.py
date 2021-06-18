@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from Logic.Setup import Setup
 import numpy as np
 
-
 class Element(ABC):
 	"""
 	abstract class for elements
@@ -21,6 +20,8 @@ class Element(ABC):
 		self.neighbors = np.array([], dtype=np.int32)
 		self.tag = "intersection"
 		self.intersections = np.array([],dtype=np.int32)
+		self.parent = self			# At first it is his own parent, but that might change in the future
+		self.kids = np.array([])	# At the start, it has no kid 
 
 	def getId(self):
 		"""
@@ -98,7 +99,7 @@ class Element(ABC):
 		self.neighbors = np.append(
 			self.neighbors, neighbor)
 
-	def getTag(self):
+	def getTag(self) -> str:
 		"""
 		Getter of the tag for intersections
 		:return: 'intersection'
@@ -106,15 +107,55 @@ class Element(ABC):
 		"""
 		return self.tag
 
-	def getCoords(self):
+	def getCoords(self) -> np.array:
 		"""
 		Getter of Coords
+		:return coord: the array with all coordinates
+		:rtype coord: np.array
 		"""
 		coord = np.array([])
 		for i in range(0,len(self.x)):
 			coord = np.append(coord,self.getX(i))
 			coord = np.append(coord,self.getY(i))
 		return coord
+
+	def getParent(self): # -> Element
+		"""
+		Getter of parent
+		:return: the parent of this element
+		:rtype: Element
+		"""
+		return self.parent
+
+	def setParent(self,parent):
+		"""
+		Setter of parent
+		:param parent: the Element parent of this element
+		:type parent: Element
+		"""
+		self.parent= parent
+
+	def getKids(self)-> np.array:
+		return self.kids
+
+	def addKid(self,kid):
+		"""
+		add a kid to the kids list
+		:param kid: the kid to add
+		:type kid: Element
+		"""
+		self.kids = np.append(
+			self.kids, kid)
+
+	def removeKid(self,kid):
+		"""
+		remove a kid to the kids list
+		:param kid: the kid to remove
+		:type kid: Element
+		"""
+		self.kids = np.delete(
+			self.kids,
+			np.where(self.kids == kid))
 
 	# Calculation by M. BARD
 	@abstractmethod
@@ -124,15 +165,18 @@ class Element(ABC):
 	def getDividedL(self):
 		"""
 		Function that calculates each value of the L array div by its last element
-		:return: the division
+		:return res: the division
 		:rtype: numpy.ndarray
 		"""
-		return self.getL() / self.getL()[-1]
+		try:
+			res = self.getL() / self.getL()[-1]
+		except ValueError:
+			res = np.array([0,0])
+		return res
 
 	@abstractmethod
 	def interpolate(self):
 		pass
-
 
 	@abstractmethod
 	def getType(self):

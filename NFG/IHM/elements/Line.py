@@ -9,8 +9,8 @@ class Line(Element):
 	"""
 	Class that extends Element, implements the Line
 	"""
-	def __init__(self):
-		super().__init__()
+	def __init__(self,Xs=np.zeros(2),Ys=np.zeros(2)):
+		super().__init__(Xs,Ys)
 
 	def getType(self):
 		"""
@@ -209,3 +209,21 @@ class Line(Element):
 			current = int(math.hypot(pointC[0] - pointA[0], pointC[1] - pointA[1])) # Calculate the length A-C
 
 		return pointC
+
+
+	def determineKids(self, pointIntersection,neighborElement):
+		"""
+		:param pointIntersection: coordinates of the intersection
+		:type pointIntersection: np.array([x, y])
+		:param neighborElement: the Second Element
+		:type neighborElement: Element
+		"""
+
+
+	def createKids(self,intersection):
+		# Create two lines that bond to the point of intersection
+		kid1 = Line(Xs=np.array([self.getX(0),intersection[0]]),Ys=np.array([self.getY(0),intersection[1]]))
+		kid2 = Line(Xs=np.array([self.getX(1),intersection[0]]),Ys=np.array([self.getY(1),intersection[1]]))
+
+		self.addKids(kid1)
+		self.addKids(kid2)
