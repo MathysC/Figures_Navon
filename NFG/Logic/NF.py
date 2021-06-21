@@ -90,19 +90,27 @@ class NF:
 			res = 0
 		return res
 
-	def printElement(self, element, draw):
-		spaces = np.linspace(0, 1, self.getN(element=element, size=self.size, density=self.d))
-		interp = element.interpolate()
-		font = ImageFont.truetype(self.police, self.size)
+	def printElement(self, component, draw):
+		todo = np.array([])
+		if len(component.getKids()) > 0:
+			todo = np.append(todo, component.getKids())
+			print(f"kid : {len(todo)}")
+		else:
+			todo = np.append(todo, component)
+			print("parent")
+		for element in todo:
+			spaces = np.linspace(0, 1, self.getN(element=element, size=self.size, density=self.d))
+			interp = element.interpolate()
+			font = ImageFont.truetype(self.police, self.size)
 
-		for i in range(0, len(interp), 2):
-			_x_, _y_ = interp[i:i + 2]
-			x_, y_ = _x_(spaces), _y_(spaces)
+			for i in range(0, len(interp), 2):
+				_x_, _y_ = interp[i:i + 2]
+				x_, y_ = _x_(spaces), _y_(spaces)
 
-			# Add local char to each coordinates
-			for i in range(0, len(x_)):
-				draw.text((x_[i], y_[i]), self.char, self.color, font=font)
-
+				# Add local char to each coordinates
+				for i in range(0, len(x_)):
+					draw.text((x_[i], y_[i]), self.char, self.color, font=font)
+		print("---")
 	def printAllElements(self, draw):
 		for element in self.elements:
 			self.printElement(element, draw)

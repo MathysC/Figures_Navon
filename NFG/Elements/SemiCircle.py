@@ -221,7 +221,7 @@ class SemiCircle(Element):
 		:return: method return nothing
 		:rtype: None
 		"""
-		tag = f"-{self.id}" #self.tag from element and self.id to make a personal tag
+		tag = f"-{self.id}" # to make a personal tag
 		# Reset intersections and neighbor 
 		canvas.delete(tag)
 		self.intersections = np.empty(0)
@@ -243,7 +243,7 @@ class SemiCircle(Element):
 			find = np.delete(find,np.where(find == self.id))
 
 			# We delete the circles that represents intersections
-			for circle in canvas.find_withtag(self.tag):
+			for circle in canvas.find_withtag(self.getIntersectionTag()):
 				find = np.delete(find,np.where(find == circle))
 
 			# Delete all the same multiple value at the same point
@@ -254,8 +254,9 @@ class SemiCircle(Element):
 				for idElement in find:
 					# We create an intersection at this point
 					intersection = canvas.create_oval(int(point[0]-Setup.RADIUSINTER), int(point[1]-Setup.RADIUSINTER),
-						int(point[0]+Setup.RADIUSINTER), int(point[1]+Setup.RADIUSINTER),
-						fill="red", outline="red", width=1,tags=self.tag+" "+tag+f" -{idElement}")
+					                                  int(point[0]+Setup.RADIUSINTER), int(point[1]+Setup.RADIUSINTER),
+					                                  fill="red", outline="red", width=1, 
+					                                  tags=self.getIntersectionTag() + " " + tag + f" -{idElement}")
 
 					# Then we save the outcome
 					self.addIntersection(intersection)

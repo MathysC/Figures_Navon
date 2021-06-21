@@ -5,12 +5,14 @@ import numpy as np
 import scipy.interpolate as itp
 import math
 
+
 class Line(Element):
 	"""
 	Class that extends Element, implements the Line
 	"""
-	def __init__(self,Xs=np.zeros(2),Ys=np.zeros(2)):
-		super().__init__(Xs,Ys)
+
+	def __init__(self, Xs=np.zeros(2), Ys=np.zeros(2)):
+		super().__init__(Xs, Ys)
 
 	def getType(self):
 		"""
@@ -31,7 +33,8 @@ class Line(Element):
 		event = kwargs.get('event')
 		canvas = kwargs.get('canvas')
 
-		point = self.gather(canvas,kwargs.get('NF'),np.array([event.x,event.y])) # Find if there is any element close to this one
+		point = self.gather(canvas, kwargs.get('NF'),
+		                    np.array([event.x, event.y]))  # Find if there is any element close to this one
 		# The line begins at the click
 		self.setX(0, point[0])
 		self.setX(1, point[0])
@@ -58,13 +61,14 @@ class Line(Element):
 		event = kwargs.get('event')
 		canvas = kwargs.get('canvas')
 
-		point = self.gather(canvas,kwargs.get('NF'),np.array([event.x,event.y])) # Find if there is any element close to this one
+		point = self.gather(canvas, kwargs.get('NF'),
+		                    np.array([event.x, event.y]))  # Find if there is any element close to this one
 		self.setX(1, point[0])
 		self.setY(1, point[1])
 
 		canvas.coords(self.id,
-					  self.getX(0), self.getY(0),
-					  self.getX(1), self.getY(1))
+		              self.getX(0), self.getY(0),
+		              self.getX(1), self.getY(1))
 		self.findNeighbors(canvas=kwargs.get('canvas'))
 
 	def end(self, **kwargs):
@@ -80,10 +84,13 @@ class Line(Element):
 		"""
 		NF = kwargs.get('NF')
 		NF.addElement(self)
-
+		canvas = kwargs.get('canvas')
 		# We add this element to its neighbors
-		self.addToNeighbors(canvas=kwargs.get('canvas'),NF=NF)
+		self.addToNeighbors(canvas=canvas, NF=NF)
 
+		self.determineKids(canvas=canvas, nf=NF)
+
+		print(f"This element's kid: {self.getKids()}")
 		# Add the element to the outcome canvas
 		draw_canvas = kwargs.get('draw_canvas')
 		draw_canvas.getOutcome().addElementToIm(self)
@@ -117,59 +124,62 @@ class Line(Element):
 		:return: method return nothing
 		:rtype: None
 		"""
-		
+
 		""" There are three tags for intersections :
 			Intersection
 			-{The ID of this element}
 			-{The ID of the neighbor}
 	 	 Those tags are wrote with an hyphen at the beginning otherwise it will be interpreted as an id an not a tag """
-		tag = f"-{self.id}" 
-		
+		tag = f"-{self.id}"
+
 		""" Reset self.intersections and self.neighbor 
 			 Because this function is used and ONLY used in self.motion
 			 We must clear those Elements before trying add an intersection and a neighbour
 			 Because the element is not the same for each motion"""
-		canvas.delete(tag) 	
+		canvas.delete(tag)
 		self.intersections = np.empty(0)
 		self.neighbors = np.empty(0)
-	
+
 		# Calculation of th before the loop to avoid useless repetition 
 		# https://stackoverflow.com/questions/22190193/finding-coordinates-of-a-point-on-a-line
 		th = math.atan2(self.getY(1) - self.getY(0), self.getX(1) - self.getX(0))
-		
+
 		# For each point of the line
-		for i in range(0,int(math.hypot(self.getX(0) - self.getX(1), self.getY(0) - self.getY(1))),1):
+		for i in range(0, int(math.hypot(self.getX(0) - self.getX(1), self.getY(0) - self.getY(1))), 3):
 			# Get the coords of the point
 			point = np.array([self.getX(0) + i * math.cos(th),
-			 self.getY(0) + i * math.sin(th)])
+			                  self.getY(0) + i * math.sin(th)])
 
 			# We find all element that are at this point
-			found = np.array(canvas.find_overlapping(point[0]-1, point[1]-1, point[0]+1, point[1]+1))
-			#found = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
-			
+			found = np.array(canvas.find_overlapping(point[0] - 1, point[1] - 1, point[0] + 1, point[1] + 1))
+			# found = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
+
 			# We delete the current element from the list
-			found = np.delete(found,np.where(found == self.id))
+			found = np.delete(found, np.where(found == self.id))
 
 			# We delete the circles that represents intersections
-			for circle in canvas.find_withtag(self.tag):
-				found = np.delete(found,np.where(found == circle))
+			for circle in canvas.find_withtag(self.getIntersectionTag()):
+				found = np.delete(found, np.where(found == circle))
 
 			# Delete all the same multiple value at the same point
 			found = np.unique(found)
-				
-			#Then if there is at least another one element found
-			if(len(found)>=1):
+
+			# Then if there is at least another one element found
+			if (len(found) >= 1):
 				for neighbor in found:
 					# We create an intersection at this point
-					intersection = canvas.create_oval(int(point[0]-Setup.RADIUSINTER), int(point[1]-Setup.RADIUSINTER),
-						int(point[0]+Setup.RADIUSINTER), int(point[1]+Setup.RADIUSINTER),
-						fill="red", outline="red", width=1,tags=self.tag+" "+tag+f" -{neighbor}")
+					intersection = canvas.create_oval(int(point[0] - Setup.RADIUSINTER),
+					                                  int(point[1] - Setup.RADIUSINTER),
+					                                  int(point[0] + Setup.RADIUSINTER),
+					                                  int(point[1] + Setup.RADIUSINTER),
+					                                  fill="red", outline="red", width=1,
+					                                  tags=self.getIntersectionTag() + " " + tag + f" -{neighbor}")
 
 					# Then we save the outcome
 					self.addIntersection(intersection)
 					self.addNeighbor(neighbor)
 
-	def whereToGather(self,pointA) -> np.array:
+	def whereToGather(self, pointA) -> np.array:
 		"""
 		Found where to place the pointA on top of the other element
 		:param: pointA
@@ -185,8 +195,9 @@ class Line(Element):
 		pointB = np.array([])
 
 		# To find the closest end, we calculate the difference in length between each end and pointA
-		LineB = int(math.hypot(self.getX(0)- pointA[0], self.getY(0)- pointA[1])) # Distance from Beginning of the Line
-		LineE = int(math.hypot(self.getX(1)- pointA[0], self.getY(1)- pointA[1])) # Distance from End of the Line
+		LineB = int(
+			math.hypot(self.getX(0) - pointA[0], self.getY(0) - pointA[1]))  # Distance from Beginning of the Line
+		LineE = int(math.hypot(self.getX(1) - pointA[0], self.getY(1) - pointA[1]))  # Distance from End of the Line
 
 		if LineB < LineE:
 			pointB = np.array([self.getX(0), self.getY(0)])
@@ -195,35 +206,51 @@ class Line(Element):
 
 		# C : The calculate point that will be the closest to A
 		pointC = np.array([])
-		previous = current = 9999 # Initialize previous and current value at extremely high value 
-							#to begin the while loop because their is not do while loop in python
-		lengthBC = 0 # The length of pointB to pointC
+		previous = current = 9999  # Initialize previous and current value at extremely high value
+		# to begin the while loop because their is not do while loop in python
+		lengthBC = 0  # The length of pointB to pointC
 
 		# https://stackoverflow.com/questions/22190193/finding-coordinates-of-a-point-on-a-line
 		th = math.atan2(self.getY(1) - self.getY(0), self.getX(1) - self.getX(0))
 		while current <= previous:
-			previous = current # Change the previous element
+			previous = current  # Change the previous element
 			pointC = np.array([self.getX(0) + lengthBC * math.cos(th),
-			 self.getY(0) + lengthBC * math.sin(th)]) # Calculate pointC
-			lengthBC += 1 # Increment the length, 1 by 1 
-			current = int(math.hypot(pointC[0] - pointA[0], pointC[1] - pointA[1])) # Calculate the length A-C
+			                   self.getY(0) + lengthBC * math.sin(th)])  # Calculate pointC
+			lengthBC += 1  # Increment the length, 1 by 1
+			current = int(math.hypot(pointC[0] - pointA[0], pointC[1] - pointA[1]))  # Calculate the length A-C
 
 		return pointC
 
-
-	def determineKids(self, pointIntersection,neighborElement):
-		"""
-		:param pointIntersection: coordinates of the intersection
-		:type pointIntersection: np.array([x, y])
-		:param neighborElement: the Second Element
-		:type neighborElement: Element
+	def determineKids(self, canvas, nf):
 		"""
 
+		"""
+		# intersections are created from the start (self.start) to the end (the last call of self.motion) of the line
+		current = self
+		for intersection in self.getIntersections():
+			intersection = int(intersection)
+			neighbor = nf.getElementById(int(canvas.gettags(intersection)[2][1:]))
+			intersectionPoint = np.array([
+				(canvas.coords(intersection)[0] + Setup.RADIUSINTER),
+				(canvas.coords(intersection)[1] + Setup.RADIUSINTER)])
+			current.createKids(intersectionPoint)
+			neighbor.createKids(intersectionPoint)
+			current = self.getKids()[-1]
 
-	def createKids(self,intersection):
-		# Create two lines that bond to the point of intersection
-		kid1 = Line(Xs=np.array([self.getX(0),intersection[0]]),Ys=np.array([self.getY(0),intersection[1]]))
-		kid2 = Line(Xs=np.array([self.getX(1),intersection[0]]),Ys=np.array([self.getY(1),intersection[1]]))
+	def createKids(self, intersection):
+		"""
+		Create two lines that bond to the point of intersection
+		:param intersection: the point of intersection
+		:type intersection: np.array([x, y])
+		"""
+		# Creates two kids
+		kid1 = Line(Xs=np.array([self.getX(0), intersection[0]]), Ys=np.array([self.getY(0), intersection[1]]))
+		kid2 = Line(Xs=np.array([self.getX(1), intersection[0]]), Ys=np.array([self.getY(1), intersection[1]]))
 
-		self.addKids(kid1)
-		self.addKids(kid2)
+		# Add this element as parent of those kids
+		kid1.setParent(self)
+		kid2.setParent(self)
+
+		# Add kids to the list
+		self.addKid(kid1)
+		self.addKid(kid2)
