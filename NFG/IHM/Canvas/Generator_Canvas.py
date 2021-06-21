@@ -1,4 +1,3 @@
-from IHM.elements.ElementFactory import ElementFactory as Factory
 from IHM.Canvas.Ui_Canvas import Ui_Canvas # Abstract class
 from Logic.Setup import Setup
 
@@ -7,8 +6,6 @@ from tkinter import *
 from tkinter import ttk #i had to separate both importation in order to use ttk
 from tkinter import font
 
-from PIL import Image, ImageTk
-import numpy as np
 
 class Generator_Canvas(Ui_Canvas):
 	def __init__(self,master,outcome,tobind):

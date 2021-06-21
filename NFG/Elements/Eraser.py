@@ -1,5 +1,4 @@
-from IHM.elements.Element import Element
-import numpy as np
+from Elements.Element import Element
 
 
 class Eraser(Element):
@@ -45,7 +44,7 @@ class Eraser(Element):
 		event = kwargs.get('event')
 		canvas = kwargs.get('canvas')
 		NF = kwargs.get('NF')
-		# onClick is a list of elements found nearby the click on the canvas but only the first created among all will be used
+		# onClick is a list of Elements found nearby the click on the canvas but only the first created among all will be used
 		# onClick is a list because find_overlapping return a list
 		# https://mail.python.org/pipermail/tutor/2012-November/092795.html
 		onClick = canvas.find_overlapping(event.x-1, event.y-1, event.x+1, event.y+1)

@@ -1,4 +1,4 @@
-from IHM.elements.Element import Element
+from Elements.Element import Element
 from Logic.Setup import Setup
 import numpy as np
 import math

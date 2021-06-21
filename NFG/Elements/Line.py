@@ -1,4 +1,4 @@
-from IHM.elements.Element import Element
+from Elements.Element import Element
 from Logic.Setup import Setup
 
 import numpy as np
@@ -127,7 +127,7 @@ class Line(Element):
 		
 		""" Reset self.intersections and self.neighbor 
 			 Because this function is used and ONLY used in self.motion
-			 We must clear those elements before trying add an intersection and a neighbour
+			 We must clear those Elements before trying add an intersection and a neighbour
 			 Because the element is not the same for each motion"""
 		canvas.delete(tag) 	
 		self.intersections = np.empty(0)

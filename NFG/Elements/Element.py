@@ -4,7 +4,7 @@ import numpy as np
 
 class Element(ABC):
 	"""
-	abstract class for elements
+	abstract class for Elements
 	"""
 	def __init__(self, Xs=np.zeros(2), Ys=np.zeros(2)):
 		"""

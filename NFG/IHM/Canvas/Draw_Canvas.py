@@ -1,4 +1,4 @@
-from IHM.elements.ElementFactory import ElementFactory as Factory
+from Elements.ElementFactory import ElementFactory as Factory
 from IHM.Canvas.Ui_Canvas import Ui_Canvas
 from Logic.Setup import Setup
 
@@ -25,8 +25,8 @@ class Draw_Canvas(Ui_Canvas):
 		# The Frame that contains the draw canvas
 		self.draw_frame = Frame(master, 
 			bg="white",
-			height=Setup.HEIGHT, 
 			width=int(Setup.WIDTH/2), 
+			height=int(Setup.HEIGHT/2), 
 			relief=RAISED)
 		super().__init__(mainElement=self.draw_frame)
 

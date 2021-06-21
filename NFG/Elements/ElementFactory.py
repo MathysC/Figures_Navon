@@ -1,13 +1,15 @@
-from IHM.elements.Element import Element
-from IHM.elements.Line import Line
-from IHM.elements.SemiCircle import SemiCircle
-from IHM.elements.Eraser import Eraser
-from IHM.elements.Circle import Circle
+from Elements.Element import Element
+from Elements.Line import Line
+from Elements.SemiCircle import SemiCircle
+from Elements.Eraser import Eraser
+from Elements.Circle import Circle
+
 
 class ElementFactory:
 	"""
 	Factory pattern in order to create different element for the canvas
 	"""
+
 	@staticmethod
 	def Create(elementType) -> Element:
 		"""
