@@ -242,7 +242,7 @@ class Element(ABC):
 		:rtype: np.array([ x , y ])
 		... seealso:: self.whereToGather(self,pointA)
 		"""
-		radius = 8
+		radius = 10
 		# Find the closest element of pointA
 		found = np.array(canvas.find_overlapping(
 			pointA[0] - radius, pointA[1] - radius,

@@ -34,7 +34,7 @@ class Line(Element):
 		canvas = kwargs.get('canvas')
 
 		point = self.gather(canvas, kwargs.get('NF'),
-		                    np.array([event.x, event.y]))  # Find if there is any element close to this one
+							np.array([event.x, event.y]))  # Find if there is any element close to this one
 		# The line begins at the click
 		self.setX(0, point[0])
 		self.setX(1, point[0])
@@ -62,13 +62,13 @@ class Line(Element):
 		canvas = kwargs.get('canvas')
 
 		point = self.gather(canvas, kwargs.get('NF'),
-		                    np.array([event.x, event.y]))  # Find if there is any element close to this one
+							np.array([event.x, event.y]))  # Find if there is any element close to this one
 		self.setX(1, point[0])
 		self.setY(1, point[1])
 
 		canvas.coords(self.id,
-		              self.getX(0), self.getY(0),
-		              self.getX(1), self.getY(1))
+					  self.getX(0), self.getY(0),
+					  self.getX(1), self.getY(1))
 		self.findNeighbors(canvas=kwargs.get('canvas'))
 
 	def end(self, **kwargs):
@@ -90,10 +90,9 @@ class Line(Element):
 
 		self.determineKids(canvas=canvas, nf=NF)
 
-		print(f"This element's kid: {self.getKids()}")
 		# Add the element to the outcome canvas
 		draw_canvas = kwargs.get('draw_canvas')
-		draw_canvas.getOutcome().addElementToIm(self)
+		draw_canvas.getOutcome().update()
 
 	def getL(self) -> np.ndarray:
 		"""
@@ -129,7 +128,7 @@ class Line(Element):
 			Intersection
 			-{The ID of this element}
 			-{The ID of the neighbor}
-	 	 Those tags are wrote with an hyphen at the beginning otherwise it will be interpreted as an id an not a tag """
+		 Those tags are wrote with an hyphen at the beginning otherwise it will be interpreted as an id an not a tag """
 		tag = f"-{self.id}"
 
 		""" Reset self.intersections and self.neighbor 
@@ -145,13 +144,13 @@ class Line(Element):
 		th = math.atan2(self.getY(1) - self.getY(0), self.getX(1) - self.getX(0))
 
 		# For each point of the line
-		for i in range(0, int(math.hypot(self.getX(0) - self.getX(1), self.getY(0) - self.getY(1))), 3):
+		for i in range(0, int(math.hypot(self.getX(0) - self.getX(1), self.getY(0) - self.getY(1))), 1):
 			# Get the coords of the point
 			point = np.array([self.getX(0) + i * math.cos(th),
-			                  self.getY(0) + i * math.sin(th)])
+							  self.getY(0) + i * math.sin(th)])
 
 			# We find all element that are at this point
-			found = np.array(canvas.find_overlapping(point[0] - 1, point[1] - 1, point[0] + 1, point[1] + 1))
+			found = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
 			# found = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
 
 			# We delete the current element from the list
@@ -169,11 +168,11 @@ class Line(Element):
 				for neighbor in found:
 					# We create an intersection at this point
 					intersection = canvas.create_oval(int(point[0] - Setup.RADIUSINTER),
-					                                  int(point[1] - Setup.RADIUSINTER),
-					                                  int(point[0] + Setup.RADIUSINTER),
-					                                  int(point[1] + Setup.RADIUSINTER),
-					                                  fill="red", outline="red", width=1,
-					                                  tags=self.getIntersectionTag() + " " + tag + f" -{neighbor}")
+													  int(point[1] - Setup.RADIUSINTER),
+													  int(point[0] + Setup.RADIUSINTER),
+													  int(point[1] + Setup.RADIUSINTER),
+													  fill="red", outline="red", width=1,
+													  tags=self.getIntersectionTag() + " " + tag + f" -{neighbor}")
 
 					# Then we save the outcome
 					self.addIntersection(intersection)
@@ -215,7 +214,7 @@ class Line(Element):
 		while current <= previous:
 			previous = current  # Change the previous element
 			pointC = np.array([self.getX(0) + lengthBC * math.cos(th),
-			                   self.getY(0) + lengthBC * math.sin(th)])  # Calculate pointC
+							   self.getY(0) + lengthBC * math.sin(th)])  # Calculate pointC
 			lengthBC += 1  # Increment the length, 1 by 1
 			current = int(math.hypot(pointC[0] - pointA[0], pointC[1] - pointA[1]))  # Calculate the length A-C
 
@@ -226,16 +225,18 @@ class Line(Element):
 
 		"""
 		# intersections are created from the start (self.start) to the end (the last call of self.motion) of the line
-		current = self
 		for intersection in self.getIntersections():
 			intersection = int(intersection)
-			neighbor = nf.getElementById(int(canvas.gettags(intersection)[2][1:]))
 			intersectionPoint = np.array([
 				(canvas.coords(intersection)[0] + Setup.RADIUSINTER),
 				(canvas.coords(intersection)[1] + Setup.RADIUSINTER)])
+			neighbor = nf.getElementById(int(canvas.gettags(intersection)[2][1:]))
+			#print(neighbor)
+			#print(neighbor.foundClosestToInsersection(intersectionPoint))
+			neighbor = neighbor.foundClosestToInsersection(intersectionPoint)
+			current = self.foundClosestToInsersection(intersectionPoint)
 			current.createKids(intersectionPoint)
 			neighbor.createKids(intersectionPoint)
-			current = self.getKids()[-1]
 
 	def createKids(self, intersection):
 		"""
@@ -245,7 +246,7 @@ class Line(Element):
 		"""
 		# Creates two kids
 		kid1 = Line(Xs=np.array([self.getX(0), intersection[0]]), Ys=np.array([self.getY(0), intersection[1]]))
-		kid2 = Line(Xs=np.array([self.getX(1), intersection[0]]), Ys=np.array([self.getY(1), intersection[1]]))
+		kid2 = Line(Xs=np.array([intersection[0], self.getX(1)]), Ys=np.array([intersection[1], self.getY(1)]))
 
 		# Add this element as parent of those kids
 		kid1.setParent(self)
@@ -254,3 +255,19 @@ class Line(Element):
 		# Add kids to the list
 		self.addKid(kid1)
 		self.addKid(kid2)
+
+
+	def foundClosestToInsersection(self, intersection):
+		if len(self.getKids()) == 0:
+			return self
+		else:
+			for kid in self.getKids():
+				startKid = np.array([kid.getX(0), kid.getY(0)])
+				endKid = np.array([kid.getX(1), kid.getY(1)])
+				print(f"{kid=}")
+				print(f"{startKid=}\n{endKid=}\n{intersection=}")
+				if startKid[0]<=intersection[0]<=endKid[0] and startKid[1]<=intersection[1]<=endKid[1]:
+					print("true")
+					return kid
+				print("false")
+				print("---")

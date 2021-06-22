@@ -90,14 +90,16 @@ class NF:
 			res = 0
 		return res
 
-	def printElement(self, component, draw):
-		todo = np.array([])
-		if len(component.getKids()) > 0:
-			todo = np.append(todo, component.getKids())
-			print(f"kid : {len(todo)}")
+	def foundElementToPrint(self, element):
+		found = np.array([])
+		if len(element.getKids()) == 0:
+			found = np.append(found, element)
 		else:
-			todo = np.append(todo, component)
-			print("parent")
+			for kid in element.getKids():
+				found = np.append(found,self.foundElementToPrint(kid))
+		return found
+	def printElement(self, component, draw):
+		todo = self.foundElementToPrint(component)
 		for element in todo:
 			spaces = np.linspace(0, 1, self.getN(element=element, size=self.size, density=self.d))
 			interp = element.interpolate()
@@ -110,7 +112,8 @@ class NF:
 				# Add local char to each coordinates
 				for i in range(0, len(x_)):
 					draw.text((x_[i], y_[i]), self.char, self.color, font=font)
-		print("---")
+
+
 	def printAllElements(self, draw):
 		for element in self.elements:
 			self.printElement(element, draw)
