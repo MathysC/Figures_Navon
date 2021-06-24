@@ -92,12 +92,13 @@ class NF:
 
 	def foundElementToPrint(self, element):
 		found = np.array([])
+		for kid in element.getKids():
+			found = np.append(found, self.foundElementToPrint(kid))
 		if len(element.getKids()) == 0:
 			found = np.append(found, element)
-		else:
-			for kid in element.getKids():
-				found = np.append(found,self.foundElementToPrint(kid))
 		return found
+
+
 	def printElement(self, component, draw):
 		todo = self.foundElementToPrint(component)
 		for element in todo:

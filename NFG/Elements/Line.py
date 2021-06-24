@@ -22,6 +22,9 @@ class Line(Element):
 		"""
 		return "line"
 
+#___________________________________________________________________________________________________________________________
+# Management of the creation of element on the Draw Canvas
+
 	def start(self, **kwargs):
 		"""
 		Start drawing a line
@@ -34,7 +37,7 @@ class Line(Element):
 		canvas = kwargs.get('canvas')
 
 		point = self.gather(canvas, kwargs.get('NF'),
-							np.array([event.x, event.y]))  # Find if there is any element close to this one
+		                    np.array([event.x, event.y]))  # Find if there is any element close to this one
 		# The line begins at the click
 		self.setX(0, point[0])
 		self.setX(1, point[0])
@@ -62,13 +65,13 @@ class Line(Element):
 		canvas = kwargs.get('canvas')
 
 		point = self.gather(canvas, kwargs.get('NF'),
-							np.array([event.x, event.y]))  # Find if there is any element close to this one
+		                    np.array([event.x, event.y]))  # Find if there is any element close to this one
 		self.setX(1, point[0])
 		self.setY(1, point[1])
 
 		canvas.coords(self.id,
-					  self.getX(0), self.getY(0),
-					  self.getX(1), self.getY(1))
+		              self.getX(0), self.getY(0),
+		              self.getX(1), self.getY(1))
 		self.findNeighbors(canvas=kwargs.get('canvas'))
 
 	def end(self, **kwargs):
@@ -83,16 +86,18 @@ class Line(Element):
 		:rtype: None
 		"""
 		NF = kwargs.get('NF')
-		NF.addElement(self)
+		NF.addElement(self) # Add the element to the list of element of the Navon's figure
 		canvas = kwargs.get('canvas')
 		# We add this element to its neighbors
-		self.addToNeighbors(canvas=canvas, NF=NF)
+		self.addToNeighbors(canvas=canvas, NF=NF) # Indiquate this element as neighbor of the neighbor it self
 
-		self.determineKids(canvas=canvas, nf=NF)
+		self.determineKids(canvas=canvas, nf=NF) 
 
 		# Add the element to the outcome canvas
 		draw_canvas = kwargs.get('draw_canvas')
 		draw_canvas.getOutcome().update()
+#___________________________________________________________________________________________________________________________
+# Management of the creation of element on the Navon's Figure
 
 	def getL(self) -> np.ndarray:
 		"""
@@ -115,6 +120,9 @@ class Line(Element):
 		_y_ = itp.interp1d(self.getDividedL(), self.y)
 		return np.array([_x_, _y_])
 
+#___________________________________________________________________________________________________________________________
+# Managing of Element Intersections 
+
 	def findNeighbors(self, canvas):
 		"""
 		Check at any point of the line if there is another element and therefore an intersection to create
@@ -126,11 +134,9 @@ class Line(Element):
 
 		""" There are three tags for intersections :
 			Intersection
-			-{The ID of this element}
-			-{The ID of the neighbor}
-		 Those tags are wrote with an hyphen at the beginning otherwise it will be interpreted as an id an not a tag """
+			-{The ID of this element}-{The ID of the neighbor}
+		 """
 		tag = f"-{self.id}"
-
 		""" Reset self.intersections and self.neighbor 
 			 Because this function is used and ONLY used in self.motion
 			 We must clear those Elements before trying add an intersection and a neighbour
@@ -147,10 +153,10 @@ class Line(Element):
 		for i in range(0, int(math.hypot(self.getX(0) - self.getX(1), self.getY(0) - self.getY(1))), 1):
 			# Get the coords of the point
 			point = np.array([self.getX(0) + i * math.cos(th),
-							  self.getY(0) + i * math.sin(th)])
+			                  self.getY(0) + i * math.sin(th)])
 
 			# We find all element that are at this point
-			found = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
+			found = np.array(canvas.find_overlapping(point[0] - 1, point[1] - 1, point[0] + 1, point[1] + 1))
 			# found = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
 
 			# We delete the current element from the list
@@ -168,15 +174,50 @@ class Line(Element):
 				for neighbor in found:
 					# We create an intersection at this point
 					intersection = canvas.create_oval(int(point[0] - Setup.RADIUSINTER),
-													  int(point[1] - Setup.RADIUSINTER),
-													  int(point[0] + Setup.RADIUSINTER),
-													  int(point[1] + Setup.RADIUSINTER),
-													  fill="red", outline="red", width=1,
-													  tags=self.getIntersectionTag() + " " + tag + f" -{neighbor}")
+					                                  int(point[1] - Setup.RADIUSINTER),
+					                                  int(point[0] + Setup.RADIUSINTER),
+					                                  int(point[1] + Setup.RADIUSINTER),
+					                                  fill="red", outline="red", width=1,
+					                                  tags=f"{self.getIntersectionTag()} {tag} -{neighbor}")
 
 					# Then we save the outcome
 					self.addIntersection(intersection)
 					self.addNeighbor(neighbor)
+
+		for idneighbor in self.getNeighbors():
+			idneighbor = int(idneighbor)
+			self.checkIntersection(canvas=canvas, idNeighbor=idneighbor)
+
+	def checkIntersection(self, canvas, idNeighbor):
+		# list of intersections that are too close to each other
+		intertooClose = np.array([])
+
+		# Get intersection between this element and the idNeighbor
+		intersections = np.array([])
+		for intersection in self.getIntersections():
+			intersection = int(intersection)
+			if f"-{self.id}" in canvas.gettags(intersection) and f"-{int(idNeighbor)}" in canvas.gettags(intersection):
+				intersections = np.append(intersections, intersection)
+		# Get the fist intersection
+		precedent = np.array([(canvas.coords(int(intersections[0]))[0] + Setup.RADIUSINTER),
+		                      (canvas.coords(int(intersections[0]))[1] + Setup.RADIUSINTER)])
+		# Get all intersection that are close one to eachother
+		for intersection in intersections[1:]:
+			intersection = int(intersection)
+			current = np.array([(canvas.coords(intersection)[0] + Setup.RADIUSINTER),
+			                    (canvas.coords(intersection)[1] + Setup.RADIUSINTER)])
+
+			# If the current element is nearby the precedent element
+			if (precedent[0] - Setup.RADIUSINTER <= current[0] <= precedent[0] + Setup.RADIUSINTER) and (
+					precedent[1] - Setup.RADIUSINTER <= current[1] <= precedent[1] + Setup.RADIUSINTER):
+				intertooClose = np.append(intertooClose, intersection)
+			precedent = current  # Change the precedent element to check the next one
+
+		# Now the intersections in the intertooClose list need to be delete		 
+		for intersection in intertooClose:
+			intersection = int(intersection)
+			self.removeIntersection(intersection)  # Delete from this intersection element
+			canvas.delete(intersection)
 
 	def whereToGather(self, pointA) -> np.array:
 		"""
@@ -214,29 +255,32 @@ class Line(Element):
 		while current <= previous:
 			previous = current  # Change the previous element
 			pointC = np.array([self.getX(0) + lengthBC * math.cos(th),
-							   self.getY(0) + lengthBC * math.sin(th)])  # Calculate pointC
+			                   self.getY(0) + lengthBC * math.sin(th)])  # Calculate pointC
 			lengthBC += 1  # Increment the length, 1 by 1
 			current = int(math.hypot(pointC[0] - pointA[0], pointC[1] - pointA[1]))  # Calculate the length A-C
 
 		return pointC
 
-	def determineKids(self, canvas, nf):
-		"""
+#___________________________________________________________________________________________________________________________
+# Managing of Element Overlays 
 
+	def foundClosestToInsersection(self, intersection) -> Element:
 		"""
-		# intersections are created from the start (self.start) to the end (the last call of self.motion) of the line
-		for intersection in self.getIntersections():
-			intersection = int(intersection)
-			intersectionPoint = np.array([
-				(canvas.coords(intersection)[0] + Setup.RADIUSINTER),
-				(canvas.coords(intersection)[1] + Setup.RADIUSINTER)])
-			neighbor = nf.getElementById(int(canvas.gettags(intersection)[2][1:]))
-			#print(neighbor)
-			#print(neighbor.foundClosestToInsersection(intersectionPoint))
-			neighbor = neighbor.foundClosestToInsersection(intersectionPoint)
-			current = self.foundClosestToInsersection(intersectionPoint)
-			current.createKids(intersectionPoint)
-			neighbor.createKids(intersectionPoint)
+		find the closest element to the given point :
+		find among the children which one is closest to the point, if any kid then return the element itself
+		:param intersection: the point of the intersection
+		:type intersection: np.array([x, y])
+		:return: the closest element
+		:rtype: Element
+		"""
+		for kid in self.getKids():
+			startKid = np.array([kid.getX(0), kid.getY(0)])
+			endKid = np.array([kid.getX(1), kid.getY(1)])
+
+			if (startKid[0] <= intersection[0] <= endKid[0] or startKid[1] <= intersection[1] <= endKid[1]) or (startKid[0] >= intersection[0] >= endKid[0] or startKid[1] >= intersection[1] >= endKid[1]):
+				return kid.foundClosestToInsersection(intersection)
+
+		return self # if the element got not kid then return the parent
 
 	def createKids(self, intersection):
 		"""
@@ -256,18 +300,7 @@ class Line(Element):
 		self.addKid(kid1)
 		self.addKid(kid2)
 
+#___________________________________________________________________________________________________________________________
 
-	def foundClosestToInsersection(self, intersection):
-		if len(self.getKids()) == 0:
-			return self
-		else:
-			for kid in self.getKids():
-				startKid = np.array([kid.getX(0), kid.getY(0)])
-				endKid = np.array([kid.getX(1), kid.getY(1)])
-				print(f"{kid=}")
-				print(f"{startKid=}\n{endKid=}\n{intersection=}")
-				if startKid[0]<=intersection[0]<=endKid[0] and startKid[1]<=intersection[1]<=endKid[1]:
-					print("true")
-					return kid
-				print("false")
-				print("---")
+	def toString(self):
+		return f"{self.getType()} - {self.getCoords()}"

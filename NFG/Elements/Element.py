@@ -268,3 +268,38 @@ class Element(ABC):
 	@abstractmethod
 	def whereToGather(self, pointA):
 		pass
+
+
+	@abstractmethod
+	def toString(self):
+		pass
+
+
+	def determineKids(self, canvas, nf):
+		"""
+		Separate this element between each intersection it created by creating kids for it
+		:param canvas: the TKINTER Canvas
+		:type canvas: TKINTER Element 
+		:param NF: the Navon's Figure
+		:type NF: NF
+		"""
+		# intersections are created from the start (self.start) to the end (the last call of self.motion) of the line
+		for intersection in self.getIntersections():
+			intersection = int(intersection) # Cast the intersection as an int because numpy save it as an double
+
+			# Get the point of the intersection
+			intersectionPoint = np.array([
+				(canvas.coords(intersection)[0] + Setup.RADIUSINTER),
+				(canvas.coords(intersection)[1] + Setup.RADIUSINTER)])
+			neighbor = nf.getElementById(int(canvas.gettags(intersection)[2][1:])) # [2] the id of the neighbor is at third place # [1:] the tag is wroten this way -X so we need to remove the hyphen
+			neighbor = neighbor.foundClosestToInsersection(intersectionPoint) # Get the element closest to the intersection from the neighbor 
+			current.createKids(intersectionPoint) # Separate the current element
+			neighbor.createKids(intersectionPoint) # Separate the neighbor
+
+	@abstractmethod
+	def foundClosestToInsersection(self, intersection):
+		pass
+
+	@abstractmethod
+	def createKids(self, intersection):
+		pass

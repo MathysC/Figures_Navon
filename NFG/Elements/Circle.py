@@ -299,3 +299,13 @@ class Circle(Element):
 			current = int(math.hypot(pointB[0] - pointA[0], pointB[1] - pointA[1])) # Calculate the length A-B
 
 		return pointB
+
+
+	def toString(self):
+		return f"{self.getType()} - {self.getCenter()} - {self.radius}"
+
+	def foundClosestToInsersection(self, intersection):
+		pass
+
+	def createKids(self, intersection):
+		pass

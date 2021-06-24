@@ -76,13 +76,37 @@ class Eraser(Element):
 			draw_canvas.outcome.update()				
 
 	def getL(self):
+		"""
+		Not implemented function for this element
+		"""
 		pass
 
 	def interpolate(self):
+		"""
+		Not implemented function for this element
+		"""
 		pass
 
-	def findNeighbors(self,**kwargs):
+	def findNeighbors(self, **kwargs):
+		"""
+		Not implemented function for this element
+		"""
 		pass
 
 	def whereToGather(self,pointA):
+		"""
+		Not implemented function for this element
+		"""
+		pass
+
+	def toString(self):
+		"""
+		Not implemented function for this element
+		"""
+		pass
+
+	def foundClosestToInsersection(self, intersection):
+		pass
+
+	def createKids(self, intersection):
 		pass
