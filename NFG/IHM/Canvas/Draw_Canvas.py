@@ -134,9 +134,17 @@ class Draw_Canvas(Ui_Canvas):
 		self.outcome = outcome # The Outcome Canvas
 
 		self.changeLocalElement(padx)
+
 	def changeGrid(self):
-		pass
-		
+		if self.gridval.get() == "disappear":
+			self.draw_canvas.delete(Setup.TAGGRID)
+		else:
+			gap = 50
+			for x in range(gap, Setup.WIDTH, gap):
+				self.draw_canvas.create_line(x, 0,x, Setup.HEIGHT,fill='grey', width=1,tags=Setup.TAGGRID)
+			for y in range(gap, Setup.HEIGHT, gap):
+				self.draw_canvas.create_line(0, y, Setup.WIDTH, y,fill='grey', width=1,tags=Setup.TAGGRID)
+
 	def changeElement(self, elementType):
 		"""
 		change the element
@@ -153,6 +161,7 @@ class Draw_Canvas(Ui_Canvas):
 		self.draw_canvas.delete("all")
 		self.outcome.getNF().setElements(np.array([]))
 		self.outcome.clearCanvas()
+		self.changeGrid()
 
 	# Events to draw / modify / set
 	def start(self, event):

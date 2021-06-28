@@ -174,6 +174,38 @@ class Element(ABC):
 	def findNeighbors(self, **kwargs):
 		pass
 
+	def createNeighbors(self,canvas,point, tag):
+			# We find all element that are at this point
+			found = np.array(canvas.find_overlapping(point[0] - 1, point[1] - 1, point[0] + 1, point[1] + 1))
+			# found = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
+
+			# We delete the current element from the list
+			found = np.delete(found, np.where(found == self.id))
+
+			# We delete the circles that represents intersections
+			for circle in canvas.find_withtag(self.getIntersectionTag()):
+				found = np.delete(found, np.where(found == circle))
+
+			# Delete all the same multiple value at the same point
+			found = np.unique(found)
+
+			# Then if there is at least another one element found
+			if (len(found) >= 1):
+				for neighbor in found:
+					# condition to avoid lines used for the grid
+					if Setup.TAGGRID in canvas.gettags(int(neighbor)):
+						continue
+					# We create an intersection at this point
+					intersection = canvas.create_oval(int(point[0] - Setup.RADIUSINTER),
+					                                  int(point[1] - Setup.RADIUSINTER),
+					                                  int(point[0] + Setup.RADIUSINTER),
+					                                  int(point[1] + Setup.RADIUSINTER),
+					                                  fill="red", outline="red", width=1,
+					                                  tags=f"{self.getIntersectionTag()} {tag} -{neighbor}")
+
+					# Then we save the outcome
+					self.addIntersection(intersection)
+					self.addNeighbor(neighbor)
 	def addToNeighbors(self, canvas, NF):
 		"""
 		Last function called in self.end that apply change to the neighbors of this element :
@@ -233,6 +265,8 @@ class Element(ABC):
 		found = np.unique(found)
 
 		if len(found) >= 1:
+			if Setup.TAGGRID in canvas.gettags(int(found[0])):
+				return pointA
 			# Get the coords of the founded element
 			# Even if found is composed of several element, we only use the first found
 			return NF.getElementById(found[0]).whereToGather(pointA)

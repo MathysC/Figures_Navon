@@ -163,34 +163,7 @@ class Line(Element):
 			point = np.array([self.getX(0) + i * math.cos(th),
 			                  self.getY(0) + i * math.sin(th)])
 
-			# We find all element that are at this point
-			found = np.array(canvas.find_overlapping(point[0] - 1, point[1] - 1, point[0] + 1, point[1] + 1))
-			# found = np.array(canvas.find_overlapping(point[0], point[1], point[0], point[1]))
-
-			# We delete the current element from the list
-			found = np.delete(found, np.where(found == self.id))
-
-			# We delete the circles that represents intersections
-			for circle in canvas.find_withtag(self.getIntersectionTag()):
-				found = np.delete(found, np.where(found == circle))
-
-			# Delete all the same multiple value at the same point
-			found = np.unique(found)
-
-			# Then if there is at least another one element found
-			if (len(found) >= 1):
-				for neighbor in found:
-					# We create an intersection at this point
-					intersection = canvas.create_oval(int(point[0] - Setup.RADIUSINTER),
-					                                  int(point[1] - Setup.RADIUSINTER),
-					                                  int(point[0] + Setup.RADIUSINTER),
-					                                  int(point[1] + Setup.RADIUSINTER),
-					                                  fill="red", outline="red", width=1,
-					                                  tags=f"{self.getIntersectionTag()} {tag} -{neighbor}")
-
-					# Then we save the outcome
-					self.addIntersection(intersection)
-					self.addNeighbor(neighbor)
+			self.createNeighbors(canvas, point, tag)
 
 		for idneighbor in self.getNeighbors():
 			idneighbor = int(idneighbor)

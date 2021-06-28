@@ -8,3 +8,4 @@ class Setup:
 	RADIUSINTER = 2  # Set the radius of the circle used to represent the intersection
 	ICONSIZE = "16x16.ico"  # "24x24.ico"
 	PATHIMG = "Images/"
+	TAGGRID = "grid" # Line's Grid tag 
