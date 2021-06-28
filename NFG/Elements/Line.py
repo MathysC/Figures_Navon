@@ -60,6 +60,8 @@ class Line(Element):
 		:type NF: NF
 		:return: this method return nothing
 		:rtype: None
+
+		.. seealso:: self.findNeighbors
 		"""
 		event = kwargs.get('event')
 		canvas = kwargs.get('canvas')
@@ -84,6 +86,10 @@ class Line(Element):
 		:type canvas: TKINTER Element 
 		:return: method return nothing
 		:rtype: None
+
+		.. seealso:: self.addToNeighbors
+		.. seealso:: self.determineKids
+		.. seealso:: Outcome_Canvas.update()
 		"""
 		NF = kwargs.get('NF')
 		NF.addElement(self) # Add the element to the list of element of the Navon's figure
@@ -91,11 +97,12 @@ class Line(Element):
 		# We add this element to its neighbors
 		self.addToNeighbors(canvas=canvas, NF=NF) # Indiquate this element as neighbor of the neighbor it self
 
-		self.determineKids(canvas=canvas, nf=NF) 
+		self.determineKids(canvas=canvas, nf=NF)  # Split the element if needed
 
 		# Add the element to the outcome canvas
 		draw_canvas = kwargs.get('draw_canvas')
 		draw_canvas.getOutcome().update()
+
 #___________________________________________________________________________________________________________________________
 # Management of the creation of element on the Navon's Figure
 

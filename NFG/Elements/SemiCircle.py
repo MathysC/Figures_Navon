@@ -4,17 +4,70 @@ import numpy as np
 import math
 import scipy.interpolate as itp
 
+# Function only to make the next calculation
+def lengthSquare(A, B) -> int: 
+	"""
+	Calculates the square length of two points
+	:param A: the first point
+	:type A: np.array([x, y])
+	:param B: the second point
+	:type B: np.array([x, y])
+	:return: the square length between two points
+	:rtype: int
+	"""
+	xDiff = A[0] - B[0] 
+	yDiff = A[1] - B[1] 
+	return int(xDiff * xDiff + yDiff * yDiff)
+
+def getAngleCL(strAngle, A, B, C)-> float: 
+	"""
+	Get Angle from Cosinus Law
+	:param strAngle: the angle we need 
+	:type strAngle: str
+	:param A: the first point of the triangle
+	:type A: np.array([x, y])
+	:param B: the second point of the triangle
+	:type B: np.array([x, y])
+	:param C: the third point of the triangle
+	:type C: np.array([x, y])
+	:return: the angle in radian
+	:rtype: float
+	"""
+	BC = lengthSquare(B, C) 
+	AC = lengthSquare(A, C) 
+	AB = lengthSquare(A, B) 
+  
+	# length of sides be sqrtA, sqrtB, sqrtC 
+	sqrtA = math.sqrt(BC) 
+	sqrtB = math.sqrt(AC) 
+	sqrtC = math.sqrt(AB) 
+	if strAngle == 'alpha':
+		return math.acos((AC + AB - BC) / 
+			(2 * sqrtB * sqrtC))
+	elif strAngle == 'betta':
+		return  math.acos((BC + AB - AC) / 
+			(2 * sqrtA * sqrtC)) 
+	elif strAngle == 'gamma':
+		return math.acos((BC + AC - AB) / 
+			(2 * sqrtA * sqrtB))
+
+	else:
+		return 0
 
 class SemiCircle(Element):
 	"""
 	Class that extends Element, implements the Semi-Circle
 	"""
 
-	def __init__(self):
+	def __init__(self, Xs=np.zeros(2), Ys=np.zeros(2)):
 		super().__init__()
 		self.center = np.zeros(2)
 		self.radius = 0
-		self.angle = 0 # Starting angle in degree
+		self.startAngle = 0.0 # Starting angle in degree
+		self.endAngle = 180.0 # End angle in degree
+
+#___________________________________________________________________________________________________________________________
+# Getter & Setter
 
 	def getType(self) -> str:
 		"""
@@ -55,6 +108,41 @@ class SemiCircle(Element):
 		:type newR: np.array
 		"""
 		self.center = newC
+
+	def getStartAngle(self) -> float :
+		"""
+		Getter of startAngle
+		:return: the starting angle in degree
+		:rtype: float
+		"""
+		return self.startAngle
+
+	def setStartAngle(self, newStart):
+		"""
+		Setter of startAngle
+		:param newStart: the new value for startAngle
+		:type newStart: float 
+		"""
+		self.startAngle = newStart
+
+	def getEndAngle(self) -> float :
+		"""
+		Getter of endAngle
+		:return: the ending angle in degree
+		:rtype: float
+		"""
+		return self.endAngle
+
+	def setEndAngle(self, newEnd):
+		"""
+		Setter of endAngle
+		:param newEnd: the new value for startAngle
+		:type newEnd: float 
+		"""
+		self.endAngle = newEnd
+
+#___________________________________________________________________________________________________________________________
+# Management of the creation of element on the Draw Canvas
 
 	def start(self, **kwargs):
 		"""
@@ -110,42 +198,17 @@ class SemiCircle(Element):
 		# C the Center
 		C = np.array([x,y]) # I make another variable to be clear with my calculation
 		
-		# Function only to make the next calculation
-		def lengthSquare(X, Y) -> int: 
-			"""
-			Calculates the square length of two points
-			"""
-			xDiff = X[0] - Y[0] 
-			yDiff = X[1] - Y[1] 
-			return xDiff * xDiff + yDiff * yDiff 		
-
-		BC = lengthSquare(B, C) 
-		AC = lengthSquare(A, C) 
-		AB = lengthSquare(A, B) 
-	  
-		# length of sides be sqrtA, sqrtB, sqrtC 
-		sqrtA = math.sqrt(BC); 
-		sqrtB = math.sqrt(AC); 
-		sqrtC = math.sqrt(AB); 
-	  
-		# From Cosine law 
-		# I keept alpha and betta if needed later
-		#alpha = math.acos((AC + AB - BC) /
-		#					 (2 * sqrtB * sqrtC)); 
-		#betta = math.acos((BC + AB - AC) / 
-		#					 (2 * sqrtA * sqrtC)); 
-		gamma = math.acos((BC + AC - AB) / 
-							 (2 * sqrtA * sqrtB));
+		gamma = getAngleCL(strAngle='gamma',A=A, B=B, C=C)
 
 		#The angle may have a different value depending on the cursor position relative to the center			
-		self.angle = math.degrees(gamma) if (event.y < y) else math.degrees(-gamma)
+		self.startAngle = math.degrees(gamma) if (event.y < y) else math.degrees(-gamma)
 
 		# Reshape the Arc
 		canvas.coords(self.id,
 			  self.getX(0), self.getY(0),
 			  self.getX(1), self.getY(1))
 
-		canvas.itemconfig(self.id,start=self.angle,extent=180)
+		canvas.itemconfig(self.id,start=self.startAngle,extent=self.endAngle)
 
 		# We find its neighbors
 		self.findNeighbors(canvas=canvas)
@@ -165,11 +228,17 @@ class SemiCircle(Element):
 		# Save this element
 		NF = kwargs.get('NF')
 		NF.addElement(self)
-		self.addToNeighbors(canvas=kwargs.get('canvas'),NF=NF)
+		self.addToNeighbors(canvas=kwargs.get('canvas'),NF=NF) # Indiquate this element as neighbor of the neighbor it self
+
+		self.determineKids(canvas=kwargs.get('canvas'), nf=NF)  # Split the element if needed
+
 
 		# Add the element to the outcome canvas
 		draw_canvas = kwargs.get('draw_canvas')
 		draw_canvas.getOutcome().addElementToIm(self)
+
+#___________________________________________________________________________________________________________________________
+# Management of the creation of element on the Navon's Figure
 
 	def getL(self) -> np.ndarray:
 		"""
@@ -179,8 +248,8 @@ class SemiCircle(Element):
 		"""
 		# Both start and End Radians are negative for the position on the NF
 		# Honestly i don't know why it didn't work with the both positive values
-		start = -math.radians(self.angle)
-		end = -math.radians(self.angle+180)
+		start = -math.radians(self.startAngle)
+		end = -math.radians(self.startAngle+self.endAngle)
 		t = np.linspace(start,end,10)
 
 		sqrtC = [(0 + self.radius * np.cos(t_), 1 + self.radius * np.sin(t_)) for t_ in t]
@@ -200,8 +269,8 @@ class SemiCircle(Element):
 		"""
 		x,y = self.center
 
-		start = -math.radians(self.angle)
-		end = -math.radians(self.angle+180)
+		start = -math.radians(self.startAngle)
+		end = -math.radians(self.startAngle+self.endAngle)
 		t = np.linspace(start,end,10)
 
 		sqrtC = [(x + self.radius * np.cos(t_), 
@@ -212,6 +281,9 @@ class SemiCircle(Element):
 		_y_ = itp.interp1d(self.getDividedL(), y_)
 
 		return np.array([_x_,_y_])
+
+#___________________________________________________________________________________________________________________________
+# Managing of Element Intersections 
 
 	def findNeighbors(self, canvas):
 		"""
@@ -229,11 +301,12 @@ class SemiCircle(Element):
 
 
 		# Check every angle of the semiCircle
-		for angle in range(int(self.angle),int(self.angle+180)):
+		for angle in range(int(self.startAngle),int(self.startAngle+self.endAngle)):
 			# Get the next point
 			radian = math.radians(-angle)
-			point = np.array([self.center[0]+self.radius * math.cos(radian),
-			 self.center[1]+self.radius * math.sin(radian)])
+			point = np.array([
+				self.center[0] + self.radius * math.cos(radian),
+				self.center[1] + self.radius * math.sin(radian)])
 
 
 			# We find all element that are at this point
@@ -251,16 +324,16 @@ class SemiCircle(Element):
 
 			#Then if there is at least another one element
 			if(len(find)>=1):
-				for idElement in find:
+				for neighbor in find:
 					# We create an intersection at this point
 					intersection = canvas.create_oval(int(point[0]-Setup.RADIUSINTER), int(point[1]-Setup.RADIUSINTER),
 					                                  int(point[0]+Setup.RADIUSINTER), int(point[1]+Setup.RADIUSINTER),
 					                                  fill="red", outline="red", width=1, 
-					                                  tags=self.getIntersectionTag() + " " + tag + f" -{idElement}")
+					                                  tags=f"{self.getIntersectionTag()} {tag} -{neighbor}")
 
 					# Then we save the outcome
 					self.addIntersection(intersection)
-					self.addNeighbor(find)
+					self.addNeighbor(neighbor)
 
 	def whereToGather(self,pointA):
 		"""
@@ -280,9 +353,9 @@ class SemiCircle(Element):
 		# On the top side :
 		if yA < yC:
 			if xA < xC:
-				return self.findPointB(180, 90, pointA)
+				return self.findPointB(self.endAngle, 90, pointA)
 			else:
-				return self.findPointB(-180, -90, pointA)
+				return self.findPointB(-self.endAngle, -90, pointA)
 
 		# On the Bottom Side
 		elif yA > yC:
@@ -318,13 +391,75 @@ class SemiCircle(Element):
 
 		return pointB
 
-
-	def toString(self):
-		return f"{self.getType()} - {self.getCenter()} - {self.radius} - {self.angle}"
-
+#___________________________________________________________________________________________________________________________
+# Managing of Element Overlays 
 
 	def foundClosestToInsersection(self, intersection):
-		pass
+		"""
+		find the closest element to the given point :
+		find among the children which one is closest to the point, if any kid then return the element itself
+		:param intersection: the point of the intersection
+		:type intersection: np.array([x, y])
+		:return: the closest element
+		:rtype: Element
+		"""
+	#	angle = (math.degrees(math.atan2(intersection[1]-self.getCenter()[1],self.getCenter()[0]-intersection[0])))
+	#	print(f"{type(angle)} : {angle = }")
+	#	for kid in self.getKids():
+	#		if kid.getEndAngle() <= angle <= kid.getStartAngle() or kid.getEndAngle() >= angle >= kid.getStartAngle():
+	#			return kid.foundClosestToInsersection(intersection)
+		return self
 
 	def createKids(self, intersection):
-		pass
+		"""
+		Create two arc that bond to the point of intersection
+		:param intersection: the point of intersection
+		:type intersection: np.array([x, y])
+		"""
+
+		# Calcultates the angle where the semicircle is divided
+		# A the point at the intersection
+		A = intersection
+		# B the created point at the side of the center
+		B =  np.array([self.center[0]+self.radius * math.cos(math.radians(self.getStartAngle())),
+			 self.center[1]+self.radius * math.sin(math.radians(self.getStartAngle()))])
+		# C the Center
+		C = np.array([self.center[0], self.center[1]]) # I make another variable to be clear with my calculation
+		
+		angle = math.degrees(getAngleCL(strAngle='gamma',A=A, B=B, C=C))
+		print(f"{angle = }")
+
+		# Create the fist kid and instanciate its variables
+		# Same values as the parent (the current element)
+		kid1 = SemiCircle(Xs = np.array([self.getX(0), self.getX(1)]), Ys = np.array([self.getY(0), self.getY(1)]))
+		kid1.setCenter(self.getCenter())
+		kid1.setRadius(self.getRadius())
+
+		# New Values
+		kid1.setStartAngle(self.getStartAngle())
+		kid1.setEndAngle(angle)
+		
+		# Create the second kid and instanciate its variables
+		# Same values as the parent (the current element)
+		kid2 = SemiCircle(Xs = np.array([self.getX(0), self.getX(1)]), Ys = np.array([self.getY(0), self.getY(1)]))
+		kid2.setCenter(self.getCenter())
+		kid2.setRadius(self.getRadius())
+		
+		# New Values
+		kid2.setStartAngle(angle)
+		kid2.setEndAngle(self.getEndAngle())
+
+		# Add this element as parent of those kids
+		kid1.setParent(self)
+		kid2.setParent(self)
+
+		# Add kids to the list
+		self.addKid(kid1)
+		#self.addKid(kid2)
+
+	def toString(self):
+		return f"{self.getType()} - {self.getCenter()} - {self.radius} - {self.startAngle}"
+
+
+
+

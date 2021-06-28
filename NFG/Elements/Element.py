@@ -291,6 +291,7 @@ class Element(ABC):
 			intersectionPoint = np.array([
 				(canvas.coords(intersection)[0] + Setup.RADIUSINTER),
 				(canvas.coords(intersection)[1] + Setup.RADIUSINTER)])
+			current = self.foundClosestToInsersection(intersectionPoint)
 			neighbor = nf.getElementById(int(canvas.gettags(intersection)[2][1:])) # [2] the id of the neighbor is at third place # [1:] the tag is wroten this way -X so we need to remove the hyphen
 			neighbor = neighbor.foundClosestToInsersection(intersectionPoint) # Get the element closest to the intersection from the neighbor 
 			current.createKids(intersectionPoint) # Separate the current element
