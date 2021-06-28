@@ -112,9 +112,13 @@ class Generator_Canvas(Ui_Canvas):
 			self.entryChar.grid(row=0, column=4, padx=padx, sticky="w")
 			self.lbfont.grid(row=0, column=5, padx=padx, sticky="e")
 			self.cbfonts.grid(row=0, column=6, padx=padx)
-			self.buttonChangeElement.configure(text="Use local Image")
+			self.buttonChangeElement.configure(text="Work in progress") # text="Use a local Image"
 			self.currentElement = "image"
 		else:								# Make appear Local Image Option
+			self.currentElement = "char"
+			self.buttonChangeElement.configure(state=DISABLED)
+
+			return							
 			self.spChar.grid_forget()
 			self.cbfonts.grid_forget()
 			self.lbfont.grid_forget()
@@ -124,7 +128,6 @@ class Generator_Canvas(Ui_Canvas):
 			self.labelImg.grid(row=0, column=2, columnspan=2, sticky="w")
 			self.entryImg.grid(row=0, column=4, sticky="w")
 			self.buttonChangeElement.configure(text="Use local Character")
-			self.currentElement = "char"
 
 	def importCSV(self):
 		pass

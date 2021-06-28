@@ -18,7 +18,7 @@ class NF:
 		:param char:
 		"""
 		self.elements = np.array([])
-		self.d = 100  # Densité
+		self.density = 100  # Densité
 		self.char = 'A'
 		self.color = (0, 0, 0)
 		self.size = 16
@@ -26,6 +26,70 @@ class NF:
 
 #___________________________________________________________________________________________________________________________
 # Getter & Setter
+
+	def getDensity(self) -> int:
+		"""
+		Getter of density
+		:return: the density
+		:rtype: int
+		"""
+		return self.density
+
+	def setDensity(self, newD):
+		"""
+		Setter of density
+		:param: newD
+		:type newD: int
+		"""
+		self.density = newD
+
+	def getChar(self) -> str:
+		"""
+		Getter of char
+		:return: the char
+		:rtype: str
+		"""
+		return self.char
+
+	def setChar(self, newC):
+		"""
+		Setter of Char
+		:param: newC
+		:type newD: str
+		"""
+		self.char = newC
+
+	def getSize(self) -> int:
+		"""
+		Getter of size
+		:return: the Size
+		:rtype: int
+		"""
+		return self.size
+
+	def setSize(self, newS):
+		"""
+		Setter of size
+		:param: newS
+		:type newD: int
+		"""
+		self.size = newS
+
+	def getPolice(self) -> str:
+		"""
+		Getter of police
+		:return: the police
+		:rtype: str
+		"""
+		return self.police
+
+	def setPolice(self, newP):
+		"""
+		Setter of police
+		:param: newP
+		:type newD: str
+		"""
+		self.police = newP
 
 	def getElements(self):
 		return self.elements
@@ -100,9 +164,9 @@ class NF:
 # Function to make appear element on the image 
 
 	def printElement(self, element, draw, canvas):
-			space = np.linspace(0, 1, self.getN(element=element, size=self.size, density=self.d))
+			space = np.linspace(0, 1, self.getN(element=element, size=self.size, density=self.density))
 			interp = element.interpolate()
-			font = ImageFont.truetype(self.police, self.size)
+			font = ImageFont.truetype(self.police+"ttf", self.size)
 			# Return spaced number from getN() interval
 			interp = element.interpolate()
 			for i in range(0, len(interp), 2):
@@ -128,7 +192,7 @@ class NF:
 
 		for element in self.elements:
 			# Return spaced number from getN() interval
-			a = np.linspace(0, 1, self.getN(element=element, size=self.size, density=self.d))
+			a = np.linspace(0, 1, self.getN(element=element, size=self.size, density=self.density))
 			interp = element.interpolate()
 			for i in range(0, len(interp), 2):
 				_x_, _y_ = interp[i:i + 2]
@@ -189,7 +253,7 @@ class NF:
 				element.setY(1, element.getY(1) * Scale[1])
 
 			# Calculation of the coords of each local image
-			a = np.linspace(0, 1, self.getN(element, lengthDiag, self.d))
+			a = np.linspace(0, 1, self.getN(element, lengthDiag, self.density))
 			interp = element.interpolate()
 			for i in range(0, len(interp), 2):
 				_x_, _y_ = interp[i:i + 2]

@@ -1,4 +1,5 @@
 from Elements.Element import Element
+from Logic.Setup import Setup
 
 
 class Eraser(Element):
@@ -57,28 +58,30 @@ class Eraser(Element):
 		# If the mouse is on the same element
 		# Remove it from the NF
 		if(onClick):
-			element = NF.getElementById(onClick[0])
-			# https://www.kite.com/python/answers/how-to-delete-values-from-a-numpy-array-in-python#:~:text=from%20an%20array-,Use%20numpy.,that%20match%20the%20specified%20condition%20.	
-			NF.removeElement(element)
-				
+			# condition to avoid lines used for the grid
+			if not Setup.TAGGRID in canvas.gettags(int(onClick[0])):
+				element = NF.getElementById(onClick[0])
+				# https://www.kite.com/python/answers/how-to-delete-values-from-a-numpy-array-in-python#:~:text=from%20an%20array-,Use%20numpy.,that%20match%20the%20specified%20condition%20.	
+				NF.removeElement(element)
+					
 
-			# Remove all the constraints from this element
-			tag = f"-{element.getId()}" 
+				# Remove all the constraints from this element
+				tag = f"-{element.getId()}" 
 
-			# Remove this element as a neighbor from its neighbors themself
-			for neighbor in element.getNeighbors():
-				otherElement = NF.getElementById(neighbor)
-				otherElement.removeNeighbor(onClick[0])
-				# And remove its intersections
-				otherElement.removeIntersectionsByTag(tag,canvas=canvas)
-			canvas.delete(tag)		
-			# Remove it from the canvas
-			canvas.delete(onClick[0])
-			# And finally, remove this element
-			del(element)
+				# Remove this element as a neighbor from its neighbors themself
+				for neighbor in element.getNeighbors():
+					otherElement = NF.getElementById(neighbor)
+					otherElement.removeNeighbor(onClick[0])
+					# And remove its intersections
+					otherElement.removeIntersectionsByTag(tag,canvas=canvas)
+				canvas.delete(tag)		
+				# Remove it from the canvas
+				canvas.delete(onClick[0])
+				# And finally, remove this element
+				del(element)
 
-			draw_canvas = kwargs.get('draw_canvas')
-			draw_canvas.outcome.update(canvas)				
+				draw_canvas = kwargs.get('draw_canvas')
+				draw_canvas.outcome.update(canvas)				
 
 #___________________________________________________________________________________________________________________________
 # Management of the creation of element on the Navon's Figure

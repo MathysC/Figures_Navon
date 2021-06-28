@@ -41,36 +41,41 @@ class Draw_Canvas(Ui_Canvas):
 
 		Button(self.serialization, text="import .DAT", command=self.importDAT, padx=padx).grid(row=0, column=0)
 		Button(self.serialization, text="export as .DAT", command=self.exportDAT, padx=padx).grid(row=0, column=1)
-		Button(self.serialization, text="export as IMG", command=self.exportIMG, padx=padx).grid(row=0, column=2)
+		Button(self.serialization, text="export as Image", command=self.exportIMG, padx=padx).grid(row=0, column=2)
 
 		## Every tools used to create a Navon's Figure are in this frame
 		self.tools = LabelFrame(self.options, text="Options for preview")
 		self.tools.grid(row=1, column=0, columnspan=5, sticky="we")
 
-		### Checkbox to choose between local character and local image
+		### Button to choose between local character and local image
 		self.currentElement= "char" # ComboBox Variable for le Local Element
 		self.buttonChangeElement = Button(self.tools, text="Use a local Image",command= lambda: self.changeLocalElement(padx))
 		self.buttonChangeElement.grid(row=0, column=0, columnspan=2, sticky="w")
 
-		### Font
-		self.lbfont = Label(self.tools, text="Font :", padx=padx) # Grid managed in self.changeLocalElement
-		self.cbfonts = ttk.Combobox(self.tools, values=font.families(), state="readonly", width=15) # ComboBox Fonts # Grid managed in self.changeLocalElement
-
 		### Local Character (if used, the Local Image is disabled)
+		self.char_var = StringVar(value="A")
 		self.labelChar = Label(self.tools, text="Local char :", padx=padx)
-		self.entryChar = Entry(self.tools, width=2)
+		self.entryChar = Entry(self.tools, width=2, textvariable=self.char_var)
+		self.char_var.trace("w", lambda *args: self.character_limit())
 
 		### Local Image (if used, the Local Character is disabled)
 		self.labelImg = Label(self.tools, text="Local Image :", padx=padx)
-		self.entryImg = Button(self.tools, text="Search an Image",height=1)
+		self.entryImg = Button(self.tools, text="Search an Image",height=1, command = None)
+
+		### Font
+		self.lbfont = Label(self.tools, text="Font :", padx=padx) # Grid managed in self.changeLocalElement
+		self.cbfonts = ttk.Combobox(self.tools, values=font.families(), state="readonly", width=15) # ComboBox Fonts # Grid managed in self.changeLocalElement
+		self.cbfonts.current(0)
 
 		### Density
+		self.density_var = IntVar(value=100)
 		Label(self.tools, text="Density :", padx=padx).grid(row=1, column=0, sticky="w")
-		Spinbox(self.tools, from_=1, to=100, width=4).grid(row=1, column=1, padx=padx, sticky="w")
+		Spinbox(self.tools, from_=1, to=100, width=4, textvariable=self.density_var, command = lambda: self.test()).grid(row=1, column=1, padx=padx, sticky="w")
 
 		### Size 
+		self.size_var = IntVar(value=16)
 		Label(self.tools, text="Size :", padx=padx).grid(row=1, column=2, sticky="w")
-		self.spChar = Spinbox(self.tools, from_=1, to=100, width=4) # Grid managed in self.changeLocalElement
+		self.spChar = Spinbox(self.tools, from_=1, to=100, width=4, textvariable=self.size_var, command = lambda: self.test()) # Grid managed in self.changeLocalElement
 		self.spImg = Spinbox(self.tools, from_=1, to=100, width=4) # Grid managed in self.changeLocalElement
 		
 
@@ -78,7 +83,7 @@ class Draw_Canvas(Ui_Canvas):
 		self.paint = LabelFrame(self.options,text="Tools")
 		self.paint.grid(row=2,column=0,sticky="w")
 
- 		# Checkbox for a grid that help the user to draw
+		# Checkbox for a grid that help the user to draw
 		self.gridval = StringVar(value="disappear") # To start the application without a grid on the canvas
 		Checkbutton(self.paint, text="Grid", command=self.changeGrid,
 			var=self.gridval, onvalue="appear", offvalue="disappear").grid(row=0,column=0)
@@ -123,45 +128,27 @@ class Draw_Canvas(Ui_Canvas):
 
 
 		self.element = Factory.Create('line') # At the beginning, the user can draw lines
+		self.outcome = outcome # The Outcome Canvas
 
 		# Events
 		self.bindCanvas()
-		self.cbfonts.bind("<<ComboboxSelected>>", self.changeFont)
+		self.cbfonts.bind("<<ComboboxSelected>>", self.update(self.draw_canvas))
 		self.getMainElement().bind(tobind[0],tobind[1]) # bind the main func of the MainWindow to the mainElement
 		self.bindallframe(self.getMainElement(),tobind[0], tobind[1]) # and bind it to all element
 
 
-		self.outcome = outcome # The Outcome Canvas
 
 		self.changeLocalElement(padx)
 
-	def changeGrid(self):
-		if self.gridval.get() == "disappear":
-			self.draw_canvas.delete(Setup.TAGGRID)
-		else:
-			gap = 50
-			for x in range(gap, Setup.WIDTH, gap):
-				self.draw_canvas.create_line(x, 0,x, Setup.HEIGHT,fill='grey', width=1,tags=Setup.TAGGRID)
-			for y in range(gap, Setup.HEIGHT, gap):
-				self.draw_canvas.create_line(0, y, Setup.WIDTH, y,fill='grey', width=1,tags=Setup.TAGGRID)
 
-	def changeElement(self, elementType):
-		"""
-		change the element
-		:param elementType: the type of the next element wanted
-		:type elementType: str
-		"""
-		self.element = Factory.Create(elementType)
+#___________________________________________________________________________________________________________________________
+# Getter & Setter
 
-	def clear(self):
-		"""
-		Clear the canvas
-		Clear the arrays of element
-		"""
-		self.draw_canvas.delete("all")
-		self.outcome.getNF().setElements(np.array([]))
-		self.outcome.clearCanvas()
-		self.changeGrid()
+	def getOutcome(self):
+		return self.outcome
+
+#___________________________________________________________________________________________________________________________
+# Managing Elements 
 
 	# Events to draw / modify / set
 	def start(self, event):
@@ -191,19 +178,52 @@ class Draw_Canvas(Ui_Canvas):
 		# We create the next element 
 		self.changeElement(self.element.getType())
 
-	def update(self):
+	def changeElement(self, elementType):
 		"""
-		Function that will update the options of the NF  
+		change the element
+		:param elementType: the type of the next element wanted
+		:type elementType: str
 		"""
-		self.outcome.getNF().size = 16# int(self.fontSb.get())
-		self.outcome.getNF().d = 100#int(self.densSb.get())
+		self.element = Factory.Create(elementType)
 
-	def final(self):
-		self.outcome.getNF().final(self.draw_canvas)
+#___________________________________________________________________________________________________________________________
+# Managing Options 
 
 
-	def getOutcome(self):
-		return self.outcome
+
+	def changeLocalElement(self,padx):
+		"""
+		Make appear and disappear the options of the local element from the draw canvas
+		"""
+
+		if self.currentElement == 'char': 	# Make appear Local Character Option
+			self.currentElement = "image"
+			self.spImg.grid_forget()
+			self.labelImg.grid_forget()
+			self.entryImg.grid_forget()
+			self.spChar.grid(row=1, column=3, padx=padx, sticky="w")
+			self.labelChar.grid(row=0, column=2, columnspan=2, padx=padx, sticky="w")
+			self.entryChar.grid(row=0, column=4, padx=padx, sticky="w")
+			self.lbfont.grid(row=0, column=5, padx=padx, sticky="e")
+			self.cbfonts.grid(row=0, column=6, padx=padx)
+			self.buttonChangeElement.configure(text="Work in progress") # text="Use a local Image"
+		else:								# Make appear Local Image Option
+			self.currentElement = "char"
+			self.buttonChangeElement.configure(state=DISABLED)
+
+			return
+			self.spChar.grid_forget()
+			self.cbfonts.grid_forget()
+			self.lbfont.grid_forget()
+			self.labelChar.grid_forget()
+			self.entryChar.grid_forget()
+			self.spImg.grid(row=1, column=3, padx=padx, sticky="w")
+			self.labelImg.grid(row=0, column=2, columnspan=2, sticky="w")
+			self.entryImg.grid(row=0, column=4, sticky="w")
+			self.buttonChangeElement.configure(text="Use local Character")
+
+#___________________________________________________________________________________________________________________________
+# Managing Import / Export
 
 	def importDAT(self):
 		pass
@@ -214,37 +234,13 @@ class Draw_Canvas(Ui_Canvas):
 	def exportIMG(self):
 		pass
 
-	def changeFont(self, event=None):
-		font = self.cbfonts.get()
 
 
-	def changeLocalElement(self,padx):
-		"""
-		Make appear and disappear the options of the local element from the draw canvas
-		"""
-		if self.currentElement == 'char': 	# Make appear Local Character Option
-			self.spImg.grid_forget()
-			self.labelImg.grid_forget()
-			self.entryImg.grid_forget()
-			self.spChar.grid(row=1, column=3, padx=padx, sticky="w")
-			self.labelChar.grid(row=0, column=2, columnspan=2, padx=padx, sticky="w")
-			self.entryChar.grid(row=0, column=4, padx=padx, sticky="w")
-			self.lbfont.grid(row=0, column=5, padx=padx, sticky="e")
-			self.cbfonts.grid(row=0, column=6, padx=padx)
-			self.buttonChangeElement.configure(text="Use local Image")
-			self.currentElement = "image"
-		else:								# Make appear Local Image Option
-			self.spChar.grid_forget()
-			self.cbfonts.grid_forget()
-			self.lbfont.grid_forget()
-			self.labelChar.grid_forget()
-			self.entryChar.grid_forget()
-			self.spImg.grid(row=1, column=3, padx=padx, sticky="w")
-			self.labelImg.grid(row=0, column=2, columnspan=2, sticky="w")
-			self.entryImg.grid(row=0, column=4, sticky="w")
-			self.buttonChangeElement.configure(text="Use local Character")
-			self.currentElement = "char"
+	def final(self):
+		self.outcome.getNF().final(self.draw_canvas)
 
+#___________________________________________________________________________________________________________________________
+# Managing Canvas
 
 	def bindallframe(self,parent,event,func):
 		for child in parent.winfo_children():
@@ -258,20 +254,20 @@ class Draw_Canvas(Ui_Canvas):
 
 	# https://stackoverflow.com/questions/24942760/is-there-a-way-to-gray-out-disable-a-tkinter-frame
 	def disableChildren(self,parent):
-	    for child in parent.winfo_children():
-	        wtype = child.winfo_class()
-	        if wtype not in ('Frame','Labelframe'):
-	            child.configure(state='disable')
-	        else:
-	            self.disableChildren(child)
+		for child in parent.winfo_children():
+			wtype = child.winfo_class()
+			if wtype not in ('Frame','Labelframe'):
+				child.configure(state='disable')
+			else:
+				self.disableChildren(child)
 
 	def enableChildren(self,parent):
-	    for child in parent.winfo_children():
-	        wtype = child.winfo_class()
-	        if wtype not in ('Frame','Labelframe'):
-	            child.configure(state='normal')
-	        else:
-	            self.enableChildren(child)
+		for child in parent.winfo_children():
+			wtype = child.winfo_class()
+			if wtype not in ('Frame','Labelframe'):
+				child.configure(state='normal')
+			else:
+				self.enableChildren(child)
 
 	def bindCanvas(self):
 		self.draw_canvas.bind('<Button-1>', self.start) # Click event
@@ -282,3 +278,50 @@ class Draw_Canvas(Ui_Canvas):
 		self.draw_canvas.unbind('<Button-1>') # Click event
 		self.draw_canvas.unbind('<B1-Motion>') # Motion event
 		self.draw_canvas.unbind('<ButtonRelease-1>') # Release event
+
+#___________________________________________________________________________________________________________________________
+# Managing Draw Canvas
+
+	def changeGrid(self):
+		if self.gridval.get() == "disappear":
+			self.draw_canvas.delete(Setup.TAGGRID)
+		else:
+			gap = 50
+			for x in range(gap, Setup.WIDTH, gap):
+				self.draw_canvas.create_line(x, 0, x, Setup.HEIGHT,fill='grey', width=1,tags=Setup.TAGGRID)
+			for y in range(gap, Setup.HEIGHT, gap):
+				self.draw_canvas.create_line(0, y, Setup.WIDTH, y,fill='grey', width=1,tags=Setup.TAGGRID)
+
+	def clear(self):
+		"""
+		Clear the canvas
+		Clear the arrays of element
+		"""
+		self.draw_canvas.delete("all")
+		self.outcome.getNF().setElements(np.array([]))
+		self.outcome.clearCanvas()
+		self.changeGrid()
+
+	def update(self,canvas):
+		"""
+		Function that will update the options of the NF  
+		"""
+		self.outcome.getNF().setSize(self.size_var.get())
+		self.outcome.getNF().setDensity(self.density_var.get())
+		self.outcome.getNF().setPolice(self.cbfonts.get())
+		self.outcome.getNF().setChar(self.char_var.get())
+		self.outcome.update(canvas)
+
+	def character_limit(self):
+		if len(self.entryChar_var.get()) > 0:
+			self.entryChar_var.set(self.entryChar_var.get()[-1])
+
+	def clear(self):
+		"""
+		Clear the canvas
+		Clear the arrays of element
+		"""
+		self.draw_canvas.delete("all")
+		self.outcome.getNF().setElements(np.array([]))
+		self.outcome.clearCanvas()
+		self.changeGrid()
