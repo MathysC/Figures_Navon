@@ -97,8 +97,6 @@ class Line(Element):
 		# We add this element to its neighbors
 		self.addToNeighbors(canvas=canvas, NF=NF) # Indiquate this element as neighbor of the neighbor it self
 
-		self.determineKids(canvas=canvas, nf=NF)  # Split the element if needed
-
 		# Add the element to the outcome canvas
 		draw_canvas = kwargs.get('draw_canvas')
 		draw_canvas.getOutcome().update()
@@ -267,45 +265,6 @@ class Line(Element):
 			current = int(math.hypot(pointC[0] - pointA[0], pointC[1] - pointA[1]))  # Calculate the length A-C
 
 		return pointC
-
-#___________________________________________________________________________________________________________________________
-# Managing of Element Overlays 
-
-	def foundClosestToInsersection(self, intersection) -> Element:
-		"""
-		find the closest element to the given point :
-		find among the children which one is closest to the point, if any kid then return the element itself
-		:param intersection: the point of the intersection
-		:type intersection: np.array([x, y])
-		:return: the closest element
-		:rtype: Element
-		"""
-		for kid in self.getKids():
-			startKid = np.array([kid.getX(0), kid.getY(0)])
-			endKid = np.array([kid.getX(1), kid.getY(1)])
-
-			if (startKid[0] <= intersection[0] <= endKid[0] or startKid[1] <= intersection[1] <= endKid[1]) or (startKid[0] >= intersection[0] >= endKid[0] or startKid[1] >= intersection[1] >= endKid[1]):
-				return kid.foundClosestToInsersection(intersection)
-
-		return self # if the element got not kid then return the parent
-
-	def createKids(self, intersection):
-		"""
-		Create two lines that bond to the point of intersection
-		:param intersection: the point of intersection
-		:type intersection: np.array([x, y])
-		"""
-		# Creates two kids
-		kid1 = Line(Xs=np.array([self.getX(0), intersection[0]]), Ys=np.array([self.getY(0), intersection[1]]))
-		kid2 = Line(Xs=np.array([intersection[0], self.getX(1)]), Ys=np.array([intersection[1], self.getY(1)]))
-
-		# Add this element as parent of those kids
-		kid1.setParent(self)
-		kid2.setParent(self)
-
-		# Add kids to the list
-		self.addKid(kid1)
-		self.addKid(kid2)
 
 #___________________________________________________________________________________________________________________________
 

@@ -304,8 +304,3 @@ class Circle(Element):
 	def toString(self):
 		return f"{self.getType()} - {self.getCenter()} - {self.radius}"
 
-	def foundClosestToInsersection(self, intersection):
-		pass
-
-	def createKids(self, intersection):
-		pass

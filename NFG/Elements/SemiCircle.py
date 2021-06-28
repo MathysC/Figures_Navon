@@ -230,9 +230,6 @@ class SemiCircle(Element):
 		NF.addElement(self)
 		self.addToNeighbors(canvas=kwargs.get('canvas'),NF=NF) # Indiquate this element as neighbor of the neighbor it self
 
-		self.determineKids(canvas=kwargs.get('canvas'), nf=NF)  # Split the element if needed
-
-
 		# Add the element to the outcome canvas
 		draw_canvas = kwargs.get('draw_canvas')
 		draw_canvas.getOutcome().addElementToIm(self)
@@ -392,74 +389,6 @@ class SemiCircle(Element):
 		return pointB
 
 #___________________________________________________________________________________________________________________________
-# Managing of Element Overlays 
-
-	def foundClosestToInsersection(self, intersection):
-		"""
-		find the closest element to the given point :
-		find among the children which one is closest to the point, if any kid then return the element itself
-		:param intersection: the point of the intersection
-		:type intersection: np.array([x, y])
-		:return: the closest element
-		:rtype: Element
-		"""
-	#	angle = (math.degrees(math.atan2(intersection[1]-self.getCenter()[1],self.getCenter()[0]-intersection[0])))
-	#	print(f"{type(angle)} : {angle = }")
-	#	for kid in self.getKids():
-	#		if kid.getEndAngle() <= angle <= kid.getStartAngle() or kid.getEndAngle() >= angle >= kid.getStartAngle():
-	#			return kid.foundClosestToInsersection(intersection)
-		return self
-
-	def createKids(self, intersection):
-		"""
-		Create two arc that bond to the point of intersection
-		:param intersection: the point of intersection
-		:type intersection: np.array([x, y])
-		"""
-
-		# Calcultates the angle where the semicircle is divided
-		# A the point at the intersection
-		A = intersection
-		# B the created point at the side of the center
-		B =  np.array([self.center[0]+self.radius * math.cos(math.radians(self.getStartAngle())),
-			 self.center[1]+self.radius * math.sin(math.radians(self.getStartAngle()))])
-		# C the Center
-		C = np.array([self.center[0], self.center[1]]) # I make another variable to be clear with my calculation
-		
-		angle = math.degrees(getAngleCL(strAngle='gamma',A=A, B=B, C=C))
-		print(f"{angle = }")
-
-		# Create the fist kid and instanciate its variables
-		# Same values as the parent (the current element)
-		kid1 = SemiCircle(Xs = np.array([self.getX(0), self.getX(1)]), Ys = np.array([self.getY(0), self.getY(1)]))
-		kid1.setCenter(self.getCenter())
-		kid1.setRadius(self.getRadius())
-
-		# New Values
-		kid1.setStartAngle(self.getStartAngle())
-		kid1.setEndAngle(angle)
-		
-		# Create the second kid and instanciate its variables
-		# Same values as the parent (the current element)
-		kid2 = SemiCircle(Xs = np.array([self.getX(0), self.getX(1)]), Ys = np.array([self.getY(0), self.getY(1)]))
-		kid2.setCenter(self.getCenter())
-		kid2.setRadius(self.getRadius())
-		
-		# New Values
-		kid2.setStartAngle(angle)
-		kid2.setEndAngle(self.getEndAngle())
-
-		# Add this element as parent of those kids
-		kid1.setParent(self)
-		kid2.setParent(self)
-
-		# Add kids to the list
-		self.addKid(kid1)
-		#self.addKid(kid2)
 
 	def toString(self):
 		return f"{self.getType()} - {self.getCenter()} - {self.radius} - {self.startAngle}"
-
-
-
-

@@ -104,9 +104,3 @@ class Eraser(Element):
 		Not implemented function for this element
 		"""
 		pass
-
-	def foundClosestToInsersection(self, intersection):
-		pass
-
-	def createKids(self, intersection):
-		pass
