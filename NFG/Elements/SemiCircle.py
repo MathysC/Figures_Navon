@@ -228,11 +228,13 @@ class SemiCircle(Element):
 		# Save this element
 		NF = kwargs.get('NF')
 		NF.addElement(self)
-		self.addToNeighbors(canvas=kwargs.get('canvas'),NF=NF) # Indiquate this element as neighbor of the neighbor it self
+
+		canvas = kwargs.get('canvas')
+		self.addToNeighbors(canvas=canvas,NF=NF) # Indiquate this element as neighbor of the neighbor it self
 
 		# Add the element to the outcome canvas
 		draw_canvas = kwargs.get('draw_canvas')
-		draw_canvas.getOutcome().addElementToIm(self)
+		draw_canvas.getOutcome().addElementToIm(self,canvas)
 
 #___________________________________________________________________________________________________________________________
 # Management of the creation of element on the Navon's Figure

@@ -24,6 +24,9 @@ class NF:
 		self.size = 16
 		self.police = "arial.ttf"
 
+#___________________________________________________________________________________________________________________________
+# Getter & Setter
+
 	def getElements(self):
 		return self.elements
 
@@ -58,6 +61,8 @@ class NF:
 		:type element: Element
 		"""
 		self.elements = np.delete(self.elements, np.where(self.elements == element))
+#___________________________________________________________________________________________________________________________
+# Calculations for the Generation of the Navon's Figure
 
 	def getG(self):
 		"""
@@ -90,34 +95,28 @@ class NF:
 			res = 0
 		return res
 
-	def foundElementToPrint(self, element):
-		found = np.array([])
-		for kid in element.getKids():
-			found = np.append(found, self.foundElementToPrint(kid))
-		if len(element.getKids()) == 0:
-			found = np.append(found, element)
-		return found
 
+#___________________________________________________________________________________________________________________________
+# Function to make appear element on the image 
 
-	def printElement(self, component, draw):
-		todo = self.foundElementToPrint(component)
-		for element in todo:
-			spaces = np.linspace(0, 1, self.getN(element=element, size=self.size, density=self.d))
+	def printElement(self, element, draw, canvas):
+			space = np.linspace(0, 1, self.getN(element=element, size=self.size, density=self.d))
 			interp = element.interpolate()
 			font = ImageFont.truetype(self.police, self.size)
-
+			# Return spaced number from getN() interval
+			interp = element.interpolate()
 			for i in range(0, len(interp), 2):
 				_x_, _y_ = interp[i:i + 2]
-				x_, y_ = _x_(spaces), _y_(spaces)
+				x_, y_ = self.prepareCoords(canvas, element, _x_(space), _y_(space), self.size)
 
-				# Add local char to each coordinates
+				# Add local char to each coords
 				for i in range(0, len(x_)):
 					draw.text((x_[i], y_[i]), self.char, self.color, font=font)
 
 
-	def printAllElements(self, draw):
+	def printAllElements(self, draw, canvas):
 		for element in self.elements:
-			self.printElement(element, draw)
+			self.printElement(element, draw, canvas)
 
 	def final(self, canvas):
 
@@ -235,7 +234,7 @@ class NF:
 		for intersection in element.getIntersections():
 			intersection = int(intersection)
 			# We check who created this intersection with the second tag ('intersection', '-self.id','-otherElement.id')
-			if canvas.gettags(intersection)[2] == f"-{element.getId()}":
+			if canvas.gettags(intersection)[1] == f"-{element.getId()}":
 				inter = np.append(inter, intersection)
 		# Then for each of those intersection, check if there is a point (x_,y_) to delete
 		for intersection in inter:

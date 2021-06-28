@@ -15,6 +15,9 @@ class Circle(Element):
 		self.center = np.zeros(2)
 		self.radius = 0
 
+#___________________________________________________________________________________________________________________________
+# Getter & Setter
+
 	def getType(self):
 		"""
 		Getter of type 
@@ -54,6 +57,9 @@ class Circle(Element):
 		:type newC: np.array
 		"""
 		self.center = newC
+
+#___________________________________________________________________________________________________________________________
+# Management of the creation of element on the Draw Canvas
 
 	def start(self, **kwargs):
 		"""
@@ -116,14 +122,17 @@ class Circle(Element):
 		"""
 		NF = kwargs.get('NF')
 		NF.addElement(self)
-
+		canvas = kwargs.get('canvas')
 		# We add this element to its neighbors
-		self.addToNeighbors(canvas=kwargs.get('canvas'),NF=kwargs.get('NF'))
+		self.addToNeighbors(canvas=canvas,NF=kwargs.get('NF'))
 
 		# Add the element to the outcome canvas
 		draw_canvas = kwargs.get('draw_canvas')
-		draw_canvas.getOutcome().addElementToIm(self)
-		
+		draw_canvas.getOutcome().addElementToIm(self,canvas)
+	
+#___________________________________________________________________________________________________________________________
+# Management of the creation of element on the Navon's Figure
+
 	def getL(self) -> np.ndarray:
 		"""
 		Function that calculates L
@@ -170,6 +179,9 @@ class Circle(Element):
 			_y_ = itp.interp1d(self.getDividedL(), y_)
 			res = np.append(res,[np.array([_x_,_y_])])
 		return res
+
+#___________________________________________________________________________________________________________________________
+# Managing of Element Intersections
 
 	def findNeighbors(self, canvas):
 		"""
@@ -300,6 +312,7 @@ class Circle(Element):
 
 		return pointB
 
+#___________________________________________________________________________________________________________________________
 
 	def toString(self):
 		return f"{self.getType()} - {self.getCenter()} - {self.radius}"

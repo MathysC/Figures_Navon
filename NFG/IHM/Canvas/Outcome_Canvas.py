@@ -17,13 +17,6 @@ class Outcome_Canvas(Ui_Canvas):
 		# https://stackoverflow.com/questions/3359717/cannot-display-an-image-in-tkinter
 		self.AGC = None #Anti Garbage Collector 
 		self.PhotoIm = None
-		# Frame where all parts of Outcome_Canvas will be put in
-#		# The Frame where the draw Canvas and the Generator canvas will be put
-#		self.canvas_frame = Frame(master,width = Setup.WIDTH,bd=2,bg="yellow")
-#		self.canvas_frame.grid(row=1,column=0,sticky="nsw")
-#
-#		self.outcomeOptions_Frame = Frame(self.canvas_frame,width = Setup.WIDTH,bg="yellow")
-#		self.outcomeOptions_Frame.grid(row=0, column=0, sticky="nsew")
 
 		# The Outcome canvas where the user can see his or her current draw
 		self.out_canvas = Canvas(master ,height=Setup.HEIGHT, width=int(Setup.WIDTH/2-10), bg="white")
@@ -35,7 +28,7 @@ class Outcome_Canvas(Ui_Canvas):
 	def setNF(self, newNF):
 		self.nf = newNF
 
-	def update(self):
+	def update(self, canvas):
 		"""
 		Reupload the image on the canvas, with every element of the NF
 		.. seealso:: NF.printAllElement(draw)
@@ -43,17 +36,17 @@ class Outcome_Canvas(Ui_Canvas):
 
 		# We delete the current image
 		self.clearCanvas()
-		self.nf.printAllElements(self.draw) # We print all element in the new draw
+		self.nf.printAllElements(self.draw, canvas) # We print all element in the new draw
 		self.AGC = ImageTk.PhotoImage(self.charIm) # Save the image to upload it on the canvas
 		self.out_canvas.create_image(0,0,anchor="nw",image=self.AGC) # An we put back the image on the canvas
 
-	def addElementToIm(self,element):
+	def addElementToIm(self,element, canvas):
 		"""
 		Reupload the image on the canvas, with the newest element of the NF
 		.. seealso:: NF.printElement
 		"""
 		self.out_canvas.delete(ALL) # We delete the Image from the Canvas
-		self.nf.printElement(element,self.draw) # We add the newest element to the image
+		self.nf.printElement(element=element,draw = self.draw, canvas=canvas) # We add the newest element to the image
 		self.AGC = ImageTk.PhotoImage(self.charIm) # Save the image to upload it on the canvas
 		self.out_canvas.create_image(0,0,anchor="nw",image=self.AGC) # An we put back the image on the canvas
 

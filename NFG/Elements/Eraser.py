@@ -8,6 +8,9 @@ class Eraser(Element):
 	def __init__(self):
 		super().__init__()
 
+#___________________________________________________________________________________________________________________________
+# Getter & Setter
+
 	def getType(self):
 		"""
 		Getter of type 
@@ -16,12 +19,14 @@ class Eraser(Element):
 		"""
 		return "eraser"
 
+#___________________________________________________________________________________________________________________________
+# Management of the element on the Draw Canvas
+
 	def start(self, **kwargs):
 		"""
 		Not implemented function for this element
 		"""
 		pass
-
 
 	def motion(self, **kwargs):
 		"""
@@ -73,7 +78,10 @@ class Eraser(Element):
 			del(element)
 
 			draw_canvas = kwargs.get('draw_canvas')
-			draw_canvas.outcome.update()				
+			draw_canvas.outcome.update(canvas)				
+
+#___________________________________________________________________________________________________________________________
+# Management of the creation of element on the Navon's Figure
 
 	def getL(self):
 		"""
@@ -87,6 +95,9 @@ class Eraser(Element):
 		"""
 		pass
 
+#___________________________________________________________________________________________________________________________
+# Managing of Element Intersections
+
 	def findNeighbors(self, **kwargs):
 		"""
 		Not implemented function for this element
@@ -98,6 +109,8 @@ class Eraser(Element):
 		Not implemented function for this element
 		"""
 		pass
+
+#___________________________________________________________________________________________________________________________
 
 	def toString(self):
 		"""

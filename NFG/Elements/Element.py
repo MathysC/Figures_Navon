@@ -24,6 +24,9 @@ class Element(ABC):
 		self.parent = self  # At first it is his own parent, but that might change in the future
 		self.kids = np.array([])  # At the start, it has no kid
 
+#___________________________________________________________________________________________________________________________
+# Getter & Setter
+
 	def getId(self):
 		"""
 		Getter of id
@@ -121,43 +124,8 @@ class Element(ABC):
 			coord = np.append(coord, self.getY(i))
 		return coord
 
-	def getParent(self):  # -> Element
-		"""
-		Getter of parent
-		:return: the parent of this element
-		:rtype: Element
-		"""
-		return self.parent
-
-	def setParent(self, parent):
-		"""
-		Setter of parent
-		:param parent: the Element parent of this element
-		:type parent: Element
-		"""
-		self.parent = parent
-
-	def getKids(self) -> np.array:
-		return self.kids
-
-	def addKid(self, kid):
-		"""
-		add a kid to the kids list
-		:param kid: the kid to add
-		:type kid: Element
-		"""
-		self.kids = np.append(
-			self.kids, kid)
-
-	def removeKid(self, kid):
-		"""
-		remove a kid to the kids list
-		:param kid: the kid to remove
-		:type kid: Element
-		"""
-		self.kids = np.delete(
-			self.kids,
-			np.where(self.kids == kid))
+#___________________________________________________________________________________________________________________________
+# Management of the creation of element on the Navon's Figure
 
 	# Calculation by M. BARD
 	@abstractmethod
@@ -184,6 +152,9 @@ class Element(ABC):
 	def getType(self):
 		pass
 
+#___________________________________________________________________________________________________________________________
+# Management of the creation of element on the Draw Canvas
+
 	@abstractmethod
 	def start(self, **kwargs):
 		pass
@@ -195,6 +166,9 @@ class Element(ABC):
 	@abstractmethod
 	def end(self, **kwargs):
 		pass
+		
+#___________________________________________________________________________________________________________________________
+# Managing of Element Intersections 
 
 	@abstractmethod
 	def findNeighbors(self, **kwargs):
@@ -269,6 +243,7 @@ class Element(ABC):
 	def whereToGather(self, pointA):
 		pass
 
+#___________________________________________________________________________________________________________________________
 	@abstractmethod
 	def toString(self):
 		pass

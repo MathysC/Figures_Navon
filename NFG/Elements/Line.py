@@ -13,6 +13,9 @@ class Line(Element):
 
 	def __init__(self, Xs=np.zeros(2), Ys=np.zeros(2)):
 		super().__init__(Xs, Ys)
+		
+#___________________________________________________________________________________________________________________________
+# Getter & Setter
 
 	def getType(self):
 		"""
@@ -99,7 +102,7 @@ class Line(Element):
 
 		# Add the element to the outcome canvas
 		draw_canvas = kwargs.get('draw_canvas')
-		draw_canvas.getOutcome().update()
+		draw_canvas.getOutcome().addElementToIm(self, canvas)
 
 #___________________________________________________________________________________________________________________________
 # Management of the creation of element on the Navon's Figure
