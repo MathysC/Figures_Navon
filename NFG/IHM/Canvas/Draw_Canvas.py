@@ -6,7 +6,7 @@ import os
 
 from tkinter import *
 from tkinter import ttk #i had to separate both importation in order to use ttk
-
+from tkinter import filedialog
 from PIL import Image, ImageTk
 import numpy as np
 
@@ -56,7 +56,7 @@ class Draw_Canvas(Ui_Canvas):
 		self.char_var = StringVar(value="A")
 		self.labelChar = Label(self.tools, text="Local char :", padx=padx)
 		self.entryChar = Entry(self.tools, width=2, textvariable=self.char_var)
-		self.char_var.trace("w", lambda : self.character_limit())
+		self.char_var.trace("w", lambda *arg: self.character_limit())
 
 		### Local Image (if used, the Local Character is disabled)
 		self.labelImg = Label(self.tools, text="Local Image :", padx=padx)
@@ -69,16 +69,18 @@ class Draw_Canvas(Ui_Canvas):
 		self.cbfonts.current(0)
 
 		### Density
-		self.density_var = IntVar(value=100)
+		self.density_var = StringVar(value="100")
 		Label(self.tools, text="Density :", padx=padx).grid(row=1, column=0, sticky="w")
 		Spinbox(self.tools, from_=1, to=100, width=4, textvariable=self.density_var, command = lambda: self.update(self.draw_canvas)).grid(row=1, column=1, padx=padx, sticky="w")
+		self.density_var.trace("w", lambda *arg: self.update(self.draw_canvas))
+
 
 		### Size 
-		self.size_var = IntVar(value=16)
+		self.size_var = StringVar(value="16")
 		Label(self.tools, text="Size :", padx=padx).grid(row=1, column=2, sticky="w")
 		self.spChar = Spinbox(self.tools, from_=1, to=100, width=4, textvariable=self.size_var, command = lambda: self.update(self.draw_canvas)) # Grid managed in self.changeLocalElement
 		self.spImg = Spinbox(self.tools, from_=1, to=100, width=4) # Grid managed in self.changeLocalElement
-		
+		self.size_var.trace("w", lambda *arg: self.update(self.draw_canvas))
 
 		## Every Paint Tools are in this frame	
 		self.paint = LabelFrame(self.options,text="Tools")
@@ -138,9 +140,9 @@ class Draw_Canvas(Ui_Canvas):
 		self.cbfonts.bind("<<ComboboxSelected>>", lambda e: self.update(self.draw_canvas))
 
 
-
-		self.changeLocalElement(padx)
-		self.update(self.draw_canvas)
+		## Start the app with 
+		self.changeLocalElement(padx) # Local Character options
+		self.update(self.draw_canvas) # With variables initialized
 
 #___________________________________________________________________________________________________________________________
 # Getter & Setter
@@ -219,9 +221,9 @@ class Draw_Canvas(Ui_Canvas):
 			self.buttonChangeElement.configure(text="Work in progress") # text="Use a local Image"
 		else:								# Make appear Local Image Option
 			self.currentElement = "char"
-			self.buttonChangeElement.configure(state=DISABLED)
+			self.buttonChangeElement.configure(state=DISABLED) # temporary
 
-			return
+			return # temporary
 			self.spChar.grid_forget()
 			self.cbfonts.grid_forget()
 			self.lbfont.grid_forget()
@@ -236,10 +238,17 @@ class Draw_Canvas(Ui_Canvas):
 		"""
 		Function that will update the options of the NF  
 		"""
-		self.outcome.getNF().setSize(self.size_var.get())
 		self.outcome.getNF().setDensity(self.density_var.get())
 		self.outcome.getNF().setPolice(self.font_var.get())
 		self.outcome.getNF().setChar(self.char_var.get())
+		try:
+		 # The code still work without the try except clause but it create an exception when we change value by typing it
+			self.outcome.getNF().setDensity(int(self.density_var.get()))
+			self.outcome.getNF().setSize(int(self.size_var.get()))
+		except ValueError:
+			pass
+
+
 		self.outcome.update(canvas)
 
 
@@ -253,7 +262,10 @@ class Draw_Canvas(Ui_Canvas):
 		pass
 
 	def exportIMG(self):
-		pass
+		file = filedialog.asksaveasfilename ( title = "Save as .." , \
+			filetypes = [("PNG", ".png"), ("JPG", ".jpg")] , defaultextension = ".png", \
+			initialdir= "Outcome", initialfile="NewImage")
+		self.getOutcome().getImage().save(file)
 
 
 
@@ -321,7 +333,7 @@ class Draw_Canvas(Ui_Canvas):
 		self.draw_canvas.delete("all")
 		self.outcome.getNF().setElements(np.array([]))
 		self.outcome.clearCanvas()
-		self.changeGrid()
+		self.changeGrid()		self.changeGrid()
 
 	def clear(self):
 		"""

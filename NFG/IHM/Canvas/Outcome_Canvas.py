@@ -16,7 +16,6 @@ class Outcome_Canvas(Ui_Canvas):
 		# Due to how works the Python garbage collector, i have to save the current image in a variable 
 		# https://stackoverflow.com/questions/3359717/cannot-display-an-image-in-tkinter
 		self.AGC = None #Anti Garbage Collector 
-		self.PhotoIm = None
 
 		# The Outcome canvas where the user can see his or her current draw
 		self.out_canvas = Canvas(master ,height=Setup.HEIGHT, width=int(Setup.WIDTH/2-10), bg="white")
@@ -27,6 +26,10 @@ class Outcome_Canvas(Ui_Canvas):
 
 	def setNF(self, newNF):
 		self.nf = newNF
+
+
+	def getImage(self):
+		return self.charIm
 
 	def update(self, canvas):
 		"""
