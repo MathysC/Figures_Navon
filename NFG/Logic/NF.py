@@ -22,7 +22,7 @@ class NF:
 		self.char = 'A'
 		self.color = (0, 0, 0)
 		self.size = 16
-		self.police = "arial.ttf"
+		self.police = "arial"
 
 #___________________________________________________________________________________________________________________________
 # Getter & Setter
@@ -166,7 +166,7 @@ class NF:
 	def printElement(self, element, draw, canvas):
 			space = np.linspace(0, 1, self.getN(element=element, size=self.size, density=self.density))
 			interp = element.interpolate()
-			font = ImageFont.truetype(self.police+"ttf", self.size)
+			font = ImageFont.truetype("Fonts/"+self.police+".otf", self.size)
 			# Return spaced number from getN() interval
 			interp = element.interpolate()
 			for i in range(0, len(interp), 2):

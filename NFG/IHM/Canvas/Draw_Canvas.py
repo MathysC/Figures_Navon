@@ -1,11 +1,11 @@
 from Elements.ElementFactory import ElementFactory as Factory
 from IHM.Canvas.Ui_Canvas import Ui_Canvas
 from Logic.Setup import Setup
+import os
 
 
 from tkinter import *
 from tkinter import ttk #i had to separate both importation in order to use ttk
-from tkinter import font
 
 from PIL import Image, ImageTk
 import numpy as np
@@ -56,26 +56,27 @@ class Draw_Canvas(Ui_Canvas):
 		self.char_var = StringVar(value="A")
 		self.labelChar = Label(self.tools, text="Local char :", padx=padx)
 		self.entryChar = Entry(self.tools, width=2, textvariable=self.char_var)
-		self.char_var.trace("w", lambda *args: self.character_limit())
+		self.char_var.trace("w", lambda : self.character_limit())
 
 		### Local Image (if used, the Local Character is disabled)
 		self.labelImg = Label(self.tools, text="Local Image :", padx=padx)
 		self.entryImg = Button(self.tools, text="Search an Image",height=1, command = None)
 
 		### Font
+		self.font_var = StringVar(value=self.get_AllFonts()[0])
 		self.lbfont = Label(self.tools, text="Font :", padx=padx) # Grid managed in self.changeLocalElement
-		self.cbfonts = ttk.Combobox(self.tools, values=font.families(), state="readonly", width=15) # ComboBox Fonts # Grid managed in self.changeLocalElement
+		self.cbfonts = ttk.Combobox(self.tools, values=self.get_AllFonts(), state="readonly", width=15,textvariable=self.font_var) # ComboBox Fonts # Grid managed in self.changeLocalElement
 		self.cbfonts.current(0)
 
 		### Density
 		self.density_var = IntVar(value=100)
 		Label(self.tools, text="Density :", padx=padx).grid(row=1, column=0, sticky="w")
-		Spinbox(self.tools, from_=1, to=100, width=4, textvariable=self.density_var, command = lambda: self.test()).grid(row=1, column=1, padx=padx, sticky="w")
+		Spinbox(self.tools, from_=1, to=100, width=4, textvariable=self.density_var, command = lambda: self.update(self.draw_canvas)).grid(row=1, column=1, padx=padx, sticky="w")
 
 		### Size 
 		self.size_var = IntVar(value=16)
 		Label(self.tools, text="Size :", padx=padx).grid(row=1, column=2, sticky="w")
-		self.spChar = Spinbox(self.tools, from_=1, to=100, width=4, textvariable=self.size_var, command = lambda: self.test()) # Grid managed in self.changeLocalElement
+		self.spChar = Spinbox(self.tools, from_=1, to=100, width=4, textvariable=self.size_var, command = lambda: self.update(self.draw_canvas)) # Grid managed in self.changeLocalElement
 		self.spImg = Spinbox(self.tools, from_=1, to=100, width=4) # Grid managed in self.changeLocalElement
 		
 
@@ -132,14 +133,14 @@ class Draw_Canvas(Ui_Canvas):
 
 		# Events
 		self.bindCanvas()
-		self.cbfonts.bind("<<ComboboxSelected>>", self.update(self.draw_canvas))
 		self.getMainElement().bind(tobind[0],tobind[1]) # bind the main func of the MainWindow to the mainElement
 		self.bindallframe(self.getMainElement(),tobind[0], tobind[1]) # and bind it to all element
+		self.cbfonts.bind("<<ComboboxSelected>>", lambda e: self.update(self.draw_canvas))
 
 
 
 		self.changeLocalElement(padx)
-
+		self.update(self.draw_canvas)
 
 #___________________________________________________________________________________________________________________________
 # Getter & Setter
@@ -189,7 +190,16 @@ class Draw_Canvas(Ui_Canvas):
 #___________________________________________________________________________________________________________________________
 # Managing Options 
 
+	def get_AllFonts(self):
+		fonts = []
+		for font in os.listdir('Fonts'):
+			fonts.append(font[:-4])
+		return fonts
 
+	def character_limit(self):
+		if len(self.char_var.get()) > 0:
+			self.char_var.set(self.char_var.get()[-1])
+		self.update(self.draw_canvas)
 
 	def changeLocalElement(self,padx):
 		"""
@@ -221,6 +231,17 @@ class Draw_Canvas(Ui_Canvas):
 			self.labelImg.grid(row=0, column=2, columnspan=2, sticky="w")
 			self.entryImg.grid(row=0, column=4, sticky="w")
 			self.buttonChangeElement.configure(text="Use local Character")
+
+	def update(self,canvas):
+		"""
+		Function that will update the options of the NF  
+		"""
+		self.outcome.getNF().setSize(self.size_var.get())
+		self.outcome.getNF().setDensity(self.density_var.get())
+		self.outcome.getNF().setPolice(self.font_var.get())
+		self.outcome.getNF().setChar(self.char_var.get())
+		self.outcome.update(canvas)
+
 
 #___________________________________________________________________________________________________________________________
 # Managing Import / Export
@@ -301,20 +322,6 @@ class Draw_Canvas(Ui_Canvas):
 		self.outcome.getNF().setElements(np.array([]))
 		self.outcome.clearCanvas()
 		self.changeGrid()
-
-	def update(self,canvas):
-		"""
-		Function that will update the options of the NF  
-		"""
-		self.outcome.getNF().setSize(self.size_var.get())
-		self.outcome.getNF().setDensity(self.density_var.get())
-		self.outcome.getNF().setPolice(self.cbfonts.get())
-		self.outcome.getNF().setChar(self.char_var.get())
-		self.outcome.update(canvas)
-
-	def character_limit(self):
-		if len(self.entryChar_var.get()) > 0:
-			self.entryChar_var.set(self.entryChar_var.get()[-1])
 
 	def clear(self):
 		"""
