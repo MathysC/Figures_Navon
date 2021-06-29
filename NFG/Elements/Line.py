@@ -169,36 +169,6 @@ class Line(Element):
 			idneighbor = int(idneighbor)
 			self.checkIntersection(canvas=canvas, idNeighbor=idneighbor)
 
-	def checkIntersection(self, canvas, idNeighbor):
-		# list of intersections that are too close to each other
-		intertooClose = np.array([])
-
-		# Get intersection between this element and the idNeighbor
-		intersections = np.array([])
-		for intersection in self.getIntersections():
-			intersection = int(intersection)
-			if f"-{self.id}" in canvas.gettags(intersection) and f"-{int(idNeighbor)}" in canvas.gettags(intersection):
-				intersections = np.append(intersections, intersection)
-		# Get the fist intersection
-		precedent = np.array([(canvas.coords(int(intersections[0]))[0] + Setup.RADIUSINTER),
-		                      (canvas.coords(int(intersections[0]))[1] + Setup.RADIUSINTER)])
-		# Get all intersection that are close one to eachother
-		for intersection in intersections[1:]:
-			intersection = int(intersection)
-			current = np.array([(canvas.coords(intersection)[0] + Setup.RADIUSINTER),
-			                    (canvas.coords(intersection)[1] + Setup.RADIUSINTER)])
-
-			# If the current element is nearby the precedent element
-			if (precedent[0] - Setup.RADIUSINTER <= current[0] <= precedent[0] + Setup.RADIUSINTER) and (
-					precedent[1] - Setup.RADIUSINTER <= current[1] <= precedent[1] + Setup.RADIUSINTER):
-				intertooClose = np.append(intertooClose, intersection)
-			precedent = current  # Change the precedent element to check the next one
-
-		# Now the intersections in the intertooClose list need to be delete		 
-		for intersection in intertooClose:
-			intersection = int(intersection)
-			self.removeIntersection(intersection)  # Delete from this intersection element
-			canvas.delete(intersection)
 
 	def whereToGather(self, pointA) -> np.array:
 		"""

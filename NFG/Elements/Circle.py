@@ -207,8 +207,11 @@ class Circle(Element):
 			point = np.array([self.center[0]+self.radius * math.cos(radian),
 			 self.center[1]+self.radius * math.sin(radian)])
 
-
 			self.createNeighbors(canvas, point, tag)
+
+			for idneighbor in self.getNeighbors():
+				idneighbor = int(idneighbor)
+				self.checkIntersection(canvas=canvas, idNeighbor=idneighbor)
 
 	def whereToGather(self,pointA) -> np.array:
 		"""
