@@ -1,11 +1,15 @@
 from IHM.Canvas.Ui_Canvas import Ui_Canvas # Abstract class
 from Logic.Setup import Setup
+from Elements.ElementFactory import ElementFactory as Factory
+from Logic.NF import NF
 
-
+import numpy as np
 from tkinter import *
 from tkinter import ttk #i had to separate both importation in order to use ttk
 from tkinter import font
+from tkinter import filedialog
 import os
+import csv
 
 class Generator_Canvas(Ui_Canvas):
 	def __init__(self,master,outcome,tobind):
@@ -16,7 +20,7 @@ class Generator_Canvas(Ui_Canvas):
 		# The Frame that will contains everything except the outcomme
 		self.gen_Frame = Frame(
 			master,
-			width=Setup.WIDTH/2-1, 
+			width=Setup.WIDTH/2, 
 			height=Setup.HEIGHT,
 			relief=RAISED)
 		self.gen_Frame.grid(row=0, column=0)
@@ -47,10 +51,9 @@ class Generator_Canvas(Ui_Canvas):
 
 		Label(self.templateframe, text = "Choose the global form",bg="white").grid(row=0, column=0,columnspan=2)
 
-		self.template_var = StringVar(value=self.get_AllDATs()[0])
-		comboForm = ttk.Combobox(self.templateframe,values=self.get_AllDATs(),state="readonly")
-		comboForm.grid(row=0, column=0, sticky="nsw")
-		comboForm.current(0)
+		self.templateform = ttk.Combobox(self.templateframe,values=self.get_AllDATs(),state="readonly")
+		self.templateform.grid(row=0, column=0, sticky="nsw")
+		self.templateform.current(0)
 
 	
 	## Every tools used to create a Navon's Figure are in this frame
@@ -77,6 +80,7 @@ class Generator_Canvas(Ui_Canvas):
 		self.lbfont = Label(self.tools, text="Font :", padx=padx) # Grid managed in self.changeLocalElement
 		self.cbfonts = ttk.Combobox(self.tools, values=self.get_AllFonts(), state="readonly", width=15,textvariable=self.font_var) # ComboBox Fonts # Grid managed in self.changeLocalElement
 		self.cbfonts.current(0)
+		self.cbfonts.bind("<<ComboboxSelected>>", lambda e: self.update())
 
 	### Density
 		self.density_var = StringVar(value="100")
@@ -101,12 +105,18 @@ class Generator_Canvas(Ui_Canvas):
 		self.getMainElement().bind(tobind[0],tobind[1])
 		self.bindallframe(self.getMainElement(),tobind[0], tobind[1])
 
-		comboForm.bind("<<ComboboxSelected>>",lambda : self.update())
+		self.templateform.bind("<<ComboboxSelected>>",lambda *arg: self.updateCanvas())
 
 	## Start the app with 
+		self.outcome = outcome
 		self.changeLocalElement(padx)
-		#self.update() # With variables initialized
+		self.update() # With variables initialized
 
+#___________________________________________________________________________________________________________________________
+# Getter & Setter
+
+	def getOutcome(self):
+		return self.outcome
 
 #___________________________________________________________________________________________________________________________
 # Managing Options
@@ -172,6 +182,40 @@ class Generator_Canvas(Ui_Canvas):
 			pass
 		self.outcome.update(self.draw_canvas)
 
+	def updateCanvas(self):
+			file = open(Setup.PATHDAT+self.templateform.get()+Setup.FORMATDAT,"r")
+
+			self.draw_canvas.delete("all")
+			self.outcome.getNF().setElements(np.array([]))
+			self.outcome.clearCanvas()
+			print(f"len Elements : {len(self.outcome.getNF().getElements())}")
+			for line in file:
+				print(f"{line=}")
+				info = line[:-1].split(" - ") # [:-1] to remove the '\n' from the line
+				element = Factory.Create(info[0])
+				if info[0] == 'line':
+					# A line is registered this way : "type" "coord"
+					coords = [float(i) for i in info[1][1:-1].split(" ")]
+					element.start(event=[coords[0],coords[1]],canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
+					element.motion(event=[coords[2],coords[3]], canvas=self.draw_canvas, NF=self.outcome.getNF())
+					element.end(event=[coords[2],coords[3]], canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
+				elif info[0] == 'semiCircle':
+					# A semiCircle is registered this way : "type" "center" "radius" "startAngle"
+					center = [float(i) for i in info[1][1:-1].split(" ")]
+					radius = int(info[2])
+					startAngle = float(info[3])
+					element.start(event=center,canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
+					element.motion(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), radius=radius, startAngle=startAngle)
+					element.end(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
+				elif info[0] == 'circle':
+					# A circle is registered this way : "type" "center" "radius"
+					center = [float(i) for i in info[1][1:-1].split(" ")]
+					radius = int(info[2])
+					element.start(event=center,canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
+					element.motion(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), radius=radius)
+					element.end(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
+				
+
 #___________________________________________________________________________________________________________________________
 # Managing Import / Export
 
@@ -188,7 +232,8 @@ class Generator_Canvas(Ui_Canvas):
 		file = filedialog.asksaveasfilename ( title = "Save as .." , \
 			filetypes = [("PNG", ".png"), ("JPG", ".jpg")] , defaultextension = ".png", \
 			initialdir= "Outcome", initialfile="NewImage")
-		self.getOutcome().getImage().save(file)
+		if not len(filepath) == 0:
+			self.getOutcome().getImage().save(file)
 
 #___________________________________________________________________________________________________________________________
 # Managing Canvas

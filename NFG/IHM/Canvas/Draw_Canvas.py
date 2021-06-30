@@ -255,6 +255,7 @@ class Draw_Canvas(Ui_Canvas):
 			filetypes = [("DAT", ".DAT")] , defaultextension = ".DAT", \
 			initialdir= Setup.PATHDAT)
 		if not len(filepath) == 0:
+			self.clear()
 			file = open(filepath,"r")
 			for line in file:
 				info = line[:-1].split(" - ") # [:-1] to remove the '\n' from the line
@@ -271,15 +272,15 @@ class Draw_Canvas(Ui_Canvas):
 					radius = int(info[2])
 					startAngle = float(info[3])
 					element.start(event=center,canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
-					element.motion(event=[coords[0]+radius,coords[1]], canvas=self.draw_canvas, NF=self.outcome.getNF(), radius=radius, startAngle=startAngle)
-					element.end(event=[coords[1]+radius,coords[1]], canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
+					element.motion(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), radius=radius, startAngle=startAngle)
+					element.end(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
 				elif info[0] == 'circle':
 					# A circle is registered this way : "type" "center" "radius"
 					center = [float(i) for i in info[1][1:-1].split(" ")]
 					radius = int(info[2])
 					element.start(event=center,canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
-					element.motion(event=[coords[0]+radius,coords[1]], canvas=self.draw_canvas, NF=self.outcome.getNF(), radius=radius)
-					element.end(event=[coords[1]+radius,coords[1]], canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
+					element.motion(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), radius=radius)
+					element.end(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
 				
 	def exportDAT(self):
 		filepath = filedialog.asksaveasfilename ( title = "Save as .." , \
@@ -297,7 +298,6 @@ class Draw_Canvas(Ui_Canvas):
 			initialdir= "Outcome", initialfile="NewImage")
 		if not len(filepath) == 0:
 			self.getOutcome().getImage().save(file)
-
 
 #___________________________________________________________________________________________________________________________
 # Managing Canvas

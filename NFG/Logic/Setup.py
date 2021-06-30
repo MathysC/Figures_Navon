@@ -13,3 +13,4 @@ class Setup:
 	PATHFONT = "Libs/Fonts/"
 	FORMATFONT = ".otf"
 	PATHDAT = "Libs/Dats/"
+	FORMATDAT = ".DAT"
