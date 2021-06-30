@@ -53,7 +53,7 @@ class Eraser(Element):
 		# onClick is a list of Elements found nearby the click on the canvas but only the first created among all will be used
 		# onClick is a list because find_overlapping return a list
 		# https://mail.python.org/pipermail/tutor/2012-November/092795.html
-		onClick = canvas.find_overlapping(event.x-1, event.y-1, event.x+1, event.y+1)
+		onClick = canvas.find_overlapping(event[0]-1, event[1]-1, event[0]+1, event[1]+1)
 
 		# If the mouse is on the same element
 		# Remove it from the NF

@@ -73,7 +73,7 @@ class Circle(Element):
 		canvas = kwargs.get('canvas')
 
 
-		self.center = self.gather(canvas,kwargs.get('NF'),np.array([event.x,event.y])) # Find if there is any element close to this one
+		self.center = self.gather(canvas,kwargs.get('NF'),np.array([event[0],event[1]])) # Find if there is any element close to this one
 		# The circle begins at the click
 		self.setX(0, self.center[0])
 		self.setX(1, self.center[0])
@@ -97,7 +97,7 @@ class Circle(Element):
 		canvas = kwargs.get('canvas')
 
 		x, y = self.center
-		point = self.gather(canvas,kwargs.get('NF'),np.array([event.x,event.y])) # Find if there is any element close to this one
+		point = self.gather(canvas,kwargs.get('NF'),np.array([event[0],event[1]])) # Find if there is any element close to this one
 
 		self.radius = int(math.hypot(x - point[0], y - point[1]))
 		self.setX(0, x - self.radius)
@@ -295,5 +295,5 @@ class Circle(Element):
 #___________________________________________________________________________________________________________________________
 
 	def toString(self):
-		return f"{self.getType()} - {self.getCenter()} - {self.radius}"
+		return f"{self.getType()} - {self.getCenter()} - {self.getRadius()}"
 

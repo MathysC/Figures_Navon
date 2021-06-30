@@ -159,7 +159,7 @@ class Draw_Canvas(Ui_Canvas):
 		:param event: the event 
 		:type event: Event
 		"""
-		self.element.start(event=event, canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
+		self.element.start(event=[event.x,event.y], canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
 
 	def motion(self, event):
 		"""
@@ -167,7 +167,7 @@ class Draw_Canvas(Ui_Canvas):
 		:param event: the event 
 		:type event: Event
 		"""
-		self.element.motion(event=event, canvas=self.draw_canvas, NF=self.outcome.getNF())
+		self.element.motion(event=[event.x,event.y], canvas=self.draw_canvas, NF=self.outcome.getNF())
 
 	def end(self, event):
 		"""
@@ -175,7 +175,7 @@ class Draw_Canvas(Ui_Canvas):
 		:param event: the event 
 		:type event: Event
 		"""
-		self.element.end(event=event, canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
+		self.element.end(event=[event.x,event.y], canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
 
 		# We create the next element 
 		self.changeElement(self.element.getType())

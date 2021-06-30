@@ -156,16 +156,16 @@ class SemiCircle(Element):
 		canvas = kwargs.get('canvas')
 
 		# Set the center
-		self.center = np.array([event.x,event.y])
+		self.center = np.array([event[0],event[1]])
 		# Set the start of the semiCircle at the cursor
-		self.setX(0, event.x)
-		self.setX(1, event.x)
-		self.setY(0, event.y)
-		self.setY(1, event.y)
+		self.setX(0, event[0])
+		self.setX(1, event[0])
+		self.setY(0, event[1])
+		self.setY(1, event[1])
 
 		self.id = canvas.create_arc(
-			event.x, event.y,
-			event.x, event.y,
+			event[0], event[1],
+			event[0], event[1],
 			fill='black', width=1, style="arc")
 
 	def motion(self, **kwargs):
@@ -183,7 +183,7 @@ class SemiCircle(Element):
 		x, y = self.center
 
 		# Calculates the radius of the SemiCircle
-		self.radius = int(math.hypot(x - event.x, y - event.y))
+		self.radius = int(math.hypot(x - event[0], y - event[1]))
 		self.setX(0, x - self.radius)
 		self.setY(0, y - self.radius)
 		self.setX(1, x + self.radius)
@@ -192,7 +192,7 @@ class SemiCircle(Element):
 		# To calculates the correct angle We need three points :
 		
 		# A the point at the cursor (event)
-		A = np.array([event.x,event.y])
+		A = np.array([event[0],event[1]])
 		# B the created point at the side of the center
 		B = np.array([x+self.radius,y])
 		# C the Center
@@ -201,7 +201,7 @@ class SemiCircle(Element):
 		gamma = getAngleCL(strAngle='gamma',A=A, B=B, C=C)
 
 		#The angle may have a different value depending on the cursor position relative to the center			
-		self.startAngle = math.degrees(gamma) if (event.y < y) else math.degrees(-gamma)
+		self.startAngle = math.degrees(gamma) if (event[1] < y) else math.degrees(-gamma)
 
 		# Reshape the Arc
 		canvas.coords(self.id,
@@ -371,4 +371,4 @@ class SemiCircle(Element):
 #___________________________________________________________________________________________________________________________
 
 	def toString(self):
-		return f"{self.getType()} - {self.getCenter()} - {self.radius} - {self.startAngle}"
+		return f"{self.getType()} - {self.getCenter()} - {self.getRadius()} - {self.getStartAngle()}"

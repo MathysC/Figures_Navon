@@ -40,7 +40,7 @@ class Line(Element):
 		canvas = kwargs.get('canvas')
 
 		point = self.gather(canvas, kwargs.get('NF'),
-		                    np.array([event.x, event.y]))  # Find if there is any element close to this one
+		                    np.array([event[0], event[1]]))  # Find if there is any element close to this one
 		# The line begins at the click
 		self.setX(0, point[0])
 		self.setX(1, point[0])
@@ -70,7 +70,7 @@ class Line(Element):
 		canvas = kwargs.get('canvas')
 
 		point = self.gather(canvas, kwargs.get('NF'),
-		                    np.array([event.x, event.y]))  # Find if there is any element close to this one
+		                    np.array([event[0], event[1]]))  # Find if there is any element close to this one
 		self.setX(1, point[0])
 		self.setY(1, point[1])
 
