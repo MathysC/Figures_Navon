@@ -32,14 +32,14 @@ class Ui_MainWindow:
 		# self.mainWindow.configure(bg=bgLeft)
 
 		# Menus
-		mainMenu = Menu(self.mainWindow)
-		self.mainWindow.config(menu=mainMenu)
-		fileMenu = Menu(master=mainMenu, tearoff=0)
-		mainMenu.add_cascade(label="File", menu=fileMenu)
-		saveMenu = Menu(master=fileMenu, tearoff=0)
-		fileMenu.add_cascade(label="Save As ... ", menu=saveMenu)
-		fileMenu.add_separator()
-		fileMenu.add_command(label="Quit", command=self.mainWindow.quit)
+		#mainMenu = Menu(self.mainWindow)
+		#self.mainWindow.config(menu=mainMenu)
+		#fileMenu = Menu(master=mainMenu, tearoff=0)
+		#mainMenu.add_cascade(label="File", menu=fileMenu)
+		#saveMenu = Menu(master=fileMenu, tearoff=0)
+		#fileMenu.add_cascade(label="Save As ... ", menu=saveMenu)
+		#fileMenu.add_separator()
+		#fileMenu.add_command(label="Quit", command=self.mainWindow.quit)
 
 		# The mainWindow is composed of 3 big parts :
 

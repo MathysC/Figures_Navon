@@ -6,10 +6,10 @@ class Setup:
 	HEIGHT = 1080
 	FONT = ('arial', 8)
 	RADIUSINTER = 2  # Set the radius of the circle used to represent the intersection
-	ICONSIZE = "16x16.ico"  # "24x24.ico"
-	PATHIMG = "Libs/Images/"
 	TAGGRID = "grid" # Line's Grid tag 
 
+	ICONSIZE = "16x16.ico"  # "24x24.ico"
+	PATHIMG = "Libs/Images/"
 	PATHFONT = "Libs/Fonts/"
 	FORMATFONT = ".otf"
 	PATHDAT = "Libs/Dats/"

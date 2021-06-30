@@ -11,7 +11,7 @@ import numpy as np
 class Outcome_Canvas(Ui_Canvas):
 	def __init__(self, master):
 		self.nf = NF()
-		self.charIm = Image.new('RGB', (int(Setup.WIDTH/2-1), Setup.HEIGHT), color='white')
+		self.charIm = Image.new('RGB', (int(Setup.WIDTH/2), Setup.HEIGHT-130), color='white')
 		self.draw = ImageDraw.Draw(self.charIm)
 		# Due to how works the Python garbage collector, i have to save the current image in a variable 
 		# https://stackoverflow.com/questions/3359717/cannot-display-an-image-in-tkinter
@@ -55,10 +55,7 @@ class Outcome_Canvas(Ui_Canvas):
 
 	def clearCanvas(self):
 		self.out_canvas.delete(ALL)# We delete the Image from the Canvas
-		self.charIm = Image.new('RGB', (int(Setup.WIDTH/2), Setup.HEIGHT), color='white') # We create a new Image
+		self.charIm = Image.new('RGB', (int(Setup.WIDTH/2), Setup.HEIGHT-130), color='white') # We create a new Image
 		self.draw = ImageDraw.Draw(self.charIm)  # We create a new draw 
 		self.AGC = ImageTk.PhotoImage(self.charIm) # Save the image to upload it on the canvas
 		self.out_canvas.create_image(0,0,anchor="nw",image=self.AGC) # An we put back the image on the canvas
-
-	def final(self):
-		pass

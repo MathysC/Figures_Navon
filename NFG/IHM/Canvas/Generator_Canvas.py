@@ -5,7 +5,7 @@ from Logic.Setup import Setup
 from tkinter import *
 from tkinter import ttk #i had to separate both importation in order to use ttk
 from tkinter import font
-
+import os
 
 class Generator_Canvas(Ui_Canvas):
 	def __init__(self,master,outcome,tobind):
@@ -22,9 +22,11 @@ class Generator_Canvas(Ui_Canvas):
 		self.gen_Frame.grid(row=0, column=0)
 		super().__init__(self.gen_Frame)
 
+		# Frame to place everything correctly
 		self.fixframe = Frame(self.gen_Frame)
 		self.fixframe.grid(row=0,column=0, sticky="nsw")
 
+	## Import and Export Options 	
 		# The Frame for create a lot of Navon's Figure
 		self.FileGeneration = LabelFrame(self.fixframe, width=Setup.WIDTH, text="Mass Generation")
 		self.FileGeneration.grid(row=0, column=1, sticky="nsw", padx=5)
@@ -32,72 +34,99 @@ class Generator_Canvas(Ui_Canvas):
 		Button(self.FileGeneration, text="import as CSV", command=self.importCSV, padx=padx).grid(row=0, column=0)
 		Button(self.FileGeneration, text="export as Images", command=self.exportMassIMG, padx=padx).grid(row=0, column=1, sticky="we")
 
+		# The frame for import export ONE NF
 		self.export = LabelFrame(self.fixframe, text="Export your generation")
 		self.export.grid(row=0, column=2, sticky="nsw",padx=5)
 		Button(self.export, text="export as CSV", command=self.exportCSV, padx=padx).grid(row=0, column=0)
 		Button(self.export, text="export as Image", command=self.exportIMG, padx=padx).grid(row=0, column=1)
 
 
-		# Frame for the template
+	# Frame for the template
 		self.templateframe = LabelFrame(self.fixframe, text="Templates")
 		self.templateframe.grid(row=0,column=0,sticky="nsw",padx=5)
 
 		Label(self.templateframe, text = "Choose the global form",bg="white").grid(row=0, column=0,columnspan=2)
 
-		comboForm = ttk.Combobox(self.templateframe,values=["A","B"],state="readonly")
+		self.template_var = StringVar(value=self.get_AllDATs()[0])
+		comboForm = ttk.Combobox(self.templateframe,values=self.get_AllDATs(),state="readonly")
 		comboForm.grid(row=0, column=0, sticky="nsw")
 		comboForm.current(0)
-		comboForm.bind("<<ComboboxSelected>>",self.func)
 
 	
-
-
-		## Every tools used to create a Navon's Figure are in this frame
+	## Every tools used to create a Navon's Figure are in this frame
 		self.tools = LabelFrame(self.gen_Frame, text="Options for preview")
 		self.tools.grid(row=1, column=0, columnspan=5, sticky="we")
 
-		### Checkbox to choose between local character and local image
+	### Button to choose between local character and local image
 		self.currentElement= "char" # ComboBox Variable for le Local Element
 		self.buttonChangeElement = Button(self.tools, text="Use a local Image",command= lambda: self.changeLocalElement(padx))
 		self.buttonChangeElement.grid(row=0, column=0, columnspan=2, sticky="w")
 
-		### Font
-		self.lbfont = Label(self.tools, text="Font :", padx=padx) # Grid managed in self.changeLocalElement
-		self.cbfonts = ttk.Combobox(self.tools, values=font.families(), state="readonly", width=15) # ComboBox Fonts # Grid managed in self.changeLocalElement
-
-		### Local Character (if used, the Local Image is disabled)
+	### Local Character (if used, the Local Image is disabled)
+		self.char_var = StringVar(value="A")
 		self.labelChar = Label(self.tools, text="Local char :", padx=padx)
-		self.entryChar = Entry(self.tools, width=2)
+		self.entryChar = Entry(self.tools, width=2, textvariable=self.char_var)
+		self.char_var.trace("w", lambda *arg: self.character_limit())
 
-		### Local Image (if used, the Local Character is disabled)
+	### Local Image (if used, the Local Character is disabled)
 		self.labelImg = Label(self.tools, text="Local Image :", padx=padx)
 		self.entryImg = Button(self.tools, text="Search an Image",height=1)
 
-		### Density
+	### Font
+		self.font_var = StringVar(value=self.get_AllFonts()[0])
+		self.lbfont = Label(self.tools, text="Font :", padx=padx) # Grid managed in self.changeLocalElement
+		self.cbfonts = ttk.Combobox(self.tools, values=self.get_AllFonts(), state="readonly", width=15,textvariable=self.font_var) # ComboBox Fonts # Grid managed in self.changeLocalElement
+		self.cbfonts.current(0)
+
+	### Density
+		self.density_var = StringVar(value="100")
 		Label(self.tools, text="Density :", padx=padx).grid(row=1, column=0, sticky="w")
-		Spinbox(self.tools, from_=1, to=100, width=4).grid(row=1, column=1, padx=padx, sticky="w")
+		Spinbox(self.tools, from_=1, to=100, width=4, textvariable=self.density_var, command = lambda: self.update()).grid(row=1, column=1, padx=padx, sticky="w")
+		self.density_var.trace("w", lambda *arg: self.update())
 
-		### Size 
+	### Size 
+		self.size_var = StringVar(value="16")
 		Label(self.tools, text="Size :", padx=padx).grid(row=1, column=2, sticky="w")
-		self.spChar = Spinbox(self.tools, from_=1, to=100, width=4) # Grid managed in self.changeLocalElement
+		self.spChar = Spinbox(self.tools, from_=1, to=100, width=4, textvariable=self.size_var, command = lambda: self.update()) # Grid managed in self.changeLocalElement
 		self.spImg = Spinbox(self.tools, from_=1, to=100, width=4) # Grid managed in self.changeLocalElement
-		
+		self.size_var.trace("w", lambda *arg: self.update())
 
+	# The draw canvas (that does not appear on the screen)
+		self.draw_canvas= Canvas(self.gen_Frame, 
+			bg="white",
+			height=int(Setup.HEIGHT),
+			width=int(Setup.WIDTH/2))
+
+	# Events
 		self.getMainElement().bind(tobind[0],tobind[1])
 		self.bindallframe(self.getMainElement(),tobind[0], tobind[1])
+
+		comboForm.bind("<<ComboboxSelected>>",lambda : self.update())
+
+	## Start the app with 
 		self.changeLocalElement(padx)
-	def func(self,event=None):
-		print("selected")
+		#self.update() # With variables initialized
 
-	def update(self):
-		pass
 
-	def final(self):
-		pass
+#___________________________________________________________________________________________________________________________
+# Managing Options
 
-	def changeFont(self, event=None):
-		font = self.cbDfonts.get()
+	def get_AllFonts(self):
+		fonts = []
+		for font in os.listdir(Setup.PATHFONT):
+			fonts.append(font[:-4])
+		return fonts
 
+	def get_AllDATs(self):
+		DATs = []
+		for dat in os.listdir(Setup.PATHDAT):
+			DATs.append(dat[:-4])
+		return DATs
+
+	def character_limit(self):
+		if len(self.char_var.get()) > 0:
+			self.char_var.set(self.char_var.get()[-1])
+		self.update()
 
 	def changeLocalElement(self,padx):
 		"""
@@ -129,6 +158,23 @@ class Generator_Canvas(Ui_Canvas):
 			self.entryImg.grid(row=0, column=4, sticky="w")
 			self.buttonChangeElement.configure(text="Use local Character")
 
+	def update(self):
+		"""
+		Function that will update the options of the NF  
+		"""
+		self.outcome.getNF().setPolice(self.font_var.get())
+		self.outcome.getNF().setChar(self.char_var.get())
+		try:
+		 # The code still work without the try except clause but it create an exception when we change value by typing it
+			self.outcome.getNF().setDensity(int(self.density_var.get()))
+			self.outcome.getNF().setSize(int(self.size_var.get()))
+		except ValueError:
+			pass
+		self.outcome.update(self.draw_canvas)
+
+#___________________________________________________________________________________________________________________________
+# Managing Import / Export
+
 	def importCSV(self):
 		pass
 
@@ -139,16 +185,20 @@ class Generator_Canvas(Ui_Canvas):
 		pass
 
 	def exportIMG(self):
-		pass
+		file = filedialog.asksaveasfilename ( title = "Save as .." , \
+			filetypes = [("PNG", ".png"), ("JPG", ".jpg")] , defaultextension = ".png", \
+			initialdir= "Outcome", initialfile="NewImage")
+		self.getOutcome().getImage().save(file)
 
+#___________________________________________________________________________________________________________________________
+# Managing Canvas
 
 	def bindallframe(self,parent,event,func):
 		for child in parent.winfo_children():
 			self.bindallframe(child,event,func)
 			child.bind(event,func)
 
-
-# https://stackoverflow.com/questions/24942760/is-there-a-way-to-gray-out-disable-a-tkinter-frame
+	# https://stackoverflow.com/questions/24942760/is-there-a-way-to-gray-out-disable-a-tkinter-frame
 	def disableChildren(self,parent):
 	    for child in parent.winfo_children():
 	        wtype = child.winfo_class()

@@ -166,7 +166,7 @@ class NF:
 	def printElement(self, element, draw, canvas):
 			space = np.linspace(0, 1, self.getN(element=element, size=self.size, density=self.density))
 			interp = element.interpolate()
-			font = ImageFont.truetype("Fonts/"+self.police+".otf", self.size)
+			font = ImageFont.truetype(Setup.PATHFONT + self.police + Setup.FORMATFONT, self.size)
 			# Return spaced number from getN() interval
 			interp = element.interpolate()
 			for i in range(0, len(interp), 2):
