@@ -247,21 +247,56 @@ class Draw_Canvas(Ui_Canvas):
 			pass
 		self.outcome.update(self.draw_canvas)
 
-
 #___________________________________________________________________________________________________________________________
 # Managing Import / Export
 
 	def importDAT(self):
-		pass
-
+		filepath = filedialog.askopenfilename( title = "Open.." , \
+			filetypes = [("DAT", ".DAT")] , defaultextension = ".DAT", \
+			initialdir= Setup.PATHDAT)
+		if not len(filepath) == 0:
+			file = open(filepath,"r")
+			for line in file:
+				info = line[:-1].split(" - ") # [:-1] to remove the '\n' from the line
+				element = Factory.Create(info[0])
+				if info[0] == 'line':
+					# A line is registered this way : "type" "coord"
+					coords = [float(i) for i in info[1][1:-1].split(" ")]
+					element.start(event=[coords[0],coords[1]],canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
+					element.motion(event=[coords[2],coords[3]], canvas=self.draw_canvas, NF=self.outcome.getNF())
+					element.end(event=[coords[2],coords[3]], canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
+				elif info[0] == 'semiCircle':
+					# A semiCircle is registered this way : "type" "center" "radius" "startAngle"
+					center = [float(i) for i in info[1][1:-1].split(" ")]
+					radius = int(info[2])
+					startAngle = float(info[3])
+					element.start(event=center,canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
+					element.motion(event=[coords[0]+radius,coords[1]], canvas=self.draw_canvas, NF=self.outcome.getNF(), radius=radius, startAngle=startAngle)
+					element.end(event=[coords[1]+radius,coords[1]], canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
+				elif info[0] == 'circle':
+					# A circle is registered this way : "type" "center" "radius"
+					center = [float(i) for i in info[1][1:-1].split(" ")]
+					radius = int(info[2])
+					element.start(event=center,canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
+					element.motion(event=[coords[0]+radius,coords[1]], canvas=self.draw_canvas, NF=self.outcome.getNF(), radius=radius)
+					element.end(event=[coords[1]+radius,coords[1]], canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
+				
 	def exportDAT(self):
-		pass
+		filepath = filedialog.asksaveasfilename ( title = "Save as .." , \
+			filetypes = [("DAT", ".DAT")] , defaultextension = ".DAT", \
+			initialdir= Setup.PATHDAT, initialfile="NewTemplate")
+		if not len(filepath) == 0:
+			file = open(filepath, "w")
+			for element in self.outcome.getNF().getElements():
+				file.write(element.toString()+"\n") # \n added to separate elements
+			file.close()
 
 	def exportIMG(self):
-		file = filedialog.asksaveasfilename ( title = "Save as .." , \
+		filepath = filedialog.asksaveasfilename ( title = "Save as .." , \
 			filetypes = [("PNG", ".png"), ("JPG", ".jpg")] , defaultextension = ".png", \
 			initialdir= "Outcome", initialfile="NewImage")
-		self.getOutcome().getImage().save(file)
+		if not len(filepath) == 0:
+			self.getOutcome().getImage().save(file)
 
 
 #___________________________________________________________________________________________________________________________
@@ -288,7 +323,6 @@ class Draw_Canvas(Ui_Canvas):
 				child.configure(state='normal')
 			else:
 				self.enableChildren(child)
-
 
 #___________________________________________________________________________________________________________________________
 # Managing Draw Canvas

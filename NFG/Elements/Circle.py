@@ -99,7 +99,13 @@ class Circle(Element):
 		x, y = self.center
 		point = self.gather(canvas,kwargs.get('NF'),np.array([event[0],event[1]])) # Find if there is any element close to this one
 
-		self.radius = int(math.hypot(x - point[0], y - point[1]))
+
+		if not kwargs.get('radius'):
+			# Calculates the radius of the SemiCircle
+			self.radius = int(math.hypot(x - event[0], y - event[1]))
+		else:
+			self.radius = kwargs.get('radius')
+			
 		self.setX(0, x - self.radius)
 		self.setY(0, y - self.radius)
 		self.setX(1, x + self.radius)

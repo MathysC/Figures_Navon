@@ -112,18 +112,6 @@ class Element(ABC):
 		self.neighbors = np.append(
 			self.neighbors, neighbor)
 
-	def getCoords(self) -> np.array:
-		"""
-		Getter of Coords
-		:return coord: the array with all coordinates
-		:rtype coord: np.array
-		"""
-		coord = np.array([])
-		for i in range(0, len(self.x)):
-			coord = np.append(coord, self.getX(i))
-			coord = np.append(coord, self.getY(i))
-		return coord
-
 #___________________________________________________________________________________________________________________________
 # Management of the creation of element on the Navon's Figure
 

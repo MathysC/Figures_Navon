@@ -215,4 +215,4 @@ class Line(Element):
 #___________________________________________________________________________________________________________________________
 
 	def toString(self):
-		return f"{self.getType()} - {self.getCoords()}"
+		return f"{self.getType()} - [{self.getX(0)} {self.getY(0)} {self.getX(1)} {self.getY(1)}]"

@@ -181,28 +181,32 @@ class SemiCircle(Element):
 		event = kwargs.get('event')
 		canvas = kwargs.get('canvas')
 		x, y = self.center
-
-		# Calculates the radius of the SemiCircle
-		self.radius = int(math.hypot(x - event[0], y - event[1]))
+		if not kwargs.get('radius'):
+			# Calculates the radius of the SemiCircle
+			self.radius = int(math.hypot(x - event[0], y - event[1]))
+		else:
+			self.radius = kwargs.get('radius')
 		self.setX(0, x - self.radius)
 		self.setY(0, y - self.radius)
 		self.setX(1, x + self.radius)
 		self.setY(1, y + self.radius)
 
-		# To calculates the correct angle We need three points :
-		
-		# A the point at the cursor (event)
-		A = np.array([event[0],event[1]])
-		# B the created point at the side of the center
-		B = np.array([x+self.radius,y])
-		# C the Center
-		C = np.array([x,y]) # I make another variable to be clear with my calculation
-		
-		gamma = getAngleCL(strAngle='gamma',A=A, B=B, C=C)
+		if not kwargs.get('startAngle'):
+			# To calculates the correct angle We need three points :
+			
+			# A the point at the cursor (event)
+			A = np.array([event[0],event[1]])
+			# B the created point at the side of the center
+			B = np.array([x+self.radius,y])
+			# C the Center
+			C = np.array([x,y]) # I make another variable to be clear with my calculation
+			
+			gamma = getAngleCL(strAngle='gamma',A=A, B=B, C=C)
 
-		#The angle may have a different value depending on the cursor position relative to the center			
-		self.startAngle = math.degrees(gamma) if (event[1] < y) else math.degrees(-gamma)
-
+			#The angle may have a different value depending on the cursor position relative to the center			
+			self.startAngle = math.degrees(gamma) if (event[1] < y) else math.degrees(-gamma)
+		else:
+			self.startAngle = kwargs.get('startAngle')
 		# Reshape the Arc
 		canvas.coords(self.id,
 			  self.getX(0), self.getY(0),
