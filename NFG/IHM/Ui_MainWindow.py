@@ -75,10 +75,6 @@ class Ui_MainWindow:
 		self.generator = Generator_Canvas(self.right_Canvas, self.gen_outcome,
 		                                  tobind=np.array(["<Button-3>", lambda e: self.changeFocus('generator')]))
 
-		# Binding
-		## Bind the Enter touch with the final function
-		self.mainWindow.bind('<Return>', self.final)
-
 		## 
 		# Start the app with the focus on the draw canvas
 		self.changeFocus("draw")
@@ -124,19 +120,3 @@ class Ui_MainWindow:
 		Function that start the project in the main
 		"""
 		self.mainWindow.mainloop()
-
-	def final(self, event=None):
-		"""
-		Function that (currently only ) preview the NF
-		.. seealso:: Draw_Canvas.update()
-		.. seealso:: Draw_Canvas.final()
-		.. seealso:: Generator_Canvas.update()
-		.. seealso:: Generator_Canvas.final()
-		"""
-		if self.currentCanvas == 'draw':
-			self.draw.update()
-			self.draw.final()
-		# self.NF.finalImage(self.canvas['draw'].draw_canvas)
-		else:
-			self.generator.update()
-			self.generator.final()

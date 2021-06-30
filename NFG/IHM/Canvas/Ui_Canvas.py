@@ -12,7 +12,3 @@ class Ui_Canvas(ABC):
 	@abstractmethod
 	def update(self):
 		pass
-
-	@abstractmethod
-	def final(self):
-		pass
