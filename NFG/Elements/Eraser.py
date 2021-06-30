@@ -1,6 +1,6 @@
 from Elements.Element import Element
 from Logic.Setup import Setup
-
+import numpy as np
 
 class Eraser(Element):
 	"""
@@ -53,17 +53,22 @@ class Eraser(Element):
 		# onClick is a list of Elements found nearby the click on the canvas but only the first created among all will be used
 		# onClick is a list because find_overlapping return a list
 		# https://mail.python.org/pipermail/tutor/2012-November/092795.html
-		onClick = canvas.find_overlapping(event[0]-1, event[1]-1, event[0]+1, event[1]+1)
-
+		onClick = canvas.find_overlapping(event[0]-5, event[1]-5, event[0]+5, event[1]+5)
+		onClick = np.array(onClick)
 		# If the mouse is on the same element
 		# Remove it from the NF
-		if(onClick):
+		if(len(onClick)>0):
 			# condition to avoid lines used for the grid
+			for element in onClick:
+				if Setup.TAGGRID in canvas.gettags(int(element)):
+					onClick = np.delete(onClick, np.where(onClick == element))
+		
+		if(len(onClick)>0):
 			if not Setup.TAGGRID in canvas.gettags(int(onClick[0])):
 				element = NF.getElementById(onClick[0])
 				# https://www.kite.com/python/answers/how-to-delete-values-from-a-numpy-array-in-python#:~:text=from%20an%20array-,Use%20numpy.,that%20match%20the%20specified%20condition%20.	
 				NF.removeElement(element)
-					
+				
 
 				# Remove all the constraints from this element
 				tag = f"-{element.getId()}" 
