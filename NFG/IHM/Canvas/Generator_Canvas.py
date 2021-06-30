@@ -8,6 +8,7 @@ from tkinter import *
 from tkinter import ttk #i had to separate both importation in order to use ttk
 from tkinter import font
 from tkinter import filedialog
+from tkinter import messagebox
 import os
 import csv
 
@@ -35,8 +36,7 @@ class Generator_Canvas(Ui_Canvas):
 		self.FileGeneration = LabelFrame(self.fixframe, width=Setup.WIDTH, text="Mass Generation")
 		self.FileGeneration.grid(row=0, column=1, sticky="nsw", padx=5)
 
-		Button(self.FileGeneration, text="import as CSV", command=self.importCSV, padx=padx).grid(row=0, column=0)
-		Button(self.FileGeneration, text="export as Images", command=self.exportMassIMG, padx=padx).grid(row=0, column=1, sticky="we")
+		Button(self.FileGeneration, text="Generate Navon's Figures from a CSV", command=self.exportMassIMG, padx=padx).grid(row=0, column=0)
 
 		# The frame for import export ONE NF
 		self.export = LabelFrame(self.fixframe, text="Export your generation")
@@ -182,51 +182,79 @@ class Generator_Canvas(Ui_Canvas):
 			pass
 		self.outcome.update(self.draw_canvas)
 
-	def updateCanvas(self):
-			file = open(Setup.PATHDAT+self.templateform.get()+Setup.FORMATDAT,"r")
+	def updateCanvas(self,preDAT=None):
 
-			self.draw_canvas.delete("all")
-			self.outcome.getNF().setElements(np.array([]))
-			self.outcome.clearCanvas()
-			print(f"len Elements : {len(self.outcome.getNF().getElements())}")
-			for line in file:
-				print(f"{line=}")
-				info = line[:-1].split(" - ") # [:-1] to remove the '\n' from the line
-				element = Factory.Create(info[0])
-				if info[0] == 'line':
-					# A line is registered this way : "type" "coord"
-					coords = [float(i) for i in info[1][1:-1].split(" ")]
-					element.start(event=[coords[0],coords[1]],canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
-					element.motion(event=[coords[2],coords[3]], canvas=self.draw_canvas, NF=self.outcome.getNF())
-					element.end(event=[coords[2],coords[3]], canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
-				elif info[0] == 'semiCircle':
-					# A semiCircle is registered this way : "type" "center" "radius" "startAngle"
-					center = [float(i) for i in info[1][1:-1].split(" ")]
-					radius = int(info[2])
-					startAngle = float(info[3])
-					element.start(event=center,canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
-					element.motion(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), radius=radius, startAngle=startAngle)
-					element.end(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
-				elif info[0] == 'circle':
-					# A circle is registered this way : "type" "center" "radius"
-					center = [float(i) for i in info[1][1:-1].split(" ")]
-					radius = int(info[2])
-					element.start(event=center,canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
-					element.motion(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), radius=radius)
-					element.end(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
-				
+		if not preDAT:
+			DAT = self.templateform.get()
+		else:
+			DAT = preDAT
+
+		file = open(Setup.PATHDAT + DAT + Setup.FORMATDAT,"r")
+
+		self.draw_canvas.delete("all")
+		self.outcome.getNF().setElements(np.array([]))
+		self.outcome.clearCanvas()
+		for line in file:
+			info = line[:-1].split(" - ") # [:-1] to remove the '\n' from the line
+			element = Factory.Create(info[0])
+			if info[0] == 'line':
+				# A line is registered this way : "type" "coord"
+				coords = [float(i) for i in info[1][1:-1].split(" ")]
+				element.start(event=[coords[0],coords[1]],canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
+				element.motion(event=[coords[2],coords[3]], canvas=self.draw_canvas, NF=self.outcome.getNF())
+				element.end(event=[coords[2],coords[3]], canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
+			elif info[0] == 'semiCircle':
+				# A semiCircle is registered this way : "type" "center" "radius" "startAngle"
+				center = [float(i) for i in info[1][1:-1].split(" ")]
+				radius = int(info[2])
+				startAngle = float(info[3])
+				element.start(event=center,canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
+				element.motion(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), radius=radius, startAngle=startAngle)
+				element.end(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)
+			elif info[0] == 'circle':
+				# A circle is registered this way : "type" "center" "radius"
+				center = [float(i) for i in info[1][1:-1].split(" ")]
+				radius = int(info[2])
+				element.start(event=center,canvas=self.draw_canvas, draw_Canvas=self, NF=self.outcome.getNF())
+				element.motion(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), radius=radius)
+				element.end(event=center, canvas=self.draw_canvas, NF=self.outcome.getNF(), draw_canvas=self)	
 
 #___________________________________________________________________________________________________________________________
 # Managing Import / Export
 
-	def importCSV(self):
-		pass
-
 	def exportCSV(self):
-		pass
+		CSVpath = filedialog.askopenfilename( title = "Choose the CSV to generate.." , \
+			filetypes = [("CSV", ".csv")] , defaultextension = Setup.FORMATMASS, \
+			initialdir= Setup.PATHMASS)
+		if len(CSVpath) != 0:
+			try:
+				with open(CSVpath,'a') as csv_file:
+					csv_writer = csv.DictWriter(csv_file, fieldnames = ['DAT','Local char','Font','Density','Size'], delimiter=";")
+					csv_writer.writerow({
+						'DAT' : self.templateform.get(),
+						'Local char' : self.char_var.get(),
+						'Font' : self.font_var.get(),
+						'Density' : self.density_var.get(),
+						'Size' : self.size_var.get()})
+			except PermissionError:
+				messagebox.showerror(title="An error occurred", message=f"Please close the file {CSVpath} before exporting")
 
 	def exportMassIMG(self):
-		pass
+		CSVpath = filedialog.askopenfilename( title = "Choose the CSV to generate.." , \
+			filetypes = [("CSV", ".csv")] , defaultextension = Setup.FORMATMASS, \
+			initialdir= Setup.PATHMASS)
+		DIRpath = filedialog.askdirectory( title = "Choose the directory where images will be saved...")
+		if len(CSVpath) != 0 and len(DIRpath) != 0:
+			with open(CSVpath,'r') as mass_file:
+				mass_reader = csv.DictReader(mass_file,delimiter=';')
+				for line in mass_reader:
+					self.char_var.set(line['Local char'])
+					self.font_var.set(line['Font'])
+					self.density_var.set(line['Density'])
+					self.size_var.set(line['Size'])
+					self.update()
+					self.updateCanvas(preDAT=line['DAT'])
+					self.getOutcome().getImage().save(DIRpath + "/" + line['DAT'] + ".png")
 
 	def exportIMG(self):
 		file = filedialog.asksaveasfilename ( title = "Save as .." , \

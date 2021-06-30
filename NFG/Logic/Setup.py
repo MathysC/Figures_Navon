@@ -12,5 +12,7 @@ class Setup:
 	PATHIMG = "Libs/Images/"
 	PATHFONT = "Libs/Fonts/"
 	FORMATFONT = ".otf"
-	PATHDAT = "Libs/Dats/"
+	PATHDAT = "Libs/DATs/"
 	FORMATDAT = ".DAT"
+	PATHMASS= "Libs/CSVs/"
+	FORMATMASS = ".csv"
